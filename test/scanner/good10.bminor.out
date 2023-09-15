@@ -1,0 +1,15 @@
+EQUALITY       ==
+IEQUALITY     !=
+IEQUALITY     !=
+IDENTIFIER     sdfsdf
+IDENTIFIER     sdfsdf
+SEMICOLON      ;
+IDENTIFIER     sdfasdfdsaf
+SEMICOLON      ;
+ADD            +
+ADD            +
+INCREMENT      ++
+IDENTIFIER     chel
+SEMICOLON      ;
+IDENTIFIER     chelswea
+SEMICOLON      ;
