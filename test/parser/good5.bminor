@@ -1,0 +1,2 @@
+usleep: function void ( usecs: integer );
+rand: function integer();

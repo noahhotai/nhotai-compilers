@@ -1,0 +1,5 @@
+func1: function integer (x:integer, y:char) =
+{
+	print x;
+	return 1
+}

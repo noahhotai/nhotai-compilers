@@ -13,6 +13,7 @@ HEX      [0-9a-fA-F]
 \+\+                                                  { return TOKEN_PLUS_PLUS; }
 \-\-                                                  { return TOKEN_MINUS_MINUS; }
 \+                                                    { return TOKEN_ADD; }
+\:                                                    { return TOKEN_COLON; }
 \-                                                    { return TOKEN_SUBTRACT; }
 \(                                                    { return TOKEN_LEFT_PARENTHESIS; }
 \)                                                    { return TOKEN_RIGHT_PARENTHESIS; }
@@ -54,6 +55,7 @@ true                                                  { return TOKEN_TRUE; }
 void                                                  { return TOKEN_VOID; }
 while                                                 { return TOKEN_WHILE; }
 
+
 ({LETTER}|_)({DIGIT}|{LETTER}|_)*                     { 
                                 if (strlen(yytext) > 255) {
                                     return TOKEN_ERROR;
@@ -65,9 +67,8 @@ while                                                 { return TOKEN_WHILE; }
 \"([^"\\\n]|\\.){0,255}\"                             { return TOKEN_STRING_LITERAL; }
 '([^\\]|\\[^']|(\\0x{HEX}{HEX}))'                     { return TOKEN_CHAR_LITERAL; }
 {DIGIT}+                                              { return TOKEN_INT_LITERAL; }
-{DIGIT}*(\.{DIGIT}*|([eE][-+]?{DIGIT}+))              { return TOKEN_FLOAT_LITERAL; }
-\/\/[^\n]*\n                                          { return TOKEN_COMMENT; }    
-\/\*([^\*]*|\**[^\/])*\*\/                            { return TOKEN_COMMENT; }
+({DIGIT}+(\.{DIGIT}*|((\.{DIGIT}+)?[eE][-+]?{DIGIT}+))|\.{DIGIT}+) { return TOKEN_FLOAT_LITERAL; }
+(\/\*([^*]|\*[^\/])*\*\*\/)|(\/\*([^*]|\*[^\/])*\*\/)    { return TOKEN_COMMENT; }
 .                                                     { return TOKEN_ERROR; }
 %%
 int yywrap() { return 1; }
