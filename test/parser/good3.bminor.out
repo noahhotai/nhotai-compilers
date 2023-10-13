@@ -1,0 +1,10 @@
+IDENTIFIER     main
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+RIGHT BRACE    }
+Program parsed successfully.

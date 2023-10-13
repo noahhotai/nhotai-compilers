@@ -1,0 +1,16 @@
+IDENTIFIER     x
+COLON :
+INT            integer
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IF             if
+LEFT PARENTHEIS     (
+INT LITERAL    0
+LESS THAN      <
+INT LITERAL    0
+RIGHT PARENTHESIS    )
+RETURN         return
+INT LITERAL    0
+SEMICOLON      ;
+Program parsed successfully.

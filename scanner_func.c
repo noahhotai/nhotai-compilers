@@ -11,13 +11,16 @@
 extern FILE *yyin;
 extern int yylex();
 extern char *yytext;
+extern int yyparse();
+extern int yy_error(char *s);
 
 int scanner() {
     while(1) {
         enum yytokentype t = yylex();
+        if (t == 0){
+            return 0;
+        }
         switch (t) {
-            case TOKEN_EOF:
-                return EXIT_SUCCESS;
             case TOKEN_ARRAY:
                 printf("ARRAY          %s\n", yytext);
                 break;
@@ -80,6 +83,9 @@ int scanner() {
                 break;
             case TOKEN_MULTIPLY:
                 printf("MULTIPLY       %s\n", yytext);
+                break;
+            case TOKEN_COLON:
+                printf("COLON %s\n", yytext);
                 break;
             case TOKEN_DIVISION:
                 printf("DIVISION       %s\n", yytext);

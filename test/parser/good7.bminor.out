@@ -1,0 +1,11 @@
+IDENTIFIER     barr
+COLON :
+ARRAY          array
+LEFT BRACKET   [
+RIGHT BRACKET  ]
+BOOL           boolean
+ASSIGN         =
+LEFT BRACE     {
+RIGHT BRACE    }
+SEMICOLON      ;
+Program parsed successfully.

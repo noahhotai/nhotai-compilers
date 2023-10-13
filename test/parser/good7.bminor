@@ -1,2 +1,1 @@
-carr:array [1] char = {'a'};
-barr:array [4] boolean = {true, false, true, true};
+barr:array [] boolean = {};

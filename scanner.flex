@@ -35,7 +35,7 @@ HEX      [0-9a-fA-F]
 \>=                                                   { return TOKEN_GREATER_THAN_OR_EQUAL; }
 &&                                                    { return TOKEN_AND; }
 \|\|                                                  { return TOKEN_OR; }
-\:                                                    { return TOKEN_TYPE_SET; }
+\:                                                    { return TOKEN_COLON; }
 \;                                                    { return TOKEN_SEMICOLON; }
 array                                                 { return TOKEN_ARRAY; }
 auto                                                  { return TOKEN_AUTO; }

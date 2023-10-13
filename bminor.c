@@ -34,7 +34,8 @@ int main(int argc, char* argv[]){
         fprintf(stdout, "Decoded line: %s\n", decode_string);
         fprintf(stdout, "Encoded line: %s\n", encode_string);
     }
-    else if (same_str(argv[1], "--parse")) {
+    
+    else if (!strcmp(argv[1], "--parse")) {
         if (!(yyin = fopen(argv[2], "r"))) {
             fprintf(stderr, "Could not open %s\n", argv[2]);
             return 1;

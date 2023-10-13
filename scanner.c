@@ -1518,7 +1518,7 @@ YY_RULE_SETUP
 case 28:
 YY_RULE_SETUP
 #line 38 "scanner.flex"
-{ return TOKEN_TYPE_SET; }
+{ return TOKEN_COLON; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP

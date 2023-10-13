@@ -1,5 +1,9 @@
-%{
+ %{
 #include <stdio.h>
+extern char *yytext;
+extern int yylex();
+extern int yyerror( char *str);
+
 %}
 // listing all the tokens
 %token TOKEN_ERROR
@@ -60,44 +64,90 @@
 
 // listing all the rules
 %%
-program : decl_list TOKEN_EOF
-| TOKEN_EOF
-;
-
-
-type: TOKEN_INT | 
-TOKEN_FLOAT|
-TOKEN_STRING|
-TOKEN_BOOLEAN|
-TOKEN_CHAR |
-TOKEN_ARRAY TOKEN_LEFT_BRACKET TOKEN_INT_LITERAL TOKEN_RIGHT_BRACKET type
+program : decl_list {return 0; }
+| {return 0; }
 ;
 
 decl_list: decl_list decl
 | decl
 ;
 
-func_decl: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION function_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_ASSIGN stmt
-|  TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION function_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_SEMICOLON
+
+if_dangle: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE if_dangle
+| var_decl
+| for_stmt dangle_end
+| func_call TOKEN_SEMICOLON
+| return_stmt TOKEN_SEMICOLON
+| print_stmt TOKEN_SEMICOLON
+| inc_or_dec TOKEN_SEMICOLON
+| TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE
+| expr_assign TOKEN_SEMICOLON
+;
+
+
+dangle_end: TOKEN_SEMICOLON|
+if_dangle
+;
+
+reg_end: stmt|
+TOKEN_SEMICOLON
+;
+
+access: TOKEN_IDENTIFIER
+| array_access
+;
+
+array_access: TOKEN_IDENTIFIER TOKEN_LEFT_BRACKET expr_val TOKEN_RIGHT_BRACKET array_access_recursive
+;
+
+array_access_recursive: TOKEN_LEFT_BRACKET expr_val TOKEN_RIGHT_BRACKET array_access_recursive
+|
+;
+
+type: TOKEN_INT | 
+TOKEN_FLOAT|
+TOKEN_STRING|
+TOKEN_BOOLEAN|
+TOKEN_CHAR |
+;
+
+
+
+func_decl: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_ASSIGN TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE
+|  TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_SEMICOLON
 ;
 
 var_decl: TOKEN_IDENTIFIER TOKEN_COLON type TOKEN_SEMICOLON
-| TOKEN_IDENTIFIER TOKEN_COLON type TOKEN_ASSIGN data_atom TOKEN_SEMICOLON
+| TOKEN_IDENTIFIER TOKEN_COLON type TOKEN_ASSIGN expr_val TOKEN_SEMICOLON
+| TOKEN_IDENTIFIER TOKEN_COLON array_type TOKEN_ASSIGN TOKEN_LEFT_BRACE expr_val_list TOKEN_RIGHT_BRACE TOKEN_SEMICOLON
+| TOKEN_IDENTIFIER TOKEN_COLON array_type TOKEN_SEMICOLON
 ;
 
 decl: var_decl
 | func_decl
 ;
 
+
+
+
 stmt_block: TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE
-| TOKEN_LEFT_BRACE TOKEN_RIGHT_BRACE
 ;
 
-function_type: type|
+func_type: type|
 TOKEN_VOID
 ;
 
-param_recursive: TOKEN_COMMA type param_recursive
+param_recursive: TOKEN_COMMA TOKEN_IDENTIFIER TOKEN_COLON type param_recursive
+|
+;
+
+every_type: type
+| array_type
+
+array_type: TOKEN_ARRAY TOKEN_LEFT_BRACKET array_size TOKEN_RIGHT_BRACKET every_type
+;
+
+array_size: expr_val
 |
 ;
 
@@ -105,37 +155,45 @@ param_list: TOKEN_IDENTIFIER TOKEN_COLON type param_recursive
 |
 ;
 
+
 stmt_list: stmt_list stmt
-| stmt
+|
 ;
 
-stmt: for_loop
-| var_decl
-| expr_assign
-| return_stmt
-| print_stmt
-| inc_or_dec
+stmt: for_stmt reg_end
+| TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS stmt
+| TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE stmt
+| expr_assign TOKEN_SEMICOLON
+| return_stmt TOKEN_SEMICOLON
+| print_stmt TOKEN_SEMICOLON
+| inc_or_dec TOKEN_SEMICOLON
 | stmt_block
-//| if_stmt
+| var_decl
+| func_call TOKEN_SEMICOLON
 ;
 
-return_stmt: TOKEN_RETURN expr_val
-
-expr_assign: TOKEN_IDENTIFIER TOKEN_ASSIGN expr_val TOKEN_SEMICOLON
+return_stmt: TOKEN_RETURN expr |
+TOKEN_RETURN 
 ;
 
-inc_or_dec: TOKEN_IDENTIFIER TOKEN_PLUS_PLUS  TOKEN_SEMICOLON
-| TOKEN_IDENTIFIER TOKEN_MINUS_MINUS  TOKEN_SEMICOLON
+expr_assign: access TOKEN_ASSIGN expr
+;
+
+inc_or_dec: TOKEN_IDENTIFIER TOKEN_PLUS_PLUS
+| TOKEN_IDENTIFIER TOKEN_MINUS_MINUS
 
 expr_val: expr_val operator data_atom
 | data_atom
+| inc_or_dec
 ;
 
 expr: expr_assign
 | expr_val
 ;
 
-for_loop: TOKEN_FOR TOKEN_LEFT_PARENTHESIS for_expr TOKEN_SEMICOLON for_expr TOKEN_SEMICOLON for_expr TOKEN_RIGHT_PARENTHESIS if_for_block
+for_stmt: TOKEN_FOR for_cond
+
+for_cond: TOKEN_LEFT_PARENTHESIS for_expr TOKEN_SEMICOLON for_expr TOKEN_SEMICOLON for_expr TOKEN_RIGHT_PARENTHESIS
 
 for_expr: expr
 |
@@ -146,11 +204,7 @@ expr_val_list: expr_val expr_val_list_recursive
 |
 ;
 
-expr_val_list_recursive: TOKEN_COMMA expr_val
-|
-;
-
-if_for_block: stmt
+expr_val_list_recursive: TOKEN_COMMA expr_val_list
 |
 ;
 
@@ -174,23 +228,23 @@ boolean_literal: TOKEN_TRUE
 ;
 
 
-func_call: TOKEN_IDENTIFIER TOKEN_LEFT_PARENTHESIS expr_val_list TOKEN_RIGHT_PARENTHESIS TOKEN_SEMICOLON
+func_call: TOKEN_IDENTIFIER TOKEN_LEFT_PARENTHESIS expr_val_list TOKEN_RIGHT_PARENTHESIS
 ;
 
 data_atom: TOKEN_STRING_LITERAL
 | TOKEN_INT_LITERAL
 | TOKEN_CHAR_LITERAL
-| TOKEN_IDENTIFIER
-| boolean_literal
-| func_call
-| TOKEN_NOT data_atom
 | TOKEN_FLOAT_LITERAL
-| TOKEN_IDENTIFIER TOKEN_LEFT_BRACKET expr_val TOKEN_RIGHT_BRACKET
+| boolean_literal
+| TOKEN_NOT data_atom
+| TOKEN_NEGATIVE data_atom
+| func_call
+| access
 | TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS
-| inc_or_dec
 ;
 
-print_stmt: TOKEN_PRINT expr_val_list TOKEN_SEMICOLON
+print_stmt: TOKEN_PRINT expr_val_list 
+;
 
 %%
 
