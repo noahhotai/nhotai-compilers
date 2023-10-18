@@ -1,0 +1,3025 @@
+=====STUDENT TESTS=====
+====Good Tests====
+===[good1.bminor Input]===
+x:integer;
+y:integer;
+z:integer;
+===[good1.bminor Output]===
+Success!
+
+IDENTIFIER     x
+COLON :
+INT            integer
+SEMICOLON      ;
+IDENTIFIER     y
+COLON :
+INT            integer
+SEMICOLON      ;
+IDENTIFIER     z
+COLON :
+INT            integer
+SEMICOLON      ;
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[good2.bminor Input]===
+main: function void () = {
+	print "hi";
+}
+===[good2.bminor Output]===
+Success!
+
+IDENTIFIER     main
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+PRINT          print
+STRING LITERAL hi
+SEMICOLON      ;
+RIGHT BRACE    }
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[good3.bminor Input]===
+main:function void() =
+{}
+===[good3.bminor Output]===
+Success!
+
+IDENTIFIER     main
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+RIGHT BRACE    }
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[good4.bminor Input]===
+main:function void();
+===[good4.bminor Output]===
+Success!
+
+IDENTIFIER     main
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+RIGHT PARENTHESIS    )
+SEMICOLON      ;
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[good5.bminor Input]===
+usleep: function void ( usecs: integer );
+rand: function integer();
+===[good5.bminor Output]===
+Success!
+
+IDENTIFIER     usleep
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+IDENTIFIER     usecs
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+SEMICOLON      ;
+IDENTIFIER     rand
+COLON :
+FUNCTION            function
+INT            integer
+LEFT PARENTHEIS     (
+RIGHT PARENTHESIS    )
+SEMICOLON      ;
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[good6.bminor Input]===
+main:function void() = {
+	if( 10 < 20 ){
+
+    }
+	else
+		print "hello";
+	if( 15 < 20 )
+	{
+		print "hi";
+	}
+}
+===[good6.bminor Output]===
+Success!
+
+IDENTIFIER     main
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IF             if
+LEFT PARENTHEIS     (
+INT LITERAL    0
+LESS THAN      <
+INT LITERAL    0
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+RIGHT BRACE    }
+ELSE           else
+PRINT          print
+STRING LITERAL hello
+SEMICOLON      ;
+IF             if
+LEFT PARENTHEIS     (
+INT LITERAL    0
+LESS THAN      <
+INT LITERAL    0
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+PRINT          print
+STRING LITERAL hi
+SEMICOLON      ;
+RIGHT BRACE    }
+RIGHT BRACE    }
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[good8.bminor Input]===
+x:integer = 5;
+if( 4 < 5 ) return 7;
+===[good8.bminor Output]===
+Success!
+
+IDENTIFIER     x
+COLON :
+INT            integer
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IF             if
+LEFT PARENTHEIS     (
+INT LITERAL    0
+LESS THAN      <
+INT LITERAL    0
+RIGHT PARENTHESIS    )
+RETURN         return
+INT LITERAL    0
+SEMICOLON      ;
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[good9.bminor Input]===
+"ffdfdfsadfsdfsdfsa"
+===[good9.bminor Output]===
+Success!
+
+STRING LITERAL ffdfdfsadfsdfsdfsa
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[good0.bminor Input]===
+y:boolean;
+
+===[good0.bminor Output]===
+Success!
+
+IDENTIFIER     y
+COLON :
+BOOL           boolean
+SEMICOLON      ;
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[good7.bminor Input]===
+barr:array [] boolean = {};
+===[good7.bminor Output]===
+Success!
+
+IDENTIFIER     barr
+COLON :
+ARRAY          array
+LEFT BRACKET   [
+RIGHT BRACKET  ]
+BOOL           boolean
+ASSIGN         =
+LEFT BRACE     {
+RIGHT BRACE    }
+SEMICOLON      ;
+Program parsed successfully.
+
+
+return code: 0
+
+
+====Bad Tests====
+===[bad0.bminor Input]===
+dfdssdfsdf
+===[bad0.bminor Output]===
+Success!
+
+IDENTIFIER     dfdssdfsdf
+parse error: syntax error
+
+
+return code: 1
+
+
+===[bad2.bminor Input]===
+x:integer = 5
+===[bad2.bminor Output]===
+Success!
+
+IDENTIFIER     x
+COLON :
+INT            integer
+ASSIGN         =
+INT LITERAL    0
+parse error: syntax error
+
+
+return code: 1
+
+
+===[bad3.bminor Input]===
+main: function void() =
+
+	x:integer = 5 ** 5;
+	print x
+}
+===[bad3.bminor Output]===
+Success!
+
+IDENTIFIER     main
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+RIGHT PARENTHESIS    )
+ASSIGN         =
+IDENTIFIER     x
+COLON :
+INT            integer
+ASSIGN         =
+INT LITERAL    0
+MULTIPLY       *
+MULTIPLY       *
+INT LITERAL    0
+SEMICOLON      ;
+PRINT          print
+IDENTIFIER     x
+RIGHT BRACE    }
+parse error: syntax error
+
+
+return code: 1
+
+
+===[bad4.bminor Input]===
+main:function void()=
+===[bad4.bminor Output]===
+Success!
+
+IDENTIFIER     main
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+RIGHT PARENTHESIS    )
+ASSIGN         =
+parse error: syntax error
+
+
+return code: 1
+
+
+===[bad5.bminor Input]===
+z:boolean  = true || ;
+===[bad5.bminor Output]===
+Success!
+
+IDENTIFIER     z
+COLON :
+BOOL           boolean
+ASSIGN         =
+TRUE           true
+OR             ||
+SEMICOLON      ;
+parse error: syntax error
+
+
+return code: 1
+
+
+===[bad6.bminor Input]===
+func1: function integer (x:integer, y:char) =
+{
+	print x;
+	return 1
+}
+===[bad6.bminor Output]===
+Success!
+
+IDENTIFIER     func1
+COLON :
+FUNCTION            function
+INT            integer
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     y
+COLON :
+CHAR           char
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+PRINT          print
+IDENTIFIER     x
+SEMICOLON      ;
+RETURN         return
+INT LITERAL    0
+RIGHT BRACE    }
+parse error: syntax error
+
+
+return code: 1
+
+
+===[bad1.bminor Input]===
+
+ dsfsdfsdfsdfsfdsf
+x = 5;
+===[bad1.bminor Output]===
+Success!
+
+IDENTIFIER     dsfsdfsdfsdfsfdsf
+IDENTIFIER     x
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+parse error: syntax error
+
+
+return code: 1
+
+
+===[bad7.bminor Input]===
+0;
+===[bad7.bminor Output]===
+TEST NOT PASSED
+
+INT LITERAL    0
+SEMICOLON      ;
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[bad8.bminor Input]===
+x:function(
+===[bad8.bminor Output]===
+Success!
+
+IDENTIFIER     x
+COLON :
+FUNCTION            function
+LEFT PARENTHEIS     (
+parse error: syntax error
+
+
+return code: 1
+
+
+===[bad9.bminor Input]===
+:;
+
+===[bad9.bminor Output]===
+TEST NOT PASSED
+
+COLON :
+SEMICOLON      ;
+Program parsed successfully.
+
+
+return code: 0
+
+
+=====HIDDEN TESTS=====
+====Good Tests====
+===[good1.bminor Input]===
+/* A program is a sequence of declarations */
+/* Try a variety of variable declarations. */
+
+n: integer;
+m: integer = 20;
+
+b: boolean;
+c: boolean = true;
+s: string;
+t: string = "hello\n";
+d: char;
+e: char = 'x';
+
+x: array [] string;
+y: array [] string = { "a", "b", "c" };
+z: array [] array [] string = { {"a","b","c"}, {"x","y","z"} };
+
+g: array [3] string;
+h: array [3] string = { "a", "b", "c" };
+i: array [2] array [3] string = { {"a","b","c"}, {"x","y","z"} };
+
+===[good1.bminor Output]===
+TEST NOT PASSED
+
+COMMENT        /* A program is a sequence of declarations */
+COMMENT        /* Try a variety of variable declarations. */
+IDENTIFIER     n
+COLON :
+INT            integer
+SEMICOLON      ;
+IDENTIFIER     m
+COLON :
+INT            integer
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     b
+COLON :
+BOOL           boolean
+SEMICOLON      ;
+IDENTIFIER     c
+COLON :
+BOOL           boolean
+ASSIGN         =
+TRUE           true
+SEMICOLON      ;
+IDENTIFIER     s
+COLON :
+STRING         string
+SEMICOLON      ;
+IDENTIFIER     t
+COLON :
+STRING         string
+ASSIGN         =
+STRING LITERAL hello
+
+SEMICOLON      ;
+IDENTIFIER     d
+COLON :
+CHAR           char
+SEMICOLON      ;
+IDENTIFIER     e
+COLON :
+CHAR           char
+ASSIGN         =
+
+ERROR: String not surrounded by quotes.
+ERROR: Invalid char literalERROR: Scanning error.
+
+return code: 1
+
+
+===[good10.bminor Input]===
+/* Try accesssing arrays of various sizes; */
+
+a: array [10] integer = {100,200,300,400,500,600,700,800,900};
+b: array [10] integer;
+c: array [10] array [10] integer;
+
+testfunc: function void () = {
+    i: integer;
+    j: integer;
+
+    for(i=0;i<10;i++) {
+        b[i] = a[i] * 10;
+    }
+
+    for(i=0;i<5;i++) {
+        b[i*2] = a[i] + b[i];
+    }
+
+    for(j=0;j<10;i++) {
+        for(i=0;i<10;i++) {
+            c[i][j] = i*j;
+        }
+    }
+
+    for(j=0;j<10;i++) {
+        for(i=0;i<10;i++) {
+            print c[i][j];
+            print " ";
+        }
+        print "\n";
+    }
+}
+
+===[good10.bminor Output]===
+Success!
+
+COMMENT        /* Try accesssing arrays of various sizes; */
+IDENTIFIER     a
+COLON :
+ARRAY          array
+LEFT BRACKET   [
+INT LITERAL    0
+RIGHT BRACKET  ]
+INT            integer
+ASSIGN         =
+LEFT BRACE     {
+INT LITERAL    0
+COMMA          ,
+INT LITERAL    0
+COMMA          ,
+INT LITERAL    0
+COMMA          ,
+INT LITERAL    0
+COMMA          ,
+INT LITERAL    0
+COMMA          ,
+INT LITERAL    0
+COMMA          ,
+INT LITERAL    0
+COMMA          ,
+INT LITERAL    0
+COMMA          ,
+INT LITERAL    0
+RIGHT BRACE    }
+SEMICOLON      ;
+IDENTIFIER     b
+COLON :
+ARRAY          array
+LEFT BRACKET   [
+INT LITERAL    0
+RIGHT BRACKET  ]
+INT            integer
+SEMICOLON      ;
+IDENTIFIER     c
+COLON :
+ARRAY          array
+LEFT BRACKET   [
+INT LITERAL    0
+RIGHT BRACKET  ]
+ARRAY          array
+LEFT BRACKET   [
+INT LITERAL    0
+RIGHT BRACKET  ]
+INT            integer
+SEMICOLON      ;
+IDENTIFIER     testfunc
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IDENTIFIER     i
+COLON :
+INT            integer
+SEMICOLON      ;
+IDENTIFIER     j
+COLON :
+INT            integer
+SEMICOLON      ;
+FOR            for
+LEFT PARENTHEIS     (
+IDENTIFIER     i
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+LESS THAN      <
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+INCREMENT      ++
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+IDENTIFIER     b
+LEFT BRACKET   [
+IDENTIFIER     i
+RIGHT BRACKET  ]
+ASSIGN         =
+IDENTIFIER     a
+LEFT BRACKET   [
+IDENTIFIER     i
+RIGHT BRACKET  ]
+MULTIPLY       *
+INT LITERAL    0
+SEMICOLON      ;
+RIGHT BRACE    }
+FOR            for
+LEFT PARENTHEIS     (
+IDENTIFIER     i
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+LESS THAN      <
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+INCREMENT      ++
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+IDENTIFIER     b
+LEFT BRACKET   [
+IDENTIFIER     i
+MULTIPLY       *
+INT LITERAL    0
+RIGHT BRACKET  ]
+ASSIGN         =
+IDENTIFIER     a
+LEFT BRACKET   [
+IDENTIFIER     i
+RIGHT BRACKET  ]
+ADD            +
+IDENTIFIER     b
+LEFT BRACKET   [
+IDENTIFIER     i
+RIGHT BRACKET  ]
+SEMICOLON      ;
+RIGHT BRACE    }
+FOR            for
+LEFT PARENTHEIS     (
+IDENTIFIER     j
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     j
+LESS THAN      <
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+INCREMENT      ++
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+FOR            for
+LEFT PARENTHEIS     (
+IDENTIFIER     i
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+LESS THAN      <
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+INCREMENT      ++
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+IDENTIFIER     c
+LEFT BRACKET   [
+IDENTIFIER     i
+RIGHT BRACKET  ]
+LEFT BRACKET   [
+IDENTIFIER     j
+RIGHT BRACKET  ]
+ASSIGN         =
+IDENTIFIER     i
+MULTIPLY       *
+IDENTIFIER     j
+SEMICOLON      ;
+RIGHT BRACE    }
+RIGHT BRACE    }
+FOR            for
+LEFT PARENTHEIS     (
+IDENTIFIER     j
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     j
+LESS THAN      <
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+INCREMENT      ++
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+FOR            for
+LEFT PARENTHEIS     (
+IDENTIFIER     i
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+LESS THAN      <
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+INCREMENT      ++
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+PRINT          print
+IDENTIFIER     c
+LEFT BRACKET   [
+IDENTIFIER     i
+RIGHT BRACKET  ]
+LEFT BRACKET   [
+IDENTIFIER     j
+RIGHT BRACKET  ]
+SEMICOLON      ;
+PRINT          print
+STRING LITERAL  
+SEMICOLON      ;
+RIGHT BRACE    }
+PRINT          print
+STRING LITERAL 
+
+SEMICOLON      ;
+RIGHT BRACE    }
+RIGHT BRACE    }
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[good11.bminor Input]===
+
+/* Try locally declared array lengths */
+
+
+testfunc: function void (x: integer, y: integer) = {
+    i: integer;
+    j: integer;
+
+    a: array [10] integer = {100,200,300,400,500,600,700,800,900};
+    b: array [x] integer;
+    c: array [x] array [y] integer;
+
+    for(i=0;i<10;i++) {
+        b[i] = a[i] * 10;
+    }
+
+    for(i=0;i<5;i++) {
+        b[i*2] = a[i] + b[i];
+    }
+
+    for(j=0;j<10;i++) {
+        for(i=0;i<10;i++) {
+            c[i][j] = i*j;
+        }
+    }
+
+    for(j=0;j<10;i++) {
+        for(i=0;i<10;i++) {
+            print c[i][j];
+            print " ";
+        }
+        print "\n";
+    }
+}
+
+===[good11.bminor Output]===
+Success!
+
+COMMENT        /* Try locally declared array lengths */
+IDENTIFIER     testfunc
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     y
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IDENTIFIER     i
+COLON :
+INT            integer
+SEMICOLON      ;
+IDENTIFIER     j
+COLON :
+INT            integer
+SEMICOLON      ;
+IDENTIFIER     a
+COLON :
+ARRAY          array
+LEFT BRACKET   [
+INT LITERAL    0
+RIGHT BRACKET  ]
+INT            integer
+ASSIGN         =
+LEFT BRACE     {
+INT LITERAL    0
+COMMA          ,
+INT LITERAL    0
+COMMA          ,
+INT LITERAL    0
+COMMA          ,
+INT LITERAL    0
+COMMA          ,
+INT LITERAL    0
+COMMA          ,
+INT LITERAL    0
+COMMA          ,
+INT LITERAL    0
+COMMA          ,
+INT LITERAL    0
+COMMA          ,
+INT LITERAL    0
+RIGHT BRACE    }
+SEMICOLON      ;
+IDENTIFIER     b
+COLON :
+ARRAY          array
+LEFT BRACKET   [
+IDENTIFIER     x
+RIGHT BRACKET  ]
+INT            integer
+SEMICOLON      ;
+IDENTIFIER     c
+COLON :
+ARRAY          array
+LEFT BRACKET   [
+IDENTIFIER     x
+RIGHT BRACKET  ]
+ARRAY          array
+LEFT BRACKET   [
+IDENTIFIER     y
+RIGHT BRACKET  ]
+INT            integer
+SEMICOLON      ;
+FOR            for
+LEFT PARENTHEIS     (
+IDENTIFIER     i
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+LESS THAN      <
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+INCREMENT      ++
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+IDENTIFIER     b
+LEFT BRACKET   [
+IDENTIFIER     i
+RIGHT BRACKET  ]
+ASSIGN         =
+IDENTIFIER     a
+LEFT BRACKET   [
+IDENTIFIER     i
+RIGHT BRACKET  ]
+MULTIPLY       *
+INT LITERAL    0
+SEMICOLON      ;
+RIGHT BRACE    }
+FOR            for
+LEFT PARENTHEIS     (
+IDENTIFIER     i
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+LESS THAN      <
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+INCREMENT      ++
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+IDENTIFIER     b
+LEFT BRACKET   [
+IDENTIFIER     i
+MULTIPLY       *
+INT LITERAL    0
+RIGHT BRACKET  ]
+ASSIGN         =
+IDENTIFIER     a
+LEFT BRACKET   [
+IDENTIFIER     i
+RIGHT BRACKET  ]
+ADD            +
+IDENTIFIER     b
+LEFT BRACKET   [
+IDENTIFIER     i
+RIGHT BRACKET  ]
+SEMICOLON      ;
+RIGHT BRACE    }
+FOR            for
+LEFT PARENTHEIS     (
+IDENTIFIER     j
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     j
+LESS THAN      <
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+INCREMENT      ++
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+FOR            for
+LEFT PARENTHEIS     (
+IDENTIFIER     i
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+LESS THAN      <
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+INCREMENT      ++
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+IDENTIFIER     c
+LEFT BRACKET   [
+IDENTIFIER     i
+RIGHT BRACKET  ]
+LEFT BRACKET   [
+IDENTIFIER     j
+RIGHT BRACKET  ]
+ASSIGN         =
+IDENTIFIER     i
+MULTIPLY       *
+IDENTIFIER     j
+SEMICOLON      ;
+RIGHT BRACE    }
+RIGHT BRACE    }
+FOR            for
+LEFT PARENTHEIS     (
+IDENTIFIER     j
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     j
+LESS THAN      <
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+INCREMENT      ++
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+FOR            for
+LEFT PARENTHEIS     (
+IDENTIFIER     i
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+LESS THAN      <
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+INCREMENT      ++
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+PRINT          print
+IDENTIFIER     c
+LEFT BRACKET   [
+IDENTIFIER     i
+RIGHT BRACKET  ]
+LEFT BRACKET   [
+IDENTIFIER     j
+RIGHT BRACKET  ]
+SEMICOLON      ;
+PRINT          print
+STRING LITERAL  
+SEMICOLON      ;
+RIGHT BRACE    }
+PRINT          print
+STRING LITERAL 
+
+SEMICOLON      ;
+RIGHT BRACE    }
+RIGHT BRACE    }
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[good12.bminor Input]===
+
+/* single statement ifs */
+
+x: integer = 65;
+s: string = "hello";
+b: boolean = false;
+
+min: function integer ( a: integer, b: integer ) =
+{
+	if(a > b) return a;
+	else return b;
+}
+
+testfunc: function void ( z: integer ) =
+{
+	print "minimum", min(10, 5), "\n";
+}
+
+===[good12.bminor Output]===
+Success!
+
+COMMENT        /* single statement ifs */
+IDENTIFIER     x
+COLON :
+INT            integer
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     s
+COLON :
+STRING         string
+ASSIGN         =
+STRING LITERAL hello
+SEMICOLON      ;
+IDENTIFIER     b
+COLON :
+BOOL           boolean
+ASSIGN         =
+FALSE          false
+SEMICOLON      ;
+IDENTIFIER     min
+COLON :
+FUNCTION            function
+INT            integer
+LEFT PARENTHEIS     (
+IDENTIFIER     a
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     b
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IF             if
+LEFT PARENTHEIS     (
+IDENTIFIER     a
+GREATER THAN   >
+IDENTIFIER     b
+RIGHT PARENTHESIS    )
+RETURN         return
+IDENTIFIER     a
+SEMICOLON      ;
+ELSE           else
+RETURN         return
+IDENTIFIER     b
+SEMICOLON      ;
+RIGHT BRACE    }
+IDENTIFIER     testfunc
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+IDENTIFIER     z
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+PRINT          print
+STRING LITERAL minimum
+COMMA          ,
+IDENTIFIER     min
+LEFT PARENTHEIS     (
+INT LITERAL    0
+COMMA          ,
+INT LITERAL    0
+RIGHT PARENTHESIS    )
+COMMA          ,
+STRING LITERAL 
+
+SEMICOLON      ;
+RIGHT BRACE    }
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[good13.bminor Input]===
+/* string format expr */
+
+x: integer = 65;
+s: string = "hello";
+b: boolean = false;
+
+min: function integer ( a: integer, b: integer ) =
+{
+	if(a > b) return a;
+	else return b;
+}
+
+testfunc: function void ( z: integer ) =
+{
+	print "minimum", min(10, 5), "\n", z=10, z==10;
+}
+	
+
+===[good13.bminor Output]===
+Success!
+
+COMMENT        /* string format expr */
+IDENTIFIER     x
+COLON :
+INT            integer
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     s
+COLON :
+STRING         string
+ASSIGN         =
+STRING LITERAL hello
+SEMICOLON      ;
+IDENTIFIER     b
+COLON :
+BOOL           boolean
+ASSIGN         =
+FALSE          false
+SEMICOLON      ;
+IDENTIFIER     min
+COLON :
+FUNCTION            function
+INT            integer
+LEFT PARENTHEIS     (
+IDENTIFIER     a
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     b
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IF             if
+LEFT PARENTHEIS     (
+IDENTIFIER     a
+GREATER THAN   >
+IDENTIFIER     b
+RIGHT PARENTHESIS    )
+RETURN         return
+IDENTIFIER     a
+SEMICOLON      ;
+ELSE           else
+RETURN         return
+IDENTIFIER     b
+SEMICOLON      ;
+RIGHT BRACE    }
+IDENTIFIER     testfunc
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+IDENTIFIER     z
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+PRINT          print
+STRING LITERAL minimum
+COMMA          ,
+IDENTIFIER     min
+LEFT PARENTHEIS     (
+INT LITERAL    0
+COMMA          ,
+INT LITERAL    0
+RIGHT PARENTHESIS    )
+COMMA          ,
+STRING LITERAL 
+
+COMMA          ,
+IDENTIFIER     z
+ASSIGN         =
+INT LITERAL    0
+COMMA          ,
+IDENTIFIER     z
+EQUALITY       ==
+INT LITERAL    0
+SEMICOLON      ;
+RIGHT BRACE    }
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[good14.bminor Input]===
+
+/* returning various expressions */
+
+testfunc: function void ( x: integer, y:integer, z:integer ) = {
+	return x;
+	return "hello";
+	return x = 10;
+	return x == 10;
+	return x > 5;
+	return testfunc(x, y, z);
+}
+
+===[good14.bminor Output]===
+Success!
+
+COMMENT        /* returning various expressions */
+IDENTIFIER     testfunc
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     y
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     z
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+RETURN         return
+IDENTIFIER     x
+SEMICOLON      ;
+RETURN         return
+STRING LITERAL hello
+SEMICOLON      ;
+RETURN         return
+IDENTIFIER     x
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+RETURN         return
+IDENTIFIER     x
+EQUALITY       ==
+INT LITERAL    0
+SEMICOLON      ;
+RETURN         return
+IDENTIFIER     x
+GREATER THAN   >
+INT LITERAL    0
+SEMICOLON      ;
+RETURN         return
+IDENTIFIER     testfunc
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+COMMA          ,
+IDENTIFIER     y
+COMMA          ,
+IDENTIFIER     z
+RIGHT PARENTHESIS    )
+SEMICOLON      ;
+RIGHT BRACE    }
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[good15.bminor Input]===
+
+
+/* code blocks */
+
+testfunc: function void ( x: integer, y:integer, z:integer ) = {
+	{
+		return x;
+		return "hello";
+		return x = 10;
+	}
+	{
+		return x == 10;
+		{
+			return x > 5;
+			return testfunc(x, y, z);
+		}
+	}
+}
+
+===[good15.bminor Output]===
+Success!
+
+COMMENT        /* code blocks */
+IDENTIFIER     testfunc
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     y
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     z
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+LEFT BRACE     {
+RETURN         return
+IDENTIFIER     x
+SEMICOLON      ;
+RETURN         return
+STRING LITERAL hello
+SEMICOLON      ;
+RETURN         return
+IDENTIFIER     x
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+RIGHT BRACE    }
+LEFT BRACE     {
+RETURN         return
+IDENTIFIER     x
+EQUALITY       ==
+INT LITERAL    0
+SEMICOLON      ;
+LEFT BRACE     {
+RETURN         return
+IDENTIFIER     x
+GREATER THAN   >
+INT LITERAL    0
+SEMICOLON      ;
+RETURN         return
+IDENTIFIER     testfunc
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+COMMA          ,
+IDENTIFIER     y
+COMMA          ,
+IDENTIFIER     z
+RIGHT PARENTHESIS    )
+SEMICOLON      ;
+RIGHT BRACE    }
+RIGHT BRACE    }
+RIGHT BRACE    }
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[good2.bminor Input]===
+/* Function prototypes are declarations without bodies. */
+
+ComputeAscii: function char ( c: char );
+
+GetLength: function integer ( s: string, i: integer );
+
+/* Function body has some code in it */
+
+GetArea: function integer ( width: integer, height: integer ) =
+{
+	return width * height;
+}
+
+===[good2.bminor Output]===
+Success!
+
+COMMENT        /* Function prototypes are declarations without bodies. */
+IDENTIFIER     ComputeAscii
+COLON :
+FUNCTION            function
+CHAR           char
+LEFT PARENTHEIS     (
+IDENTIFIER     c
+COLON :
+CHAR           char
+RIGHT PARENTHESIS    )
+SEMICOLON      ;
+IDENTIFIER     GetLength
+COLON :
+FUNCTION            function
+INT            integer
+LEFT PARENTHEIS     (
+IDENTIFIER     s
+COLON :
+STRING         string
+COMMA          ,
+IDENTIFIER     i
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+SEMICOLON      ;
+COMMENT        /* Function body has some code in it */
+IDENTIFIER     GetArea
+COLON :
+FUNCTION            function
+INT            integer
+LEFT PARENTHEIS     (
+IDENTIFIER     width
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     height
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+RETURN         return
+IDENTIFIER     width
+MULTIPLY       *
+IDENTIFIER     height
+SEMICOLON      ;
+RIGHT BRACE    }
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[good3.bminor Input]===
+/* A function contains a sequence of statements */
+/* Some of those statements can be decls */
+
+simplefunc: function void () = {
+     x: integer;
+     y: integer = 20;
+     s: string = "hello world";
+}
+
+===[good3.bminor Output]===
+Success!
+
+COMMENT        /* A function contains a sequence of statements */
+COMMENT        /* Some of those statements can be decls */
+IDENTIFIER     simplefunc
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IDENTIFIER     x
+COLON :
+INT            integer
+SEMICOLON      ;
+IDENTIFIER     y
+COLON :
+INT            integer
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     s
+COLON :
+STRING         string
+ASSIGN         =
+STRING LITERAL hello world
+SEMICOLON      ;
+RIGHT BRACE    }
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[good4.bminor Input]===
+/* A function contains a sequence of statements */
+/* Try decls and stmts and exprs together. */
+
+simplefunc: function boolean ( x: integer, y: integer ) = {
+
+     // A declaration
+     z: integer = x * y;
+
+     // An expression with a semicolon
+     z = 16 + x / y;
+
+     // Print statement
+     print "input is: ", x, " and ", y, "\n";
+
+     // Simple if-else statement
+     if( x < y ) {
+         return true;
+     } else {
+         return false;
+     }
+
+}
+
+===[good4.bminor Output]===
+Success!
+
+COMMENT        /* A function contains a sequence of statements */
+COMMENT        /* Try decls and stmts and exprs together. */
+IDENTIFIER     simplefunc
+COLON :
+FUNCTION            function
+BOOL           boolean
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     y
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+DIVISION       /
+DIVISION       /
+IDENTIFIER     A
+IDENTIFIER     declaration
+IDENTIFIER     z
+COLON :
+INT            integer
+ASSIGN         =
+IDENTIFIER     x
+MULTIPLY       *
+IDENTIFIER     y
+SEMICOLON      ;
+DIVISION       /
+DIVISION       /
+IDENTIFIER     An
+IDENTIFIER     expression
+IDENTIFIER     with
+IDENTIFIER     a
+IDENTIFIER     semicolon
+IDENTIFIER     z
+ASSIGN         =
+INT LITERAL    0
+ADD            +
+IDENTIFIER     x
+DIVISION       /
+IDENTIFIER     y
+SEMICOLON      ;
+DIVISION       /
+DIVISION       /
+IDENTIFIER     Print
+IDENTIFIER     statement
+PRINT          print
+STRING LITERAL input is: 
+COMMA          ,
+IDENTIFIER     x
+COMMA          ,
+STRING LITERAL  and 
+COMMA          ,
+IDENTIFIER     y
+COMMA          ,
+STRING LITERAL 
+
+SEMICOLON      ;
+DIVISION       /
+DIVISION       /
+IDENTIFIER     Simple
+IF             if
+SUBTRACT           -
+ELSE           else
+IDENTIFIER     statement
+IF             if
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+LESS THAN      <
+IDENTIFIER     y
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+RETURN         return
+TRUE           true
+SEMICOLON      ;
+RIGHT BRACE    }
+ELSE           else
+LEFT BRACE     {
+RETURN         return
+FALSE          false
+SEMICOLON      ;
+RIGHT BRACE    }
+RIGHT BRACE    }
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[good5.bminor Input]===
+/* A function contains a sequence of statements */
+/* Try decls and stmts and exprs together. */
+/* Add some float */
+
+simplefunc: function boolean ( x: integer, y: integer ) = {
+
+     // A declaration
+     z: integer = x * y;
+	
+     // A float declaration
+     q: float = 10e9;
+     
+     // another float
+     v: float = 2.10e2;
+
+     // a float operation
+     return v;
+
+}
+
+===[good5.bminor Output]===
+Success!
+
+COMMENT        /* A function contains a sequence of statements */
+COMMENT        /* Try decls and stmts and exprs together. */
+COMMENT        /* Add some float */
+IDENTIFIER     simplefunc
+COLON :
+FUNCTION            function
+BOOL           boolean
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     y
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+DIVISION       /
+DIVISION       /
+IDENTIFIER     A
+IDENTIFIER     declaration
+IDENTIFIER     z
+COLON :
+INT            integer
+ASSIGN         =
+IDENTIFIER     x
+MULTIPLY       *
+IDENTIFIER     y
+SEMICOLON      ;
+DIVISION       /
+DIVISION       /
+IDENTIFIER     A
+FLOAT          float
+IDENTIFIER     declaration
+IDENTIFIER     q
+COLON :
+FLOAT          float
+ASSIGN         =
+FLOAT LITERAL  10000000000.000000
+SEMICOLON      ;
+DIVISION       /
+DIVISION       /
+IDENTIFIER     another
+FLOAT          float
+IDENTIFIER     v
+COLON :
+FLOAT          float
+ASSIGN         =
+FLOAT LITERAL  210.000000
+SEMICOLON      ;
+DIVISION       /
+DIVISION       /
+IDENTIFIER     a
+FLOAT          float
+IDENTIFIER     operation
+RETURN         return
+IDENTIFIER     v
+SEMICOLON      ;
+RIGHT BRACE    }
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[good6.bminor Input]===
+/* Try several variations of for-loops */
+
+simplefunc: function void (r: integer, s: integer, t: integer ) = {
+
+    i: integer;
+
+    for( i=0; i<r; i++ ) {
+        print i,"\n";
+    }
+
+    i=0;
+    for( ; i<s; i++ ) {
+        print i,"\n";
+    }
+
+    i=0;
+    for( ; i<r; ) {
+        print i,"\n";
+        i++;
+    }
+
+    for(;;) print "forever!\n";
+}
+
+===[good6.bminor Output]===
+Success!
+
+COMMENT        /* Try several variations of for-loops */
+IDENTIFIER     simplefunc
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+IDENTIFIER     r
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     s
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     t
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IDENTIFIER     i
+COLON :
+INT            integer
+SEMICOLON      ;
+FOR            for
+LEFT PARENTHEIS     (
+IDENTIFIER     i
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+LESS THAN      <
+IDENTIFIER     r
+SEMICOLON      ;
+IDENTIFIER     i
+INCREMENT      ++
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+PRINT          print
+IDENTIFIER     i
+COMMA          ,
+STRING LITERAL 
+
+SEMICOLON      ;
+RIGHT BRACE    }
+IDENTIFIER     i
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+FOR            for
+LEFT PARENTHEIS     (
+SEMICOLON      ;
+IDENTIFIER     i
+LESS THAN      <
+IDENTIFIER     s
+SEMICOLON      ;
+IDENTIFIER     i
+INCREMENT      ++
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+PRINT          print
+IDENTIFIER     i
+COMMA          ,
+STRING LITERAL 
+
+SEMICOLON      ;
+RIGHT BRACE    }
+IDENTIFIER     i
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+FOR            for
+LEFT PARENTHEIS     (
+SEMICOLON      ;
+IDENTIFIER     i
+LESS THAN      <
+IDENTIFIER     r
+SEMICOLON      ;
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+PRINT          print
+IDENTIFIER     i
+COMMA          ,
+STRING LITERAL 
+
+SEMICOLON      ;
+IDENTIFIER     i
+INCREMENT      ++
+SEMICOLON      ;
+RIGHT BRACE    }
+FOR            for
+LEFT PARENTHEIS     (
+SEMICOLON      ;
+SEMICOLON      ;
+RIGHT PARENTHESIS    )
+PRINT          print
+STRING LITERAL forever!
+
+SEMICOLON      ;
+RIGHT BRACE    }
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[good7.bminor Input]===
+/* Test various nestings of if-else statements */
+
+testit: function boolean ( x: integer, y: integer ) = {
+
+	/* If statement without braces */
+	if( x<y ) print "less\n"; else print "low\n";
+
+	/* If statement with braces */
+	if( x<y ) { print "less\n"; } else { print "low\n"; }
+
+	/* This statement should print nothing */
+        if(20<10) if(10<20) print "incorrect!"; else print "dangling else!";
+
+	/* statements and decls inside of if-else */
+
+        if( x>y ) {
+              i: integer;
+              for(i=0;i<x;i++) print i, "\n";
+        } else {
+              i: integer;
+              for(i=0;i<y;i++) print i, "\n";
+        }
+
+	/* A decl can come after a few statements */
+	i: integer;
+
+	/* try the other way around */
+	for(i=0;i<x;i++) {
+              if( i<x ) print "small"; else print "large";
+        }
+
+        return true;
+}
+
+===[good7.bminor Output]===
+Success!
+
+COMMENT        /* Test various nestings of if-else statements */
+IDENTIFIER     testit
+COLON :
+FUNCTION            function
+BOOL           boolean
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     y
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+COMMENT        /* If statement without braces */
+IF             if
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+LESS THAN      <
+IDENTIFIER     y
+RIGHT PARENTHESIS    )
+PRINT          print
+STRING LITERAL less
+
+SEMICOLON      ;
+ELSE           else
+PRINT          print
+STRING LITERAL low
+
+SEMICOLON      ;
+COMMENT        /* If statement with braces */
+IF             if
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+LESS THAN      <
+IDENTIFIER     y
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+PRINT          print
+STRING LITERAL less
+
+SEMICOLON      ;
+RIGHT BRACE    }
+ELSE           else
+LEFT BRACE     {
+PRINT          print
+STRING LITERAL low
+
+SEMICOLON      ;
+RIGHT BRACE    }
+COMMENT        /* This statement should print nothing */
+IF             if
+LEFT PARENTHEIS     (
+INT LITERAL    0
+LESS THAN      <
+INT LITERAL    0
+RIGHT PARENTHESIS    )
+IF             if
+LEFT PARENTHEIS     (
+INT LITERAL    0
+LESS THAN      <
+INT LITERAL    0
+RIGHT PARENTHESIS    )
+PRINT          print
+STRING LITERAL incorrect!
+SEMICOLON      ;
+ELSE           else
+PRINT          print
+STRING LITERAL dangling else!
+SEMICOLON      ;
+COMMENT        /* statements and decls inside of if-else */
+IF             if
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+GREATER THAN   >
+IDENTIFIER     y
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+IDENTIFIER     i
+COLON :
+INT            integer
+SEMICOLON      ;
+FOR            for
+LEFT PARENTHEIS     (
+IDENTIFIER     i
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+LESS THAN      <
+IDENTIFIER     x
+SEMICOLON      ;
+IDENTIFIER     i
+INCREMENT      ++
+RIGHT PARENTHESIS    )
+PRINT          print
+IDENTIFIER     i
+COMMA          ,
+STRING LITERAL 
+
+SEMICOLON      ;
+RIGHT BRACE    }
+ELSE           else
+LEFT BRACE     {
+IDENTIFIER     i
+COLON :
+INT            integer
+SEMICOLON      ;
+FOR            for
+LEFT PARENTHEIS     (
+IDENTIFIER     i
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+LESS THAN      <
+IDENTIFIER     y
+SEMICOLON      ;
+IDENTIFIER     i
+INCREMENT      ++
+RIGHT PARENTHESIS    )
+PRINT          print
+IDENTIFIER     i
+COMMA          ,
+STRING LITERAL 
+
+SEMICOLON      ;
+RIGHT BRACE    }
+COMMENT        /* A decl can come after a few statements */
+IDENTIFIER     i
+COLON :
+INT            integer
+SEMICOLON      ;
+COMMENT        /* try the other way around */
+FOR            for
+LEFT PARENTHEIS     (
+IDENTIFIER     i
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+LESS THAN      <
+IDENTIFIER     x
+SEMICOLON      ;
+IDENTIFIER     i
+INCREMENT      ++
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+IF             if
+LEFT PARENTHEIS     (
+IDENTIFIER     i
+LESS THAN      <
+IDENTIFIER     x
+RIGHT PARENTHESIS    )
+PRINT          print
+STRING LITERAL small
+SEMICOLON      ;
+ELSE           else
+PRINT          print
+STRING LITERAL large
+SEMICOLON      ;
+RIGHT BRACE    }
+RETURN         return
+TRUE           true
+SEMICOLON      ;
+RIGHT BRACE    }
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[good8.bminor Input]===
+/* Now try some expressions */
+
+x: integer = 65;
+s: string = "hello";
+b: boolean = false;
+
+min: function integer ( a: integer, b: integer ) =
+{
+	if( a<b ) return a; else return b;
+}
+
+testfunc: function void ( z: integer ) =
+{
+	// Nested integer operators.
+	y: integer = x*(x*10 + 55%6 + z/10);
+	print "y: ", y, "\n";
+
+	// Nested boolean operations.
+	c: boolean = ( x<100 && y>200 ) || !(b=true);
+	print "c: ", c, "\n";
+
+	// Boolean operations on strings?
+	d: boolean = (s == "goodbye");
+	print "d: ", d, "\n";
+
+	// Can we stack up assignments?
+	z = y = x;
+
+	a: array [100] integer;
+
+	// Function calls and array accesses:
+	y = min(a[10],a[20]);
+}
+
+===[good8.bminor Output]===
+TEST NOT PASSED
+
+COMMENT        /* Now try some expressions */
+IDENTIFIER     x
+COLON :
+INT            integer
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     s
+COLON :
+STRING         string
+ASSIGN         =
+STRING LITERAL hello
+SEMICOLON      ;
+IDENTIFIER     b
+COLON :
+BOOL           boolean
+ASSIGN         =
+FALSE          false
+SEMICOLON      ;
+IDENTIFIER     min
+COLON :
+FUNCTION            function
+INT            integer
+LEFT PARENTHEIS     (
+IDENTIFIER     a
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     b
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IF             if
+LEFT PARENTHEIS     (
+IDENTIFIER     a
+LESS THAN      <
+IDENTIFIER     b
+RIGHT PARENTHESIS    )
+RETURN         return
+IDENTIFIER     a
+SEMICOLON      ;
+ELSE           else
+RETURN         return
+IDENTIFIER     b
+SEMICOLON      ;
+RIGHT BRACE    }
+IDENTIFIER     testfunc
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+IDENTIFIER     z
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+DIVISION       /
+DIVISION       /
+IDENTIFIER     Nested
+INT            integer
+IDENTIFIER     operators
+ERROR          .
+
+ERROR: Scanning error.
+
+return code: 1
+
+
+===[good9.bminor Input]===
+/* Check for minimum use of parentheses. */
+
+testfunc: function void ( x: integer, y:integer, z:integer ) = {
+
+          r: integer;
+	  b: boolean;
+
+          // Parens required
+	  r = (x+y)/z;
+	  r = x+(y+z);
+	  b = (true||false) && (false||true);
+
+          // Parens not required
+	  r = x+(y/z);
+	  r = (x+y)+z;
+	  b = (x+y) < (x+z);
+	  b = (true&&false) || (false&&true);
+
+}
+
+===[good9.bminor Output]===
+Success!
+
+COMMENT        /* Check for minimum use of parentheses. */
+IDENTIFIER     testfunc
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     y
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     z
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IDENTIFIER     r
+COLON :
+INT            integer
+SEMICOLON      ;
+IDENTIFIER     b
+COLON :
+BOOL           boolean
+SEMICOLON      ;
+DIVISION       /
+DIVISION       /
+IDENTIFIER     Parens
+IDENTIFIER     required
+IDENTIFIER     r
+ASSIGN         =
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+ADD            +
+IDENTIFIER     y
+RIGHT PARENTHESIS    )
+DIVISION       /
+IDENTIFIER     z
+SEMICOLON      ;
+IDENTIFIER     r
+ASSIGN         =
+IDENTIFIER     x
+ADD            +
+LEFT PARENTHEIS     (
+IDENTIFIER     y
+ADD            +
+IDENTIFIER     z
+RIGHT PARENTHESIS    )
+SEMICOLON      ;
+IDENTIFIER     b
+ASSIGN         =
+LEFT PARENTHEIS     (
+TRUE           true
+OR             ||
+FALSE          false
+RIGHT PARENTHESIS    )
+AND            &&
+LEFT PARENTHEIS     (
+FALSE          false
+OR             ||
+TRUE           true
+RIGHT PARENTHESIS    )
+SEMICOLON      ;
+DIVISION       /
+DIVISION       /
+IDENTIFIER     Parens
+IDENTIFIER     not
+IDENTIFIER     required
+IDENTIFIER     r
+ASSIGN         =
+IDENTIFIER     x
+ADD            +
+LEFT PARENTHEIS     (
+IDENTIFIER     y
+DIVISION       /
+IDENTIFIER     z
+RIGHT PARENTHESIS    )
+SEMICOLON      ;
+IDENTIFIER     r
+ASSIGN         =
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+ADD            +
+IDENTIFIER     y
+RIGHT PARENTHESIS    )
+ADD            +
+IDENTIFIER     z
+SEMICOLON      ;
+IDENTIFIER     b
+ASSIGN         =
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+ADD            +
+IDENTIFIER     y
+RIGHT PARENTHESIS    )
+LESS THAN      <
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+ADD            +
+IDENTIFIER     z
+RIGHT PARENTHESIS    )
+SEMICOLON      ;
+IDENTIFIER     b
+ASSIGN         =
+LEFT PARENTHEIS     (
+TRUE           true
+AND            &&
+FALSE          false
+RIGHT PARENTHESIS    )
+OR             ||
+LEFT PARENTHEIS     (
+FALSE          false
+AND            &&
+TRUE           true
+RIGHT PARENTHESIS    )
+SEMICOLON      ;
+RIGHT BRACE    }
+Program parsed successfully.
+
+
+return code: 0
+
+
+====Bad Tests====
+===[bad1.bminor Input]===
+/* A program is a not an expression at the top level */
+
+x = 5;
+
+
+===[bad1.bminor Output]===
+TEST NOT PASSED
+
+COMMENT        /* A program is a not an expression at the top level */
+IDENTIFIER     x
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[bad10.bminor Input]===
+/* Unbalanced braces */
+
+main:function integer ( x: integer ) =
+{
+	if(x<10) {
+              if(x!=23) {
+                  print "hello";
+              } else {
+                  print "goodbye";
+              }
+        print "too few braces";
+}
+
+===[bad10.bminor Output]===
+TEST NOT PASSED
+
+COMMENT        /* Unbalanced braces */
+IDENTIFIER     main
+COLON :
+FUNCTION            function
+INT            integer
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IF             if
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+LESS THAN      <
+INT LITERAL    0
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+IF             if
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+IEQUALITY     !=
+INT LITERAL    0
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+PRINT          print
+STRING LITERAL hello
+SEMICOLON      ;
+RIGHT BRACE    }
+ELSE           else
+LEFT BRACE     {
+PRINT          print
+STRING LITERAL goodbye
+SEMICOLON      ;
+RIGHT BRACE    }
+PRINT          print
+STRING LITERAL too few braces
+SEMICOLON      ;
+RIGHT BRACE    }
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[bad11.bminor Input]===
+/* return return */
+
+simplefunc: function void () = {
+     x: integer = 10;
+     y: integer = 20;
+
+     return return;
+
+}
+
+===[bad11.bminor Output]===
+TEST NOT PASSED
+
+COMMENT        /* return return */
+IDENTIFIER     simplefunc
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IDENTIFIER     x
+COLON :
+INT            integer
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     y
+COLON :
+INT            integer
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+RETURN         return
+RETURN         return
+SEMICOLON      ;
+RIGHT BRACE    }
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[bad12.bminor Input]===
+/* invalid keyword usage */
+
+simplefunc: function void () = {
+     x: integer = 10;
+     array: integer = 20;
+
+     return x + array;
+}
+
+===[bad12.bminor Output]===
+TEST NOT PASSED
+
+COMMENT        /* invalid keyword usage */
+IDENTIFIER     simplefunc
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IDENTIFIER     x
+COLON :
+INT            integer
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+ARRAY          array
+COLON :
+INT            integer
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+RETURN         return
+IDENTIFIER     x
+ADD            +
+ARRAY          array
+SEMICOLON      ;
+RIGHT BRACE    }
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[bad13.bminor Input]===
+
+/* empty array initializer */
+
+simplefunc: function void () = {
+     x: integer = 10;
+     y: integer = 20;
+	
+     p: array [5] integer = {};
+}
+
+===[bad13.bminor Output]===
+TEST NOT PASSED
+
+COMMENT        /* empty array initializer */
+IDENTIFIER     simplefunc
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IDENTIFIER     x
+COLON :
+INT            integer
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     y
+COLON :
+INT            integer
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     p
+COLON :
+ARRAY          array
+LEFT BRACKET   [
+INT LITERAL    0
+RIGHT BRACKET  ]
+INT            integer
+ASSIGN         =
+LEFT BRACE     {
+RIGHT BRACE    }
+SEMICOLON      ;
+RIGHT BRACE    }
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[bad14.bminor Input]===
+
+/* Array declaration attempt */
+
+
+simplefunc: function void () = {
+	c7: array [x] char = {'C', 'E', 'G', "Bb"};
+	d7: array [c7;] char = c7 + 1; 
+}
+
+===[bad14.bminor Output]===
+Success!
+
+COMMENT        /* Array declaration attempt */
+IDENTIFIER     simplefunc
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IDENTIFIER     c7
+COLON :
+ARRAY          array
+LEFT BRACKET   [
+IDENTIFIER     x
+RIGHT BRACKET  ]
+CHAR           char
+ASSIGN         =
+LEFT BRACE     {
+
+ERROR: String not surrounded by quotes.
+ERROR: Invalid char literalERROR: Scanning error.
+
+return code: 1
+
+
+===[bad2.bminor Input]===
+/* A program is a not a sequence of statements */
+
+print "hello world";
+return 5;
+
+===[bad2.bminor Output]===
+TEST NOT PASSED
+
+COMMENT        /* A program is a not a sequence of statements */
+PRINT          print
+STRING LITERAL hello world
+SEMICOLON      ;
+RETURN         return
+INT LITERAL    0
+SEMICOLON      ;
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[bad3.bminor Input]===
+/* Cannot have more elses than ifs */
+
+simplefunc: function void () = {
+     x: integer = 10;
+     y: integer = 20;
+
+     if(x<y) if(y>x) else print "a"; else print "b" else print "c";
+}
+
+===[bad3.bminor Output]===
+TEST NOT PASSED
+
+COMMENT        /* Cannot have more elses than ifs */
+IDENTIFIER     simplefunc
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IDENTIFIER     x
+COLON :
+INT            integer
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     y
+COLON :
+INT            integer
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IF             if
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+LESS THAN      <
+IDENTIFIER     y
+RIGHT PARENTHESIS    )
+IF             if
+LEFT PARENTHEIS     (
+IDENTIFIER     y
+GREATER THAN   >
+IDENTIFIER     x
+RIGHT PARENTHESIS    )
+ELSE           else
+PRINT          print
+STRING LITERAL a
+SEMICOLON      ;
+ELSE           else
+PRINT          print
+STRING LITERAL b
+ELSE           else
+PRINT          print
+STRING LITERAL c
+SEMICOLON      ;
+RIGHT BRACE    }
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[bad4.bminor Input]===
+/* For loop does need to have semis even if parts are missing */
+
+main: function void() =
+{
+        i: integer;
+	for(i=0;) print i;
+}
+
+===[bad4.bminor Output]===
+TEST NOT PASSED
+
+COMMENT        /* For loop does need to have semis even if parts are missing */
+IDENTIFIER     main
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IDENTIFIER     i
+COLON :
+INT            integer
+SEMICOLON      ;
+FOR            for
+LEFT PARENTHEIS     (
+IDENTIFIER     i
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+RIGHT PARENTHESIS    )
+PRINT          print
+IDENTIFIER     i
+SEMICOLON      ;
+RIGHT BRACE    }
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[bad5.bminor Input]===
+/* Print statement must separate elemnts with a comma */
+
+main:function void()
+{
+	print x y z;
+}
+
+===[bad5.bminor Output]===
+TEST NOT PASSED
+
+COMMENT        /* Print statement must separate elemnts with a comma */
+IDENTIFIER     main
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+PRINT          print
+IDENTIFIER     x
+IDENTIFIER     y
+IDENTIFIER     z
+SEMICOLON      ;
+RIGHT BRACE    }
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[bad6.bminor Input]===
+/* Function parameters must separate with a comma */
+
+main:function void( x:integer y:integer );
+
+===[bad6.bminor Output]===
+TEST NOT PASSED
+
+COMMENT        /* Function parameters must separate with a comma */
+IDENTIFIER     main
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+COLON :
+INT            integer
+IDENTIFIER     y
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+SEMICOLON      ;
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[bad7.bminor Input]===
+/* No invalid seqeuences of operators */
+
+main:function integer ( x:integer ) = {
+
+        return x + * 5 * - 7;
+}
+
+===[bad7.bminor Output]===
+TEST NOT PASSED
+
+COMMENT        /* No invalid seqeuences of operators */
+IDENTIFIER     main
+COLON :
+FUNCTION            function
+INT            integer
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+RETURN         return
+IDENTIFIER     x
+ADD            +
+MULTIPLY       *
+INT LITERAL    0
+MULTIPLY       *
+SUBTRACT           -
+INT LITERAL    0
+SEMICOLON      ;
+RIGHT BRACE    }
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[bad8.bminor Input]===
+/* Unbalanced parentheses */
+
+main:function integer( x: integer ) =
+{
+	return (x*(x+5);
+}
+
+===[bad8.bminor Output]===
+TEST NOT PASSED
+
+COMMENT        /* Unbalanced parentheses */
+IDENTIFIER     main
+COLON :
+FUNCTION            function
+INT            integer
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+RETURN         return
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+MULTIPLY       *
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+ADD            +
+INT LITERAL    0
+RIGHT PARENTHESIS    )
+SEMICOLON      ;
+RIGHT BRACE    }
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[bad9.bminor Input]===
+/* Unbalanced braces */
+
+main:function integer ( x: integer ) =
+{
+	if(x<10) {
+              if(x!=23) {
+                  print "hello";
+              } else {
+                  print "goodbye";
+              }
+        }
+
+    }
+    print "too many braces";
+}
+
+===[bad9.bminor Output]===
+TEST NOT PASSED
+
+COMMENT        /* Unbalanced braces */
+IDENTIFIER     main
+COLON :
+FUNCTION            function
+INT            integer
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IF             if
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+LESS THAN      <
+INT LITERAL    0
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+IF             if
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+IEQUALITY     !=
+INT LITERAL    0
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+PRINT          print
+STRING LITERAL hello
+SEMICOLON      ;
+RIGHT BRACE    }
+ELSE           else
+LEFT BRACE     {
+PRINT          print
+STRING LITERAL goodbye
+SEMICOLON      ;
+RIGHT BRACE    }
+RIGHT BRACE    }
+RIGHT BRACE    }
+PRINT          print
+STRING LITERAL too many braces
+SEMICOLON      ;
+RIGHT BRACE    }
+Program parsed successfully.
+
+
+return code: 0
+
+
+===[bad15.bminor Input]===
+/* */
+
+x: integer = 10;
+
+x = 15;
+
+===[bad15.bminor Output]===
+TEST NOT PASSED
+
+COMMENT        /* */
+IDENTIFIER     x
+COLON :
+INT            integer
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     x
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+Program parsed successfully.
+
+
+return code: 0
+
+
+===== SUMMARIZED PARSER RESULTS =====
+{
+  "student_tests": {
+    "Good": {
+      "correct": 10,
+      "incorrect": 0
+    },
+    "Bad": {
+      "correct": 8,
+      "incorrect": 2
+    }
+  },
+  "hidden_tests": {
+    "Good": {
+      "correct": 13,
+      "incorrect": 2
+    },
+    "Bad": {
+      "correct": 1,
+      "incorrect": 14
+    }
+  }
+}
+
+Parser Project Grade
+-------------------
+
+General Structure: 15/25
+---------------------------------
+Initially the project failed many more tests, I saw 
+that you had a duplicate defenition for the string keyword:
+"TOKEN_STR" and "TOKEN_STRING". After fixing that it got a 
+few more tests passed.
+
+It seems most of the problems have to do with the scanner and encoder. 
+These parts of the project are still essential for the function of the parser.
+
+For issues with the parser, we need to keep in mind that a valid program may
+only be made up of declarations at the top level. Top level expressions or statements
+which are not inside a function are not valid.
+
+Eliminating Ambiguities: 10/10
+--------------------------------------
+no conflicts reported 
+
+Student Tests: 18/20
+---------------------------
+Fails 2 of your tests
+
+Hidden Tests: 19/35
+---------------------------
+Fails 16 hidden tests, see above
+
+Code Style: 10/10
+------------------------
+
+Total: 72/100
+------------------------------------------
