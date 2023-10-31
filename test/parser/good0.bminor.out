@@ -1,0 +1,5 @@
+IDENTIFIER     y
+COLON :
+BOOL           boolean
+SEMICOLON      ;
+HEREProgram parsed successfully.
