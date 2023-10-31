@@ -1,0 +1,60 @@
+IDENTIFIER     simplefunc
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+IDENTIFIER     r
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     s
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     t
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IDENTIFIER     i
+COLON :
+INT            integer
+SEMICOLON      ;
+IDENTIFIER     i
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+FOR            for
+LEFT PARENTHEIS     (
+SEMICOLON      ;
+IDENTIFIER     i
+LESS THAN      <
+IDENTIFIER     s
+SEMICOLON      ;
+IDENTIFIER     i
+INCREMENT      ++
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+PRINT          print
+IDENTIFIER     i
+COMMA          ,
+STRING LITERAL 
+
+SEMICOLON      ;
+RIGHT BRACE    }
+IDENTIFIER     i
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+FOR            for
+LEFT PARENTHEIS     (
+SEMICOLON      ;
+SEMICOLON      ;
+RIGHT PARENTHESIS    )
+PRINT          print
+STRING LITERAL forever!
+
+SEMICOLON      ;
+RIGHT BRACE    }
+HEREProgram parsed successfully.

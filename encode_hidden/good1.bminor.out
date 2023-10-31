@@ -1,0 +1,146 @@
+IDENTIFIER     n
+COLON :
+INT            integer
+SEMICOLON      ;
+IDENTIFIER     m
+COLON :
+INT            integer
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     b
+COLON :
+BOOL           boolean
+SEMICOLON      ;
+IDENTIFIER     c
+COLON :
+BOOL           boolean
+ASSIGN         =
+TRUE           true
+SEMICOLON      ;
+IDENTIFIER     s
+COLON :
+STRING         string
+SEMICOLON      ;
+IDENTIFIER     t
+COLON :
+STRING         string
+ASSIGN         =
+STRING LITERAL hello
+
+SEMICOLON      ;
+IDENTIFIER     d
+COLON :
+CHAR           char
+SEMICOLON      ;
+IDENTIFIER     e
+COLON :
+CHAR           char
+ASSIGN         =
+CHAR LITERAL   'x' x
+SEMICOLON      ;
+IDENTIFIER     x
+COLON :
+ARRAY          array
+LEFT BRACKET   [
+RIGHT BRACKET  ]
+STRING         string
+SEMICOLON      ;
+IDENTIFIER     y
+COLON :
+ARRAY          array
+LEFT BRACKET   [
+RIGHT BRACKET  ]
+STRING         string
+ASSIGN         =
+LEFT BRACE     {
+STRING LITERAL a
+COMMA          ,
+STRING LITERAL b
+COMMA          ,
+STRING LITERAL c
+RIGHT BRACE    }
+SEMICOLON      ;
+IDENTIFIER     z
+COLON :
+ARRAY          array
+LEFT BRACKET   [
+RIGHT BRACKET  ]
+ARRAY          array
+LEFT BRACKET   [
+RIGHT BRACKET  ]
+STRING         string
+ASSIGN         =
+LEFT BRACE     {
+LEFT BRACE     {
+STRING LITERAL a
+COMMA          ,
+STRING LITERAL b
+COMMA          ,
+STRING LITERAL c
+RIGHT BRACE    }
+COMMA          ,
+LEFT BRACE     {
+STRING LITERAL x
+COMMA          ,
+STRING LITERAL y
+COMMA          ,
+STRING LITERAL z
+RIGHT BRACE    }
+RIGHT BRACE    }
+SEMICOLON      ;
+IDENTIFIER     g
+COLON :
+ARRAY          array
+LEFT BRACKET   [
+INT LITERAL    0
+RIGHT BRACKET  ]
+STRING         string
+SEMICOLON      ;
+IDENTIFIER     h
+COLON :
+ARRAY          array
+LEFT BRACKET   [
+INT LITERAL    0
+RIGHT BRACKET  ]
+STRING         string
+ASSIGN         =
+LEFT BRACE     {
+STRING LITERAL a
+COMMA          ,
+STRING LITERAL b
+COMMA          ,
+STRING LITERAL c
+RIGHT BRACE    }
+SEMICOLON      ;
+IDENTIFIER     i
+COLON :
+ARRAY          array
+LEFT BRACKET   [
+INT LITERAL    0
+RIGHT BRACKET  ]
+ARRAY          array
+LEFT BRACKET   [
+INT LITERAL    0
+RIGHT BRACKET  ]
+STRING         string
+ASSIGN         =
+LEFT BRACE     {
+LEFT BRACE     {
+STRING LITERAL a
+COMMA          ,
+STRING LITERAL b
+COMMA          ,
+STRING LITERAL c
+RIGHT BRACE    }
+COMMA          ,
+LEFT BRACE     {
+STRING LITERAL x
+COMMA          ,
+STRING LITERAL y
+COMMA          ,
+STRING LITERAL z
+RIGHT BRACE    }
+RIGHT BRACE    }
+SEMICOLON      ;
+HEREProgram parsed successfully.

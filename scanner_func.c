@@ -60,7 +60,7 @@ int scanner() {
             case TOKEN_RETURN:
                 printf("RETURN         %s\n", yytext);
                 break;
-            case TOKEN_STR:
+            case TOKEN_STRING:
                 printf("STRING         %s\n", yytext);
                 break;
             case TOKEN_TRUE:
@@ -153,9 +153,6 @@ int scanner() {
             case TOKEN_MINUS_MINUS:
                 printf("DECREMENT      %s\n", yytext);
                 break;
-            case TOKEN_COMMENT:
-                printf("COMMENT        %s\n", yytext);
-                break;
             case TOKEN_ERROR:
                 printf("ERROR          %s\n", yytext);
                 return EXIT_FAILURE;
@@ -197,7 +194,7 @@ int scanner() {
             } break;
             case TOKEN_CHAR_LITERAL: {
                 char read_char;
-                if ((string_decode(yytext, &read_char))) {
+                if (!(read_char = char_decode(yytext))) {
                     fprintf(stderr, "ERROR: Invalid char literal");
                     return EXIT_FAILURE;
                 }

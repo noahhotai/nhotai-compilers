@@ -1,0 +1,40 @@
+IDENTIFIER     main
+COLON :
+FUNCTION            function
+INT            integer
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IF             if
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+LESS THAN      <
+INT LITERAL    0
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+IF             if
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+IEQUALITY     !=
+INT LITERAL    0
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+PRINT          print
+STRING LITERAL hello
+SEMICOLON      ;
+RIGHT BRACE    }
+ELSE           else
+LEFT BRACE     {
+PRINT          print
+STRING LITERAL goodbye
+SEMICOLON      ;
+RIGHT BRACE    }
+PRINT          print
+STRING LITERAL too few braces
+SEMICOLON      ;
+RIGHT BRACE    }
+parse error: syntax error

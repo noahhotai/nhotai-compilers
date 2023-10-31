@@ -1,1 +1,2 @@
-x:integer;
+z: array [] string = {"a","b","c"};
+z: array [] array [] string = { {"a","b","c"}, {"x","y","z"} };

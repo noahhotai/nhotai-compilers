@@ -3,6 +3,42 @@
 #include <stdlib.h>
 #include <string.h>
 
+int char_decode(char* c){
+    if (strlen(c) == 3){
+        return c[1];
+    }
+    if (strlen(c) == 4){
+        switch (c[3]){
+            case 'a':
+                return '\a';
+            case 'b':
+                return '\b';
+            case 'e':
+                return '\e';
+            case 'f':
+                return '\f';
+            case 'n':
+                return '\n';
+            case 'r':
+                return '\r';
+            case 't':
+                return '\t';
+            case 'v':
+                return '\v';
+            case '\\':
+                return '\\';
+            case '\'':
+                return '\'';
+            default:
+                return '\0';
+        }
+    }
+    // in case of hex code
+    char hex_values[3] = {*(c+4), *(c+5), '\0'};
+    return (char) strtol(hex_values, NULL, 16);
+
+}
+
 int string_decode(const char *es, char *s){
     int i = 0;
     int j = 0;

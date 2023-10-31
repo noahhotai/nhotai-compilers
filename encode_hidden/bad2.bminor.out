@@ -1,0 +1,7 @@
+PRINT          print
+STRING LITERAL hello world
+SEMICOLON      ;
+RETURN         return
+INT LITERAL    0
+SEMICOLON      ;
+parse error: syntax error

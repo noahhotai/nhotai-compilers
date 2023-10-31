@@ -1,0 +1,4 @@
+/* Function parameters must separate with a comma */
+
+main:function void( x:integer y:integer );
+

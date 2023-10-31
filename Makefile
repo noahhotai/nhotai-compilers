@@ -7,10 +7,10 @@ CFLAGS=  -g -Wall -std=gnu99
 bminor : bminor.o scanner.o parser.o
 	$(LD) -o $@ $^
 
-scanner.o: scanner.c token.h
+scanner.o: scanner.c 
 	$(CC) $(CFLAGS) -c $< -o $@
 
-bminor.o : bminor.c token.h
+bminor.o : bminor.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 scanner.c: scanner.flex

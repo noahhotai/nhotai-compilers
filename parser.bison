@@ -4,10 +4,43 @@ extern char *yytext;
 extern int yylex();
 extern int yyerror( char *str);
 
+#include "expr.h"
+#include "stmt.h"
+#include "token.h"
+#include "decl.h"
+#include "type.h"
+#include "param_list.h"
+
 %}
+
+%type <decl> program decl decl_list var_decl func_decl array_decl                                                                                                                                  
+%type <stmt> if_dangle stmt simple_stmt compound_stmt dangle_end reg_end stmt_block stmt_list return_stmt for_stmt for_cond print_stmt
+%type <expr> access array_access array_size array_expr_list nested_array_braces nested_array_braces_recursive expr_assign inc_or_dec expr_val expr for_expr expr_list expr_list_recursive expr2 expr3 expr4 expr5 expr6 expr7 expr8 expr9 boolean_literal func_call data_atom
+%type <type> type func_type every_type array_type  
+%type <param_list> param_recursive param_list
+
+
+body stmnt_list statement if_term
+%type <type> auto_decl type_decl auto_decl_args type_decl_args return_types
+
+%type <param_list> decl_args_epsilon decl_args decl_args_end
+%type <name> name 
+
+%define parse.trace
+
+%union{
+	struct decl *decl;
+	struct stmt *stmt;
+	struct expr *expr;
+	char * name;
+	struct type *type;
+	struct param_list *param_list;
+};
+
+
 // listing all the tokens
+%token TOKEN_EOF 0
 %token TOKEN_ERROR
-%token TOKEN_EOF
 %token TOKEN_ARRAY
 %token TOKEN_SUBTRACT
 %token TOKEN_AUTO
@@ -23,7 +56,7 @@ extern int yyerror( char *str);
 %token TOKEN_INT
 %token TOKEN_PRINT
 %token TOKEN_RETURN
-%token TOKEN_STR
+%token TOKEN_STRING
 %token TOKEN_TRUE
 %token TOKEN_VOID
 %token TOKEN_WHILE
@@ -52,198 +85,234 @@ extern int yyerror( char *str);
 %token TOKEN_COMMA
 %token TOKEN_PLUS_PLUS
 %token TOKEN_MINUS_MINUS
-%token TOKEN_COMMENT
 %token TOKEN_LESS_THAN_OR_EQUAL
 %token TOKEN_GREATER_THAN_OR_EQUAL
 %token TOKEN_IDENTIFIER
 %token TOKEN_INT_LITERAL
 %token TOKEN_FLOAT_LITERAL
 %token TOKEN_STRING_LITERAL
-%token TOKEN_STRING
 %token TOKEN_CHAR_LITERAL
 
 // listing all the rules
 %%
-program : decl_list {return 0; }
-| {return 0; }
+program : decl_list TOKEN_EOF { parser_result = $1; return 0; }
+| TOKEN_EOF { return 0; }
 ;
 
-decl_list: decl_list decl
-| decl
+decl_list: decl_list decl {$$ = $1; $1->next = $2;}
+| decl {$$ = $1;}
 ;
 
-
-if_dangle: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE if_dangle
-| var_decl
-| for_stmt dangle_end
-| func_call TOKEN_SEMICOLON
-| return_stmt TOKEN_SEMICOLON
-| print_stmt TOKEN_SEMICOLON
-| inc_or_dec TOKEN_SEMICOLON
-| TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE
-| expr_assign TOKEN_SEMICOLON
+decl: var_decl  {$$ = $1;}
+| func_decl  {$$ = $1;}
 ;
 
 
-dangle_end: TOKEN_SEMICOLON|
-if_dangle
+func_decl: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_ASSIGN TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE {$$ = decl_create($1, 0, type_create(TYPE_FUNCTION, $4, 0), $10, 0);}
+|  TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_SEMICOLON  {$$ = decl_create($1, 0, type_create(TYPE_FUNCTION, $4, 0), 0, 0);}
 ;
 
-reg_end: stmt|
-TOKEN_SEMICOLON
+var_decl: TOKEN_IDENTIFIER TOKEN_COLON type TOKEN_SEMICOLON {decl_create($1, $3, 0, 0, 0 );}
+| TOKEN_IDENTIFIER TOKEN_COLON type TOKEN_ASSIGN expr TOKEN_SEMICOLON {decl_create($1, $3, $4, 0, 0 );}
+| array_decl {$$ = $1}
 ;
 
-access: TOKEN_IDENTIFIER
-| array_access
+
+if_dangle: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE if_dangle {$$ = stmt_create(STMT_IF_ELSE, 0, 0, $3, 0, $5, $7, 0);}
+| for_stmt dangle_end {$1->body = $2; $$ = $1} 
+| simple_stmt {$$ = $1;}
 ;
 
-array_access: TOKEN_IDENTIFIER TOKEN_LEFT_BRACKET expr_val TOKEN_RIGHT_BRACKET array_access_recursive
+stmt: compound_stmt {$$ = $1;}
+| simple_stmt {$$ = $1;}
 ;
 
-array_access_recursive: TOKEN_LEFT_BRACKET expr_val TOKEN_RIGHT_BRACKET array_access_recursive
+simple_stmt: var_decl {$$ = stmt_create(STMT_DECL, $1, 0, 0, 0, 0, 0, 0);}
+| func_call TOKEN_SEMICOLON {$$ = stmt_create(STMT_EXPR, 0, 0, 1, 0, 0, 0, 0)}
+| return_stmt TOKEN_SEMICOLON {$$ = $1}
+| print_stmt TOKEN_SEMICOLON {$$ = $1}
+| inc_or_dec TOKEN_SEMICOLON {$$ = stmt_create(STMT_EXPR, 0, $1, 0, 0, 0, 0, 0);}
+| stmt_block {$$ = $1};
+| expr_assign TOKEN_SEMICOLON {$$ = stmt_create(STMT_EXPR, 0, $1, 0, 0, 0, 0, 0);}
+;
+
+compound_stmt: for_stmt reg_end {$1->body = $2; $$ = $1;}
+| TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS stmt {$$ = stmt_create(STMT_IF_ELSE, 0, 0, $3, 0, $5, 0, 0)}
+| TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE stmt  {$$ = stmt_create(STMT_IF_ELSE, 0, 0, $3, 0, $5, $7, 0);}
+;
+
+
+dangle_end: TOKEN_SEMICOLON {$$ = 0;}
+|if_dangle {$$ = $1;}
+;
+
+reg_end: stmt {$$ = $0;}
+| TOKEN_SEMICOLON {$$ = 0;}
+;
+
+access: TOKEN_IDENTIFIER {$$ = expr_create_ident($1);}
+| array_access {$$ = $1}
+;
+
+array_access: TOKEN_IDENTIFIER TOKEN_LEFT_BRACKET expr TOKEN_RIGHT_BRACKET array_access_recursive { $$ = expr_create(EXPR_ARRAY_ACCESS, expr_create_ident(yytext), expr_create(EXPR_NESTED_ARRAY_ACCESS,  $3, $5));}
+;
+
+array_access_recursive: TOKEN_LEFT_BRACKET expr TOKEN_RIGHT_BRACKET array_access_recursive {$$ = expr_create(EXPR_NESTED_ARRAY_ACCESS, $2, $4);}
+| {$$ = 0}
+;
+
+type: TOKEN_INT { $$ = type_create(TYPE_INTEGER, 0, 0);	}
+| TOKEN_FLOAT  { $$ = type_create(TYPE_FLOAT, 0, 0);	}
+| TOKEN_STRING { $$ = type_create(TYPE_STRING, 0, 0);	}
+| TOKEN_BOOLEAN { $$ = type_create(TYPE_BOOLEAN, 0, 0);	}
+| TOKEN_CHAR { $$ = type_create(TYPE_CHAR, 0, 0);	}
+;
+
+stmt_block: TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE {$$ = $2;}
+;
+
+func_type: type { $$ = $1;	}
+| TOKEN_VOID { $$ = type_create(TYPE_CHAR, 0, 0);	}
+;
+
+param_recursive: TOKEN_COMMA TOKEN_IDENTIFIER TOKEN_COLON type param_recursive {$$ = param_list_create(yytext, $4, $5)}
 |
 ;
 
-type: TOKEN_INT | 
-TOKEN_FLOAT|
-TOKEN_STRING|
-TOKEN_BOOLEAN|
-TOKEN_CHAR |
+every_type: type { $$ = $1;	}
+| array_type { $$ = $1; } 
+;
+
+array_type: TOKEN_ARRAY TOKEN_LEFT_BRACKET array_size TOKEN_RIGHT_BRACKET every_type {type_create(TYPE_ARRAY, 0, 0);}
+;
+
+array_size: expr { $$ = $1; } 
+|                { $$ = 0; } 
+;
+
+array_expr_list: expr expr_list_recursive {$$ = expr_create(EXPR_LIST, $1, $2);}
+| nested_array_braces {expr_create()}
+;
+
+nested_array_braces: TOKEN_LEFT_BRACE array_expr_list TOKEN_RIGHT_BRACE nested_array_braces_recursive {$$ = expr_create(EXPR_NESTED_BRACES $2, $4);}
+;
+
+nested_array_braces_recursive: TOKEN_COMMA TOKEN_LEFT_BRACE array_expr_list TOKEN_RIGHT_BRACE nested_array_braces_recursive {$$ = expr_create(EXPR_NESTED_BRACES $3, $5);}
+| ($$ = 0;)
+;
+
+array_decl: TOKEN_IDENTIFIER TOKEN_COLON array_type TOKEN_ASSIGN TOKEN_LEFT_BRACE array_expr_list TOKEN_RIGHT_BRACE TOKEN_SEMICOLON {decl_create($1, $3, $6, 0, 0 );}
+| TOKEN_IDENTIFIER TOKEN_COLON array_type TOKEN_SEMICOLON {decl_create($1, $3, 0, 0, 0);}
 ;
 
 
-
-func_decl: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_ASSIGN TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE
-|  TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_SEMICOLON
-;
-
-var_decl: TOKEN_IDENTIFIER TOKEN_COLON type TOKEN_SEMICOLON
-| TOKEN_IDENTIFIER TOKEN_COLON type TOKEN_ASSIGN expr_val TOKEN_SEMICOLON
-| TOKEN_IDENTIFIER TOKEN_COLON array_type TOKEN_ASSIGN TOKEN_LEFT_BRACE expr_val_list TOKEN_RIGHT_BRACE TOKEN_SEMICOLON
-| TOKEN_IDENTIFIER TOKEN_COLON array_type TOKEN_SEMICOLON
-;
-
-decl: var_decl
-| func_decl
-;
-
-
-
-
-stmt_block: TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE
-;
-
-func_type: type|
-TOKEN_VOID
-;
-
-param_recursive: TOKEN_COMMA TOKEN_IDENTIFIER TOKEN_COLON type param_recursive
-|
-;
-
-every_type: type
-| array_type
-
-array_type: TOKEN_ARRAY TOKEN_LEFT_BRACKET array_size TOKEN_RIGHT_BRACKET every_type
-;
-
-array_size: expr_val
-|
-;
-
-param_list: TOKEN_IDENTIFIER TOKEN_COLON type param_recursive
-|
-;
-
-
-stmt_list: stmt_list stmt
-|
-;
-
-stmt: for_stmt reg_end
-| TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS stmt
-| TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE stmt
-| expr_assign TOKEN_SEMICOLON
-| return_stmt TOKEN_SEMICOLON
-| print_stmt TOKEN_SEMICOLON
-| inc_or_dec TOKEN_SEMICOLON
-| stmt_block
-| var_decl
-| func_call TOKEN_SEMICOLON
-;
-
-return_stmt: TOKEN_RETURN expr |
-TOKEN_RETURN 
-;
-
-expr_assign: access TOKEN_ASSIGN expr
-;
-
-inc_or_dec: TOKEN_IDENTIFIER TOKEN_PLUS_PLUS
-| TOKEN_IDENTIFIER TOKEN_MINUS_MINUS
-
-expr_val: expr_val operator data_atom
-| data_atom
-| inc_or_dec
-;
-
-expr: expr_assign
-| expr_val
-;
-
-for_stmt: TOKEN_FOR for_cond
-
-for_cond: TOKEN_LEFT_PARENTHESIS for_expr TOKEN_SEMICOLON for_expr TOKEN_SEMICOLON for_expr TOKEN_RIGHT_PARENTHESIS
-
-for_expr: expr
+param_list: TOKEN_IDENTIFIER TOKEN_COLON type param_recursive {$$ = param_list_create(yytext, $3, $4); }
 |
 ;
 
 
-expr_val_list: expr_val expr_val_list_recursive
+stmt_list: stmt_list stmt {$1->next = $2; $$ = $1;}
+| {$$ = 0;}
+;
+
+
+return_stmt: TOKEN_RETURN expr | {stmt_create(STMT_RETURN, 0,0, $2, 0, 0, 0, 0);}
+TOKEN_RETURN {stmt_create(STMT_RETURN, 0,0, 0, 0, 0, 0, 0);}
+;
+
+expr_assign: access TOKEN_ASSIGN expr {$$ = expr_create(EXPR_ASSIGN, $1, $3);}
+;
+
+inc_or_dec: TOKEN_IDENTIFIER TOKEN_PLUS_PLUS {expr_create( EXPR_ADD, $1, 0 ); }
+| TOKEN_IDENTIFIER TOKEN_MINUS_MINUS {expr_create( EXPR_SUB, $1, 0 ); }
+;
+
+expr_val: expr2 {$$ = $1;}
+;
+
+expr: expr_assign {$$ = $1;}
+| expr_val {$$ = $1;}
+;
+
+for_stmt: TOKEN_FOR for_cond {$$ = $2}
+;
+
+for_cond: TOKEN_LEFT_PARENTHESIS for_expr TOKEN_SEMICOLON for_expr TOKEN_SEMICOLON for_expr TOKEN_RIGHT_PARENTHESIS {$$ = stmt_create(STMT_IF_ELSE, 0, $2, $4, $6, 0, 0, 0); }
+;
+
+for_expr: expr {$$ = $1}
+| {$$ = 0}
+;
+
+expr_list: expr expr_list_recursive {expr_create(EXPR_LIST, $1, $2);}
+| {$$ = 0;}
+;
+
+expr_list_recursive: TOKEN_COMMA expr expr_list_recursive {expr_create(EXPR_LIST, $2, $3);}
 |
 ;
 
-expr_val_list_recursive: TOKEN_COMMA expr_val_list
-|
+expr2: expr3 {$$ = $1;}
+| expr2 TOKEN_OR expr3 {$$ = expr_create(EXPR_OR, $1, $3);}
 ;
 
-operator:  TOKEN_GREATER_THAN_OR_EQUAL
-| TOKEN_GREATER_THAN
-| TOKEN_LESS_THAN
-| TOKEN_LESS_THAN_OR_EQUAL
-| TOKEN_NOT_EQUAL
-| TOKEN_EQUAL
-| TOKEN_ADD
-|TOKEN_AND
-|TOKEN_OR
-| TOKEN_SUBTRACT|
-TOKEN_MULTIPLY|
-TOKEN_MODULO|
-TOKEN_EXPONENT
+expr3: expr4 {$$ = $1;}
+| expr3 TOKEN_AND expr4 {expr_create(EXPR_EXP, $1, $3);}
 ;
 
-boolean_literal: TOKEN_TRUE
-| TOKEN_FALSE
+expr4: expr4 TOKEN_EQUAL expr5 {expr_create(EXPR_EQ, $1, $3);}
+| expr4 TOKEN_NOT_EQUAL expr5 {expr_create(EXPR_NOT_EQ, $1, $3);}
+| expr5 {$$ = $1;}
+;
+
+expr5: expr6 {$$ = $1;}
+| expr5 TOKEN_LESS_THAN_OR_EQUAL expr6 {expr_create(EXPR_LTE, $1, $3);}
+| expr5 TOKEN_LESS_THAN expr6 {expr_create(EXPR_LT, $1, $3);}
+| expr5 TOKEN_GREATER_THAN expr6 {expr_create(EXPR_GT, $1, $3);}
+| expr5 TOKEN_GREATER_THAN_OR_EQUAL expr6 {expr_create(EXPR_GTE, $1, $3);}
+;
+
+expr6: expr7 {$$ = $1;}
+| expr7 TOKEN_ADD expr6 {expr_create(EXPR_ADD, $1, $3);}
+| expr7 TOKEN_SUBTRACT expr6 {expr_create(EXPR_SUB, $1, $3);}
+;
+
+expr7: expr8 {$$ = $1;}
+| expr7 TOKEN_MODULO expr8 {expr_create(EXPR_MOD, $1, $3);}
+| expr7 TOKEN_MULTIPLY expr8 {expr_create(EXPR_MUL, $1, $3);}
+| expr7 TOKEN_DIVISION expr8 {expr_create(EXPR_DIV, $1, $3);}
+;
+
+expr8: expr9 {$$ = $1;}
+| TOKEN_NOT expr9  {$$ = $1;}
+| TOKEN_SUBTRACT expr9  {$$ = $1;}
+| TOKEN_ADD expr9  {$$ = $1;}
+;
+
+expr9: data_atom {$$ = $1;}
+| expr9 TOKEN_EXPONENT data_atom {expr_create(EXPR_EXP, $1, $3);}
+;
+
+boolean_literal: TOKEN_TRUE {$$ = $expr_create_boolean_literal(1);}
+| TOKEN_FALSE {$$ = $expr_create_boolean_literal(0);}
 ;
 
 
-func_call: TOKEN_IDENTIFIER TOKEN_LEFT_PARENTHESIS expr_val_list TOKEN_RIGHT_PARENTHESIS
+func_call: TOKEN_IDENTIFIER TOKEN_LEFT_PARENTHESIS expr_list TOKEN_RIGHT_PARENTHESIS { expr_create(EXPR_FUNC_CALL, $1, $3);}
 ;
 
-data_atom: TOKEN_STRING_LITERAL
-| TOKEN_INT_LITERAL
-| TOKEN_CHAR_LITERAL
-| TOKEN_FLOAT_LITERAL
-| boolean_literal
-| TOKEN_NOT data_atom
-| TOKEN_NEGATIVE data_atom
-| func_call
-| access
-| TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS
+data_atom: TOKEN_STRING_LITERAL {$$ = expr_create_string_literal($1);}
+| TOKEN_INT_LITERAL {$$ = $expr_create_integer_literal($1);}
+| TOKEN_CHAR_LITERAL  {$$ = $expr_create_char_literal($1);}
+| TOKEN_FLOAT_LITERAL  {$$ = $expr_create_float_literal($1);}
+| boolean_literal {$$ = $1}
+| func_call {$$ = $1}
+| access {$$ = $1}
+| inc_or_dec {$$ = $1} 
+| TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS {$$ = $2}
 ;
 
-print_stmt: TOKEN_PRINT expr_val_list 
+print_stmt: TOKEN_PRINT expr_list {$$ = stmt_create(STMT_PRINT, 0, 0, $2, 0, 0, 0, 0)}
 ;
 
 %%

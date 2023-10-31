@@ -1,0 +1,26 @@
+IDENTIFIER     simplefunc
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IDENTIFIER     x
+COLON :
+INT            integer
+SEMICOLON      ;
+IDENTIFIER     y
+COLON :
+INT            integer
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     s
+COLON :
+STRING         string
+ASSIGN         =
+STRING LITERAL hello world
+SEMICOLON      ;
+RIGHT BRACE    }
+HEREProgram parsed successfully.

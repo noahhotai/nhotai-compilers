@@ -1,0 +1,162 @@
+IDENTIFIER     testit
+COLON :
+FUNCTION            function
+BOOL           boolean
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     y
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IF             if
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+LESS THAN      <
+IDENTIFIER     y
+RIGHT PARENTHESIS    )
+PRINT          print
+STRING LITERAL less
+
+SEMICOLON      ;
+ELSE           else
+PRINT          print
+STRING LITERAL low
+
+SEMICOLON      ;
+IF             if
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+LESS THAN      <
+IDENTIFIER     y
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+PRINT          print
+STRING LITERAL less
+
+SEMICOLON      ;
+RIGHT BRACE    }
+ELSE           else
+LEFT BRACE     {
+PRINT          print
+STRING LITERAL low
+
+SEMICOLON      ;
+RIGHT BRACE    }
+IF             if
+LEFT PARENTHEIS     (
+INT LITERAL    0
+LESS THAN      <
+INT LITERAL    0
+RIGHT PARENTHESIS    )
+IF             if
+LEFT PARENTHEIS     (
+INT LITERAL    0
+LESS THAN      <
+INT LITERAL    0
+RIGHT PARENTHESIS    )
+PRINT          print
+STRING LITERAL incorrect!
+SEMICOLON      ;
+ELSE           else
+PRINT          print
+STRING LITERAL dangling else!
+SEMICOLON      ;
+IF             if
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+GREATER THAN   >
+IDENTIFIER     y
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+IDENTIFIER     i
+COLON :
+INT            integer
+SEMICOLON      ;
+FOR            for
+LEFT PARENTHEIS     (
+IDENTIFIER     i
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+LESS THAN      <
+IDENTIFIER     x
+SEMICOLON      ;
+IDENTIFIER     i
+INCREMENT      ++
+RIGHT PARENTHESIS    )
+PRINT          print
+IDENTIFIER     i
+COMMA          ,
+STRING LITERAL 
+
+SEMICOLON      ;
+RIGHT BRACE    }
+ELSE           else
+LEFT BRACE     {
+IDENTIFIER     i
+COLON :
+INT            integer
+SEMICOLON      ;
+FOR            for
+LEFT PARENTHEIS     (
+IDENTIFIER     i
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+LESS THAN      <
+IDENTIFIER     y
+SEMICOLON      ;
+IDENTIFIER     i
+INCREMENT      ++
+RIGHT PARENTHESIS    )
+PRINT          print
+IDENTIFIER     i
+COMMA          ,
+STRING LITERAL 
+
+SEMICOLON      ;
+RIGHT BRACE    }
+IDENTIFIER     i
+COLON :
+INT            integer
+SEMICOLON      ;
+FOR            for
+LEFT PARENTHEIS     (
+IDENTIFIER     i
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+LESS THAN      <
+IDENTIFIER     x
+SEMICOLON      ;
+IDENTIFIER     i
+INCREMENT      ++
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+IF             if
+LEFT PARENTHEIS     (
+IDENTIFIER     i
+LESS THAN      <
+IDENTIFIER     x
+RIGHT PARENTHESIS    )
+PRINT          print
+STRING LITERAL small
+SEMICOLON      ;
+ELSE           else
+PRINT          print
+STRING LITERAL large
+SEMICOLON      ;
+RIGHT BRACE    }
+RETURN         return
+TRUE           true
+SEMICOLON      ;
+RIGHT BRACE    }
+HEREProgram parsed successfully.

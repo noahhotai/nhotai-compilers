@@ -1,0 +1,14 @@
+IDENTIFIER     main
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+COLON :
+INT            integer
+IDENTIFIER     y
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+SEMICOLON      ;
+parse error: syntax error

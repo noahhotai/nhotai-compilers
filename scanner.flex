@@ -8,7 +8,8 @@ HEX      [0-9a-fA-F]
 %%
 
 (" "|\t|\n|\r)+                                       { /* ignore white space */ }
-
+(\/\*([^*]|\*[^\/])*\*\*\/)|(\/\*([^*]|\*[^\/])*\*\/)    { /* ignore comments */ }
+\/\/[^\n]*\n                                          { /* ignore comments */ }    
 \,                                                    { return TOKEN_COMMA; }
 \+\+                                                  { return TOKEN_PLUS_PLUS; }
 \-\-                                                  { return TOKEN_MINUS_MINUS; }
@@ -68,7 +69,7 @@ while                                                 { return TOKEN_WHILE; }
 '([^\\]|\\[^']|(\\0x{HEX}{HEX}))'                     { return TOKEN_CHAR_LITERAL; }
 {DIGIT}+                                              { return TOKEN_INT_LITERAL; }
 ({DIGIT}+(\.{DIGIT}*|((\.{DIGIT}+)?[eE][-+]?{DIGIT}+))|\.{DIGIT}+) { return TOKEN_FLOAT_LITERAL; }
-(\/\*([^*]|\*[^\/])*\*\*\/)|(\/\*([^*]|\*[^\/])*\*\/)    { return TOKEN_COMMENT; }
+
 .                                                     { return TOKEN_ERROR; }
 %%
 int yywrap() { return 1; }

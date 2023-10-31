@@ -1,0 +1,29 @@
+IDENTIFIER     testfunc
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     y
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     z
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IDENTIFIER     r
+ASSIGN         =
+IDENTIFIER     x
+ADD            +
+IDENTIFIER     y
+DIVISION       /
+IDENTIFIER     z
+SEMICOLON      ;
+RIGHT BRACE    }
+HEREProgram parsed successfully.

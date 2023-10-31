@@ -1,0 +1,62 @@
+IDENTIFIER     simplefunc
+COLON :
+FUNCTION            function
+BOOL           boolean
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     y
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IDENTIFIER     z
+COLON :
+INT            integer
+ASSIGN         =
+IDENTIFIER     x
+MULTIPLY       *
+IDENTIFIER     y
+SEMICOLON      ;
+IDENTIFIER     z
+ASSIGN         =
+INT LITERAL    0
+ADD            +
+IDENTIFIER     x
+DIVISION       /
+IDENTIFIER     y
+SEMICOLON      ;
+PRINT          print
+STRING LITERAL input is: 
+COMMA          ,
+IDENTIFIER     x
+COMMA          ,
+STRING LITERAL  and 
+COMMA          ,
+IDENTIFIER     y
+COMMA          ,
+STRING LITERAL 
+
+SEMICOLON      ;
+IF             if
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+LESS THAN      <
+IDENTIFIER     y
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+RETURN         return
+TRUE           true
+SEMICOLON      ;
+RIGHT BRACE    }
+ELSE           else
+LEFT BRACE     {
+RETURN         return
+FALSE          false
+SEMICOLON      ;
+RIGHT BRACE    }
+RIGHT BRACE    }
+HEREProgram parsed successfully.

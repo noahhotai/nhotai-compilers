@@ -1,0 +1,40 @@
+IDENTIFIER     simplefunc
+COLON :
+FUNCTION            function
+BOOL           boolean
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     y
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IDENTIFIER     z
+COLON :
+INT            integer
+ASSIGN         =
+IDENTIFIER     x
+MULTIPLY       *
+IDENTIFIER     y
+SEMICOLON      ;
+IDENTIFIER     q
+COLON :
+FLOAT          float
+ASSIGN         =
+FLOAT LITERAL  10000000000.000000
+SEMICOLON      ;
+IDENTIFIER     v
+COLON :
+FLOAT          float
+ASSIGN         =
+FLOAT LITERAL  210.000000
+SEMICOLON      ;
+RETURN         return
+IDENTIFIER     v
+SEMICOLON      ;
+RIGHT BRACE    }
+HEREProgram parsed successfully.

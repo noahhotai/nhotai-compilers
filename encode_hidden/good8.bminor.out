@@ -1,0 +1,164 @@
+IDENTIFIER     x
+COLON :
+INT            integer
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     s
+COLON :
+STRING         string
+ASSIGN         =
+STRING LITERAL hello
+SEMICOLON      ;
+IDENTIFIER     b
+COLON :
+BOOL           boolean
+ASSIGN         =
+FALSE          false
+SEMICOLON      ;
+IDENTIFIER     min
+COLON :
+FUNCTION            function
+INT            integer
+LEFT PARENTHEIS     (
+IDENTIFIER     a
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     b
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IF             if
+LEFT PARENTHEIS     (
+IDENTIFIER     a
+LESS THAN      <
+IDENTIFIER     b
+RIGHT PARENTHESIS    )
+RETURN         return
+IDENTIFIER     a
+SEMICOLON      ;
+ELSE           else
+RETURN         return
+IDENTIFIER     b
+SEMICOLON      ;
+RIGHT BRACE    }
+IDENTIFIER     testfunc
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+IDENTIFIER     z
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IDENTIFIER     y
+COLON :
+INT            integer
+ASSIGN         =
+IDENTIFIER     x
+MULTIPLY       *
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+MULTIPLY       *
+INT LITERAL    0
+ADD            +
+INT LITERAL    0
+MODULO         %
+INT LITERAL    0
+ADD            +
+IDENTIFIER     z
+DIVISION       /
+INT LITERAL    0
+RIGHT PARENTHESIS    )
+SEMICOLON      ;
+PRINT          print
+STRING LITERAL y: 
+COMMA          ,
+IDENTIFIER     y
+COMMA          ,
+STRING LITERAL 
+
+SEMICOLON      ;
+IDENTIFIER     c
+COLON :
+BOOL           boolean
+ASSIGN         =
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+LESS THAN      <
+INT LITERAL    0
+AND            &&
+IDENTIFIER     y
+GREATER THAN   >
+INT LITERAL    0
+RIGHT PARENTHESIS    )
+OR             ||
+NOT            !
+LEFT PARENTHEIS     (
+IDENTIFIER     b
+ASSIGN         =
+TRUE           true
+RIGHT PARENTHESIS    )
+SEMICOLON      ;
+PRINT          print
+STRING LITERAL c: 
+COMMA          ,
+IDENTIFIER     c
+COMMA          ,
+STRING LITERAL 
+
+SEMICOLON      ;
+IDENTIFIER     d
+COLON :
+BOOL           boolean
+ASSIGN         =
+LEFT PARENTHEIS     (
+IDENTIFIER     s
+EQUALITY       ==
+STRING LITERAL goodbye
+RIGHT PARENTHESIS    )
+SEMICOLON      ;
+PRINT          print
+STRING LITERAL d: 
+COMMA          ,
+IDENTIFIER     d
+COMMA          ,
+STRING LITERAL 
+
+SEMICOLON      ;
+IDENTIFIER     z
+ASSIGN         =
+IDENTIFIER     y
+ASSIGN         =
+IDENTIFIER     x
+SEMICOLON      ;
+IDENTIFIER     a
+COLON :
+ARRAY          array
+LEFT BRACKET   [
+INT LITERAL    0
+RIGHT BRACKET  ]
+INT            integer
+SEMICOLON      ;
+IDENTIFIER     y
+ASSIGN         =
+IDENTIFIER     min
+LEFT PARENTHEIS     (
+IDENTIFIER     a
+LEFT BRACKET   [
+INT LITERAL    0
+RIGHT BRACKET  ]
+COMMA          ,
+IDENTIFIER     a
+LEFT BRACKET   [
+INT LITERAL    0
+RIGHT BRACKET  ]
+RIGHT PARENTHESIS    )
+SEMICOLON      ;
+RIGHT BRACE    }
+HEREProgram parsed successfully.

@@ -1,0 +1,11 @@
+main:function void() = {
+	if( 10 < 20 ){
+
+    }
+	else
+		print "hello";
+	if( 15 < 20 )
+	{
+		print "hi";
+	}
+}

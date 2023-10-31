@@ -1,0 +1,73 @@
+IDENTIFIER     x
+COLON :
+INT            integer
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     s
+COLON :
+STRING         string
+ASSIGN         =
+STRING LITERAL hello
+SEMICOLON      ;
+IDENTIFIER     b
+COLON :
+BOOL           boolean
+ASSIGN         =
+FALSE          false
+SEMICOLON      ;
+IDENTIFIER     min
+COLON :
+FUNCTION            function
+INT            integer
+LEFT PARENTHEIS     (
+IDENTIFIER     a
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     b
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IF             if
+LEFT PARENTHEIS     (
+IDENTIFIER     a
+GREATER THAN   >
+IDENTIFIER     b
+RIGHT PARENTHESIS    )
+RETURN         return
+IDENTIFIER     a
+SEMICOLON      ;
+ELSE           else
+RETURN         return
+IDENTIFIER     b
+SEMICOLON      ;
+RIGHT BRACE    }
+IDENTIFIER     testfunc
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+IDENTIFIER     z
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+PRINT          print
+STRING LITERAL minimum
+COMMA          ,
+IDENTIFIER     min
+LEFT PARENTHEIS     (
+INT LITERAL    0
+COMMA          ,
+INT LITERAL    0
+RIGHT PARENTHESIS    )
+COMMA          ,
+STRING LITERAL 
+
+SEMICOLON      ;
+RIGHT BRACE    }
+HEREProgram parsed successfully.

@@ -1,0 +1,45 @@
+IDENTIFIER     simplefunc
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IDENTIFIER     x
+COLON :
+INT            integer
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     y
+COLON :
+INT            integer
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IF             if
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+LESS THAN      <
+IDENTIFIER     y
+RIGHT PARENTHESIS    )
+IF             if
+LEFT PARENTHEIS     (
+IDENTIFIER     y
+GREATER THAN   >
+IDENTIFIER     x
+RIGHT PARENTHESIS    )
+ELSE           else
+PRINT          print
+STRING LITERAL a
+SEMICOLON      ;
+ELSE           else
+PRINT          print
+STRING LITERAL b
+ELSE           else
+PRINT          print
+STRING LITERAL c
+SEMICOLON      ;
+RIGHT BRACE    }
+parse error: syntax error

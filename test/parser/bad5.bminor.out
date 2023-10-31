@@ -1,8 +1,0 @@
-IDENTIFIER     z
-COLON :
-BOOL           boolean
-ASSIGN         =
-TRUE           true
-OR             ||
-SEMICOLON      ;
-parse error: syntax error

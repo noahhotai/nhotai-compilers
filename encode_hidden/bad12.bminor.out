@@ -1,0 +1,27 @@
+IDENTIFIER     simplefunc
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IDENTIFIER     x
+COLON :
+INT            integer
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+ARRAY          array
+COLON :
+INT            integer
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+RETURN         return
+IDENTIFIER     x
+ADD            +
+ARRAY          array
+SEMICOLON      ;
+RIGHT BRACE    }
+parse error: syntax error

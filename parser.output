@@ -1,2407 +1,3279 @@
 Terminals unused in grammar
 
    TOKEN_ERROR
-   TOKEN_EOF
    TOKEN_AUTO
-   TOKEN_STR
    TOKEN_WHILE
-   TOKEN_DIVISION
    TOKEN_TYPE_SET
-   TOKEN_COMMENT
 
 
 Grammar
 
-    0 $accept: program $end
+    0 $accept: program TOKEN_EOF
 
-    1 program: decl_list
-    2        | %empty
+    1 program: decl_list TOKEN_EOF
+    2        | TOKEN_EOF
 
     3 decl_list: decl_list decl
     4          | decl
 
-    5 if_dangle: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE if_dangle
-    6          | var_decl
-    7          | for_stmt dangle_end
-    8          | func_call TOKEN_SEMICOLON
-    9          | return_stmt TOKEN_SEMICOLON
-   10          | print_stmt TOKEN_SEMICOLON
-   11          | inc_or_dec TOKEN_SEMICOLON
-   12          | TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE
-   13          | expr_assign TOKEN_SEMICOLON
+    5 decl: var_decl
+    6     | func_decl
 
-   14 dangle_end: TOKEN_SEMICOLON
-   15           | if_dangle
+    7 func_decl: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_ASSIGN TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE
+    8          | TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_SEMICOLON
 
-   16 reg_end: stmt
-   17        | TOKEN_SEMICOLON
+    9 var_decl: TOKEN_IDENTIFIER TOKEN_COLON type TOKEN_SEMICOLON
+   10         | TOKEN_IDENTIFIER TOKEN_COLON type TOKEN_ASSIGN expr TOKEN_SEMICOLON
+   11         | array_decl
 
-   18 access: TOKEN_IDENTIFIER
-   19       | array_access
+   12 if_dangle: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE if_dangle
+   13          | var_decl
+   14          | for_stmt dangle_end
+   15          | func_call TOKEN_SEMICOLON
+   16          | return_stmt TOKEN_SEMICOLON
+   17          | print_stmt TOKEN_SEMICOLON
+   18          | inc_or_dec TOKEN_SEMICOLON
+   19          | TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE
+   20          | expr_assign TOKEN_SEMICOLON
 
-   20 array_access: TOKEN_IDENTIFIER TOKEN_LEFT_BRACKET expr_val TOKEN_RIGHT_BRACKET array_access_recursive
+   21 dangle_end: TOKEN_SEMICOLON
+   22           | if_dangle
 
-   21 array_access_recursive: TOKEN_LEFT_BRACKET expr_val TOKEN_RIGHT_BRACKET array_access_recursive
-   22                       | %empty
+   23 reg_end: stmt
+   24        | TOKEN_SEMICOLON
 
-   23 type: TOKEN_INT
-   24     | TOKEN_FLOAT
-   25     | TOKEN_STRING
-   26     | TOKEN_BOOLEAN
-   27     | TOKEN_CHAR
-   28     | %empty
+   25 access: TOKEN_IDENTIFIER
+   26       | array_access
 
-   29 func_decl: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_ASSIGN TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE
-   30          | TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_SEMICOLON
+   27 array_access: TOKEN_IDENTIFIER TOKEN_LEFT_BRACKET expr TOKEN_RIGHT_BRACKET array_access_recursive
 
-   31 var_decl: TOKEN_IDENTIFIER TOKEN_COLON type TOKEN_SEMICOLON
-   32         | TOKEN_IDENTIFIER TOKEN_COLON type TOKEN_ASSIGN expr_val TOKEN_SEMICOLON
-   33         | TOKEN_IDENTIFIER TOKEN_COLON array_type TOKEN_ASSIGN TOKEN_LEFT_BRACE expr_val_list TOKEN_RIGHT_BRACE TOKEN_SEMICOLON
-   34         | TOKEN_IDENTIFIER TOKEN_COLON array_type TOKEN_SEMICOLON
+   28 array_access_recursive: TOKEN_LEFT_BRACKET expr TOKEN_RIGHT_BRACKET array_access_recursive
+   29                       | %empty
 
-   35 decl: var_decl
-   36     | func_decl
+   30 type: TOKEN_INT
+   31     | TOKEN_FLOAT
+   32     | TOKEN_STRING
+   33     | TOKEN_BOOLEAN
+   34     | TOKEN_CHAR
+   35     | %empty
 
-   37 stmt_block: TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE
+   36 stmt_block: TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE
 
-   38 func_type: type
-   39          | TOKEN_VOID
+   37 func_type: type
+   38          | TOKEN_VOID
 
-   40 param_recursive: TOKEN_COMMA TOKEN_IDENTIFIER TOKEN_COLON type param_recursive
-   41                | %empty
+   39 param_recursive: TOKEN_COMMA TOKEN_IDENTIFIER TOKEN_COLON type param_recursive
+   40                | %empty
 
-   42 every_type: type
-   43           | array_type
+   41 every_type: type
+   42           | array_type
 
-   44 array_type: TOKEN_ARRAY TOKEN_LEFT_BRACKET array_size TOKEN_RIGHT_BRACKET every_type
+   43 array_type: TOKEN_ARRAY TOKEN_LEFT_BRACKET array_size TOKEN_RIGHT_BRACKET every_type
 
-   45 array_size: expr_val
-   46           | %empty
+   44 array_size: expr
+   45           | %empty
 
-   47 param_list: TOKEN_IDENTIFIER TOKEN_COLON type param_recursive
-   48           | %empty
+   46 array_expr_list: expr expr_list_recursive
+   47                | nested_array_braces
 
-   49 stmt_list: stmt_list stmt
-   50          | %empty
+   48 nested_array_braces: TOKEN_LEFT_BRACE array_expr_list TOKEN_RIGHT_BRACE nested_array_braces_recursive
 
-   51 stmt: for_stmt reg_end
-   52     | TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS stmt
-   53     | TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE stmt
-   54     | expr_assign TOKEN_SEMICOLON
-   55     | return_stmt TOKEN_SEMICOLON
-   56     | print_stmt TOKEN_SEMICOLON
-   57     | inc_or_dec TOKEN_SEMICOLON
-   58     | stmt_block
-   59     | var_decl
-   60     | func_call TOKEN_SEMICOLON
+   49 nested_array_braces_recursive: TOKEN_COMMA TOKEN_LEFT_BRACE array_expr_list TOKEN_RIGHT_BRACE nested_array_braces_recursive
+   50                              | %empty
 
-   61 return_stmt: TOKEN_RETURN expr
-   62            | TOKEN_RETURN
+   51 array_decl: TOKEN_IDENTIFIER TOKEN_COLON array_type TOKEN_ASSIGN TOKEN_LEFT_BRACE array_expr_list TOKEN_RIGHT_BRACE TOKEN_SEMICOLON
+   52           | TOKEN_IDENTIFIER TOKEN_COLON array_type TOKEN_SEMICOLON
 
-   63 expr_assign: access TOKEN_ASSIGN expr
+   53 param_list: TOKEN_IDENTIFIER TOKEN_COLON type param_recursive
+   54           | %empty
 
-   64 inc_or_dec: TOKEN_IDENTIFIER TOKEN_PLUS_PLUS
-   65           | TOKEN_IDENTIFIER TOKEN_MINUS_MINUS
+   55 stmt_list: stmt_list stmt
+   56          | %empty
 
-   66 expr_val: expr_val operator data_atom
-   67         | data_atom
-   68         | inc_or_dec
+   57 stmt: for_stmt reg_end
+   58     | TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS stmt
+   59     | TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE stmt
+   60     | expr_assign TOKEN_SEMICOLON
+   61     | return_stmt TOKEN_SEMICOLON
+   62     | print_stmt TOKEN_SEMICOLON
+   63     | inc_or_dec TOKEN_SEMICOLON
+   64     | stmt_block
+   65     | var_decl
+   66     | func_call TOKEN_SEMICOLON
 
-   69 expr: expr_assign
-   70     | expr_val
+   67 return_stmt: TOKEN_RETURN expr
+   68            | TOKEN_RETURN
 
-   71 for_stmt: TOKEN_FOR for_cond
+   69 expr_assign: access TOKEN_ASSIGN expr
 
-   72 for_cond: TOKEN_LEFT_PARENTHESIS for_expr TOKEN_SEMICOLON for_expr TOKEN_SEMICOLON for_expr TOKEN_RIGHT_PARENTHESIS
+   70 inc_or_dec: TOKEN_IDENTIFIER TOKEN_PLUS_PLUS
+   71           | TOKEN_IDENTIFIER TOKEN_MINUS_MINUS
 
-   73 for_expr: expr
-   74         | %empty
+   72 expr_val: expr2
 
-   75 expr_val_list: expr_val expr_val_list_recursive
-   76              | %empty
+   73 expr: expr_assign
+   74     | expr_val
 
-   77 expr_val_list_recursive: TOKEN_COMMA expr_val_list
-   78                        | %empty
+   75 for_stmt: TOKEN_FOR for_cond
 
-   79 operator: TOKEN_GREATER_THAN_OR_EQUAL
-   80         | TOKEN_GREATER_THAN
-   81         | TOKEN_LESS_THAN
-   82         | TOKEN_LESS_THAN_OR_EQUAL
-   83         | TOKEN_NOT_EQUAL
-   84         | TOKEN_EQUAL
-   85         | TOKEN_ADD
-   86         | TOKEN_AND
-   87         | TOKEN_OR
-   88         | TOKEN_SUBTRACT
-   89         | TOKEN_MULTIPLY
-   90         | TOKEN_MODULO
-   91         | TOKEN_EXPONENT
+   76 for_cond: TOKEN_LEFT_PARENTHESIS for_expr TOKEN_SEMICOLON for_expr TOKEN_SEMICOLON for_expr TOKEN_RIGHT_PARENTHESIS
 
-   92 boolean_literal: TOKEN_TRUE
-   93                | TOKEN_FALSE
+   77 for_expr: expr
+   78         | %empty
 
-   94 func_call: TOKEN_IDENTIFIER TOKEN_LEFT_PARENTHESIS expr_val_list TOKEN_RIGHT_PARENTHESIS
+   79 expr_list: expr expr_list_recursive
+   80          | %empty
 
-   95 data_atom: TOKEN_STRING_LITERAL
-   96          | TOKEN_INT_LITERAL
-   97          | TOKEN_CHAR_LITERAL
-   98          | TOKEN_FLOAT_LITERAL
-   99          | boolean_literal
-  100          | TOKEN_NOT data_atom
-  101          | TOKEN_NEGATIVE data_atom
-  102          | func_call
-  103          | access
-  104          | TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS
+   81 expr_list_recursive: TOKEN_COMMA expr expr_list_recursive
+   82                    | %empty
 
-  105 print_stmt: TOKEN_PRINT expr_val_list
+   83 expr2: expr3
+   84      | expr2 TOKEN_OR expr3
+
+   85 expr3: expr4
+   86      | expr3 TOKEN_AND expr4
+
+   87 expr4: expr4 TOKEN_EQUAL expr5
+   88      | expr4 TOKEN_NOT_EQUAL expr5
+   89      | expr5
+
+   90 expr5: expr6
+   91      | expr5 TOKEN_LESS_THAN_OR_EQUAL expr6
+   92      | expr5 TOKEN_LESS_THAN expr6
+   93      | expr5 TOKEN_GREATER_THAN expr6
+   94      | expr5 TOKEN_GREATER_THAN_OR_EQUAL expr6
+
+   95 expr6: expr7
+   96      | expr7 TOKEN_ADD expr6
+   97      | expr7 TOKEN_SUBTRACT expr6
+
+   98 expr7: expr8
+   99      | expr7 TOKEN_MODULO expr8
+  100      | expr7 TOKEN_MULTIPLY expr8
+  101      | expr7 TOKEN_DIVISION expr8
+
+  102 expr8: expr9
+  103      | TOKEN_NOT expr9
+  104      | TOKEN_SUBTRACT expr9
+  105      | TOKEN_ADD expr9
+
+  106 expr9: data_atom
+  107      | expr9 TOKEN_EXPONENT data_atom
+
+  108 boolean_literal: TOKEN_TRUE
+  109                | TOKEN_FALSE
+
+  110 func_call: TOKEN_IDENTIFIER TOKEN_LEFT_PARENTHESIS expr_list TOKEN_RIGHT_PARENTHESIS
+
+  111 data_atom: TOKEN_STRING_LITERAL
+  112          | TOKEN_INT_LITERAL
+  113          | TOKEN_CHAR_LITERAL
+  114          | TOKEN_FLOAT_LITERAL
+  115          | boolean_literal
+  116          | TOKEN_NEGATIVE data_atom
+  117          | func_call
+  118          | access
+  119          | inc_or_dec
+  120          | TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS
+
+  121 print_stmt: TOKEN_PRINT expr_list
 
 
 Terminals, with rules where they appear
 
-$end (0) 0
+TOKEN_EOF (0) 0 1 2
 error (256)
 TOKEN_ERROR (258)
-TOKEN_EOF (259)
-TOKEN_ARRAY (260) 44
-TOKEN_SUBTRACT (261) 88
-TOKEN_AUTO (262)
-TOKEN_BOOLEAN (263) 26
-TOKEN_CHAR (264) 27
-TOKEN_ELSE (265) 5 53
-TOKEN_FALSE (266) 93
-TOKEN_FLOAT (267) 24
-TOKEN_FOR (268) 71
-TOKEN_FUNCTION (269) 29 30
-TOKEN_COLON (270) 29 30 31 32 33 34 40 47
-TOKEN_IF (271) 5 52 53
-TOKEN_INT (272) 23
-TOKEN_PRINT (273) 105
-TOKEN_RETURN (274) 61 62
-TOKEN_STR (275)
-TOKEN_TRUE (276) 92
-TOKEN_VOID (277) 39
-TOKEN_WHILE (278)
-TOKEN_ADD (279) 85
-TOKEN_NEGATIVE (280) 101
-TOKEN_MULTIPLY (281) 89
-TOKEN_DIVISION (282)
-TOKEN_MODULO (283) 90
-TOKEN_EXPONENT (284) 91
-TOKEN_LEFT_PARENTHESIS (285) 5 29 30 52 53 72 94 104
-TOKEN_RIGHT_PARENTHESIS (286) 5 29 30 52 53 72 94 104
-TOKEN_ASSIGN (287) 29 32 33 63
-TOKEN_LEFT_BRACE (288) 12 29 33 37
-TOKEN_RIGHT_BRACE (289) 12 29 33 37
-TOKEN_LEFT_BRACKET (290) 20 21 44
-TOKEN_RIGHT_BRACKET (291) 20 21 44
-TOKEN_NOT_EQUAL (292) 83
-TOKEN_EQUAL (293) 84
-TOKEN_NOT (294) 100
-TOKEN_LESS_THAN (295) 81
-TOKEN_GREATER_THAN (296) 80
-TOKEN_AND (297) 86
-TOKEN_OR (298) 87
-TOKEN_TYPE_SET (299)
-TOKEN_SEMICOLON (300) 8 9 10 11 13 14 17 30 31 32 33 34 54 55 56 57
-    60 72
-TOKEN_COMMA (301) 40 77
-TOKEN_PLUS_PLUS (302) 64
-TOKEN_MINUS_MINUS (303) 65
-TOKEN_COMMENT (304)
-TOKEN_LESS_THAN_OR_EQUAL (305) 82
-TOKEN_GREATER_THAN_OR_EQUAL (306) 79
-TOKEN_IDENTIFIER (307) 18 20 29 30 31 32 33 34 40 47 64 65 94
-TOKEN_INT_LITERAL (308) 96
-TOKEN_FLOAT_LITERAL (309) 98
-TOKEN_STRING_LITERAL (310) 95
-TOKEN_STRING (311) 25
-TOKEN_CHAR_LITERAL (312) 97
+TOKEN_ARRAY (259) 43
+TOKEN_SUBTRACT (260) 97 104
+TOKEN_AUTO (261)
+TOKEN_BOOLEAN (262) 33
+TOKEN_CHAR (263) 34
+TOKEN_ELSE (264) 12 59
+TOKEN_FALSE (265) 109
+TOKEN_FLOAT (266) 31
+TOKEN_FOR (267) 75
+TOKEN_FUNCTION (268) 7 8
+TOKEN_COLON (269) 7 8 9 10 39 51 52 53
+TOKEN_IF (270) 12 58 59
+TOKEN_INT (271) 30
+TOKEN_PRINT (272) 121
+TOKEN_RETURN (273) 67 68
+TOKEN_STRING (274) 32
+TOKEN_TRUE (275) 108
+TOKEN_VOID (276) 38
+TOKEN_WHILE (277)
+TOKEN_ADD (278) 96 105
+TOKEN_NEGATIVE (279) 116
+TOKEN_MULTIPLY (280) 100
+TOKEN_DIVISION (281) 101
+TOKEN_MODULO (282) 99
+TOKEN_EXPONENT (283) 107
+TOKEN_LEFT_PARENTHESIS (284) 7 8 12 58 59 76 110 120
+TOKEN_RIGHT_PARENTHESIS (285) 7 8 12 58 59 76 110 120
+TOKEN_ASSIGN (286) 7 10 51 69
+TOKEN_LEFT_BRACE (287) 7 19 36 48 49 51
+TOKEN_RIGHT_BRACE (288) 7 19 36 48 49 51
+TOKEN_LEFT_BRACKET (289) 27 28 43
+TOKEN_RIGHT_BRACKET (290) 27 28 43
+TOKEN_NOT_EQUAL (291) 88
+TOKEN_EQUAL (292) 87
+TOKEN_NOT (293) 103
+TOKEN_LESS_THAN (294) 92
+TOKEN_GREATER_THAN (295) 93
+TOKEN_AND (296) 86
+TOKEN_OR (297) 84
+TOKEN_TYPE_SET (298)
+TOKEN_SEMICOLON (299) 8 9 10 15 16 17 18 20 21 24 51 52 60 61 62 63
+    66 76
+TOKEN_COMMA (300) 39 49 81
+TOKEN_PLUS_PLUS (301) 70
+TOKEN_MINUS_MINUS (302) 71
+TOKEN_LESS_THAN_OR_EQUAL (303) 91
+TOKEN_GREATER_THAN_OR_EQUAL (304) 94
+TOKEN_IDENTIFIER (305) 7 8 9 10 25 27 39 51 52 53 70 71 110
+TOKEN_INT_LITERAL (306) 112
+TOKEN_FLOAT_LITERAL (307) 114
+TOKEN_STRING_LITERAL (308) 111
+TOKEN_CHAR_LITERAL (309) 113
 
 
 Nonterminals, with rules where they appear
 
-$accept (58)
+$accept (55)
     on left: 0
-program (59)
+program (56)
     on left: 1 2, on right: 0
-decl_list (60)
+decl_list (57)
     on left: 3 4, on right: 1 3
+decl (58)
+    on left: 5 6, on right: 3 4
+func_decl (59)
+    on left: 7 8, on right: 6
+var_decl (60)
+    on left: 9 10 11, on right: 5 13 65
 if_dangle (61)
-    on left: 5 6 7 8 9 10 11 12 13, on right: 5 15 53
+    on left: 12 13 14 15 16 17 18 19 20, on right: 12 22 59
 dangle_end (62)
-    on left: 14 15, on right: 7
+    on left: 21 22, on right: 14
 reg_end (63)
-    on left: 16 17, on right: 51
+    on left: 23 24, on right: 57
 access (64)
-    on left: 18 19, on right: 63 103
+    on left: 25 26, on right: 69 118
 array_access (65)
-    on left: 20, on right: 19
+    on left: 27, on right: 26
 array_access_recursive (66)
-    on left: 21 22, on right: 20 21
+    on left: 28 29, on right: 27 28
 type (67)
-    on left: 23 24 25 26 27 28, on right: 31 32 38 40 42 47
-func_decl (68)
-    on left: 29 30, on right: 36
-var_decl (69)
-    on left: 31 32 33 34, on right: 6 35 59
-decl (70)
-    on left: 35 36, on right: 3 4
-stmt_block (71)
-    on left: 37, on right: 58
-func_type (72)
-    on left: 38 39, on right: 29 30
-param_recursive (73)
-    on left: 40 41, on right: 40 47
-every_type (74)
-    on left: 42 43, on right: 44
-array_type (75)
-    on left: 44, on right: 33 34 43
-array_size (76)
-    on left: 45 46, on right: 44
-param_list (77)
-    on left: 47 48, on right: 29 30
-stmt_list (78)
-    on left: 49 50, on right: 12 29 37 49
-stmt (79)
-    on left: 51 52 53 54 55 56 57 58 59 60, on right: 16 49 52 53
-return_stmt (80)
-    on left: 61 62, on right: 9 55
-expr_assign (81)
-    on left: 63, on right: 13 54 69
-inc_or_dec (82)
-    on left: 64 65, on right: 11 57 68
-expr_val (83)
-    on left: 66 67 68, on right: 20 21 32 45 66 70 75
-expr (84)
-    on left: 69 70, on right: 5 52 53 61 63 73 104
-for_stmt (85)
-    on left: 71, on right: 7 51
-for_cond (86)
-    on left: 72, on right: 71
-for_expr (87)
-    on left: 73 74, on right: 72
-expr_val_list (88)
-    on left: 75 76, on right: 33 77 94 105
-expr_val_list_recursive (89)
-    on left: 77 78, on right: 75
-operator (90)
-    on left: 79 80 81 82 83 84 85 86 87 88 89 90 91, on right: 66
-boolean_literal (91)
-    on left: 92 93, on right: 99
-func_call (92)
-    on left: 94, on right: 8 60 102
-data_atom (93)
-    on left: 95 96 97 98 99 100 101 102 103 104, on right: 66 67 100
-    101
-print_stmt (94)
-    on left: 105, on right: 10 56
+    on left: 30 31 32 33 34 35, on right: 9 10 37 39 41 53
+stmt_block (68)
+    on left: 36, on right: 64
+func_type (69)
+    on left: 37 38, on right: 7 8
+param_recursive (70)
+    on left: 39 40, on right: 39 53
+every_type (71)
+    on left: 41 42, on right: 43
+array_type (72)
+    on left: 43, on right: 42 51 52
+array_size (73)
+    on left: 44 45, on right: 43
+array_expr_list (74)
+    on left: 46 47, on right: 48 49 51
+nested_array_braces (75)
+    on left: 48, on right: 47
+nested_array_braces_recursive (76)
+    on left: 49 50, on right: 48 49
+array_decl (77)
+    on left: 51 52, on right: 11
+param_list (78)
+    on left: 53 54, on right: 7 8
+stmt_list (79)
+    on left: 55 56, on right: 7 19 36 55
+stmt (80)
+    on left: 57 58 59 60 61 62 63 64 65 66, on right: 23 55 58 59
+return_stmt (81)
+    on left: 67 68, on right: 16 61
+expr_assign (82)
+    on left: 69, on right: 20 60 73
+inc_or_dec (83)
+    on left: 70 71, on right: 18 63 119
+expr_val (84)
+    on left: 72, on right: 74
+expr (85)
+    on left: 73 74, on right: 10 12 27 28 44 46 58 59 67 69 77 79 81
+    120
+for_stmt (86)
+    on left: 75, on right: 14 57
+for_cond (87)
+    on left: 76, on right: 75
+for_expr (88)
+    on left: 77 78, on right: 76
+expr_list (89)
+    on left: 79 80, on right: 110 121
+expr_list_recursive (90)
+    on left: 81 82, on right: 46 79 81
+expr2 (91)
+    on left: 83 84, on right: 72 84
+expr3 (92)
+    on left: 85 86, on right: 83 84 86
+expr4 (93)
+    on left: 87 88 89, on right: 85 86 87 88
+expr5 (94)
+    on left: 90 91 92 93 94, on right: 87 88 89 91 92 93 94
+expr6 (95)
+    on left: 95 96 97, on right: 90 91 92 93 94 96 97
+expr7 (96)
+    on left: 98 99 100 101, on right: 95 96 97 99 100 101
+expr8 (97)
+    on left: 102 103 104 105, on right: 98 99 100 101
+expr9 (98)
+    on left: 106 107, on right: 102 103 104 105 107
+boolean_literal (99)
+    on left: 108 109, on right: 115
+func_call (100)
+    on left: 110, on right: 15 66 117
+data_atom (101)
+    on left: 111 112 113 114 115 116 117 118 119 120, on right: 106
+    107 116
+print_stmt (102)
+    on left: 121, on right: 17 62
 
 
 State 0
 
-    0 $accept: . program $end
+    0 $accept: . program TOKEN_EOF
 
-    TOKEN_IDENTIFIER  shift, and go to state 1
+    TOKEN_EOF         shift, and go to state 1
+    TOKEN_IDENTIFIER  shift, and go to state 2
 
-    $default  reduce using rule 2 (program)
-
-    program    go to state 2
-    decl_list  go to state 3
-    func_decl  go to state 4
-    var_decl   go to state 5
-    decl       go to state 6
+    program     go to state 3
+    decl_list   go to state 4
+    decl        go to state 5
+    func_decl   go to state 6
+    var_decl    go to state 7
+    array_decl  go to state 8
 
 
 State 1
 
-   29 func_decl: TOKEN_IDENTIFIER . TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_ASSIGN TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE
-   30          | TOKEN_IDENTIFIER . TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_SEMICOLON
-   31 var_decl: TOKEN_IDENTIFIER . TOKEN_COLON type TOKEN_SEMICOLON
-   32         | TOKEN_IDENTIFIER . TOKEN_COLON type TOKEN_ASSIGN expr_val TOKEN_SEMICOLON
-   33         | TOKEN_IDENTIFIER . TOKEN_COLON array_type TOKEN_ASSIGN TOKEN_LEFT_BRACE expr_val_list TOKEN_RIGHT_BRACE TOKEN_SEMICOLON
-   34         | TOKEN_IDENTIFIER . TOKEN_COLON array_type TOKEN_SEMICOLON
+    2 program: TOKEN_EOF .
 
-    TOKEN_COLON  shift, and go to state 7
+    $default  reduce using rule 2 (program)
 
 
 State 2
 
-    0 $accept: program . $end
+    7 func_decl: TOKEN_IDENTIFIER . TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_ASSIGN TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE
+    8          | TOKEN_IDENTIFIER . TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_SEMICOLON
+    9 var_decl: TOKEN_IDENTIFIER . TOKEN_COLON type TOKEN_SEMICOLON
+   10         | TOKEN_IDENTIFIER . TOKEN_COLON type TOKEN_ASSIGN expr TOKEN_SEMICOLON
+   51 array_decl: TOKEN_IDENTIFIER . TOKEN_COLON array_type TOKEN_ASSIGN TOKEN_LEFT_BRACE array_expr_list TOKEN_RIGHT_BRACE TOKEN_SEMICOLON
+   52           | TOKEN_IDENTIFIER . TOKEN_COLON array_type TOKEN_SEMICOLON
 
-    $end  shift, and go to state 8
+    TOKEN_COLON  shift, and go to state 9
 
 
 State 3
 
-    1 program: decl_list .
-    3 decl_list: decl_list . decl
+    0 $accept: program . TOKEN_EOF
 
-    TOKEN_IDENTIFIER  shift, and go to state 1
-
-    $default  reduce using rule 1 (program)
-
-    func_decl  go to state 4
-    var_decl   go to state 5
-    decl       go to state 9
+    TOKEN_EOF  shift, and go to state 10
 
 
 State 4
 
-   36 decl: func_decl .
+    1 program: decl_list . TOKEN_EOF
+    3 decl_list: decl_list . decl
 
-    $default  reduce using rule 36 (decl)
+    TOKEN_EOF         shift, and go to state 11
+    TOKEN_IDENTIFIER  shift, and go to state 2
+
+    decl        go to state 12
+    func_decl   go to state 6
+    var_decl    go to state 7
+    array_decl  go to state 8
 
 
 State 5
-
-   35 decl: var_decl .
-
-    $default  reduce using rule 35 (decl)
-
-
-State 6
 
     4 decl_list: decl .
 
     $default  reduce using rule 4 (decl_list)
 
 
+State 6
+
+    6 decl: func_decl .
+
+    $default  reduce using rule 6 (decl)
+
+
 State 7
 
-   29 func_decl: TOKEN_IDENTIFIER TOKEN_COLON . TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_ASSIGN TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE
-   30          | TOKEN_IDENTIFIER TOKEN_COLON . TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_SEMICOLON
-   31 var_decl: TOKEN_IDENTIFIER TOKEN_COLON . type TOKEN_SEMICOLON
-   32         | TOKEN_IDENTIFIER TOKEN_COLON . type TOKEN_ASSIGN expr_val TOKEN_SEMICOLON
-   33         | TOKEN_IDENTIFIER TOKEN_COLON . array_type TOKEN_ASSIGN TOKEN_LEFT_BRACE expr_val_list TOKEN_RIGHT_BRACE TOKEN_SEMICOLON
-   34         | TOKEN_IDENTIFIER TOKEN_COLON . array_type TOKEN_SEMICOLON
+    5 decl: var_decl .
 
-    TOKEN_ARRAY     shift, and go to state 10
-    TOKEN_BOOLEAN   shift, and go to state 11
-    TOKEN_CHAR      shift, and go to state 12
-    TOKEN_FLOAT     shift, and go to state 13
-    TOKEN_FUNCTION  shift, and go to state 14
-    TOKEN_INT       shift, and go to state 15
-    TOKEN_STRING    shift, and go to state 16
-
-    $default  reduce using rule 28 (type)
-
-    type        go to state 17
-    array_type  go to state 18
+    $default  reduce using rule 5 (decl)
 
 
 State 8
 
-    0 $accept: program $end .
+   11 var_decl: array_decl .
+
+    $default  reduce using rule 11 (var_decl)
+
+
+State 9
+
+    7 func_decl: TOKEN_IDENTIFIER TOKEN_COLON . TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_ASSIGN TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE
+    8          | TOKEN_IDENTIFIER TOKEN_COLON . TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_SEMICOLON
+    9 var_decl: TOKEN_IDENTIFIER TOKEN_COLON . type TOKEN_SEMICOLON
+   10         | TOKEN_IDENTIFIER TOKEN_COLON . type TOKEN_ASSIGN expr TOKEN_SEMICOLON
+   51 array_decl: TOKEN_IDENTIFIER TOKEN_COLON . array_type TOKEN_ASSIGN TOKEN_LEFT_BRACE array_expr_list TOKEN_RIGHT_BRACE TOKEN_SEMICOLON
+   52           | TOKEN_IDENTIFIER TOKEN_COLON . array_type TOKEN_SEMICOLON
+
+    TOKEN_ARRAY     shift, and go to state 13
+    TOKEN_BOOLEAN   shift, and go to state 14
+    TOKEN_CHAR      shift, and go to state 15
+    TOKEN_FLOAT     shift, and go to state 16
+    TOKEN_FUNCTION  shift, and go to state 17
+    TOKEN_INT       shift, and go to state 18
+    TOKEN_STRING    shift, and go to state 19
+
+    $default  reduce using rule 35 (type)
+
+    type        go to state 20
+    array_type  go to state 21
+
+
+State 10
+
+    0 $accept: program TOKEN_EOF .
 
     $default  accept
 
 
-State 9
+State 11
+
+    1 program: decl_list TOKEN_EOF .
+
+    $default  reduce using rule 1 (program)
+
+
+State 12
 
     3 decl_list: decl_list decl .
 
     $default  reduce using rule 3 (decl_list)
 
 
-State 10
-
-   44 array_type: TOKEN_ARRAY . TOKEN_LEFT_BRACKET array_size TOKEN_RIGHT_BRACKET every_type
-
-    TOKEN_LEFT_BRACKET  shift, and go to state 19
-
-
-State 11
-
-   26 type: TOKEN_BOOLEAN .
-
-    $default  reduce using rule 26 (type)
-
-
-State 12
-
-   27 type: TOKEN_CHAR .
-
-    $default  reduce using rule 27 (type)
-
-
 State 13
 
-   24 type: TOKEN_FLOAT .
+   43 array_type: TOKEN_ARRAY . TOKEN_LEFT_BRACKET array_size TOKEN_RIGHT_BRACKET every_type
 
-    $default  reduce using rule 24 (type)
+    TOKEN_LEFT_BRACKET  shift, and go to state 22
 
 
 State 14
 
-   29 func_decl: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION . func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_ASSIGN TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE
-   30          | TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION . func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_SEMICOLON
+   33 type: TOKEN_BOOLEAN .
 
-    TOKEN_BOOLEAN  shift, and go to state 11
-    TOKEN_CHAR     shift, and go to state 12
-    TOKEN_FLOAT    shift, and go to state 13
-    TOKEN_INT      shift, and go to state 15
-    TOKEN_VOID     shift, and go to state 20
-    TOKEN_STRING   shift, and go to state 16
-
-    $default  reduce using rule 28 (type)
-
-    type       go to state 21
-    func_type  go to state 22
+    $default  reduce using rule 33 (type)
 
 
 State 15
 
-   23 type: TOKEN_INT .
+   34 type: TOKEN_CHAR .
 
-    $default  reduce using rule 23 (type)
+    $default  reduce using rule 34 (type)
 
 
 State 16
 
-   25 type: TOKEN_STRING .
+   31 type: TOKEN_FLOAT .
 
-    $default  reduce using rule 25 (type)
+    $default  reduce using rule 31 (type)
 
 
 State 17
 
-   31 var_decl: TOKEN_IDENTIFIER TOKEN_COLON type . TOKEN_SEMICOLON
-   32         | TOKEN_IDENTIFIER TOKEN_COLON type . TOKEN_ASSIGN expr_val TOKEN_SEMICOLON
+    7 func_decl: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION . func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_ASSIGN TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE
+    8          | TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION . func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_SEMICOLON
 
-    TOKEN_ASSIGN     shift, and go to state 23
-    TOKEN_SEMICOLON  shift, and go to state 24
+    TOKEN_BOOLEAN  shift, and go to state 14
+    TOKEN_CHAR     shift, and go to state 15
+    TOKEN_FLOAT    shift, and go to state 16
+    TOKEN_INT      shift, and go to state 18
+    TOKEN_STRING   shift, and go to state 19
+    TOKEN_VOID     shift, and go to state 23
+
+    $default  reduce using rule 35 (type)
+
+    type       go to state 24
+    func_type  go to state 25
 
 
 State 18
 
-   33 var_decl: TOKEN_IDENTIFIER TOKEN_COLON array_type . TOKEN_ASSIGN TOKEN_LEFT_BRACE expr_val_list TOKEN_RIGHT_BRACE TOKEN_SEMICOLON
-   34         | TOKEN_IDENTIFIER TOKEN_COLON array_type . TOKEN_SEMICOLON
+   30 type: TOKEN_INT .
 
-    TOKEN_ASSIGN     shift, and go to state 25
-    TOKEN_SEMICOLON  shift, and go to state 26
+    $default  reduce using rule 30 (type)
 
 
 State 19
 
-   44 array_type: TOKEN_ARRAY TOKEN_LEFT_BRACKET . array_size TOKEN_RIGHT_BRACKET every_type
+   32 type: TOKEN_STRING .
 
-    TOKEN_FALSE             shift, and go to state 27
-    TOKEN_TRUE              shift, and go to state 28
-    TOKEN_NEGATIVE          shift, and go to state 29
-    TOKEN_LEFT_PARENTHESIS  shift, and go to state 30
-    TOKEN_NOT               shift, and go to state 31
-    TOKEN_IDENTIFIER        shift, and go to state 32
-    TOKEN_INT_LITERAL       shift, and go to state 33
-    TOKEN_FLOAT_LITERAL     shift, and go to state 34
-    TOKEN_STRING_LITERAL    shift, and go to state 35
-    TOKEN_CHAR_LITERAL      shift, and go to state 36
-
-    $default  reduce using rule 46 (array_size)
-
-    access           go to state 37
-    array_access     go to state 38
-    array_size       go to state 39
-    inc_or_dec       go to state 40
-    expr_val         go to state 41
-    boolean_literal  go to state 42
-    func_call        go to state 43
-    data_atom        go to state 44
+    $default  reduce using rule 32 (type)
 
 
 State 20
 
-   39 func_type: TOKEN_VOID .
+    9 var_decl: TOKEN_IDENTIFIER TOKEN_COLON type . TOKEN_SEMICOLON
+   10         | TOKEN_IDENTIFIER TOKEN_COLON type . TOKEN_ASSIGN expr TOKEN_SEMICOLON
 
-    $default  reduce using rule 39 (func_type)
+    TOKEN_ASSIGN     shift, and go to state 26
+    TOKEN_SEMICOLON  shift, and go to state 27
 
 
 State 21
 
-   38 func_type: type .
+   51 array_decl: TOKEN_IDENTIFIER TOKEN_COLON array_type . TOKEN_ASSIGN TOKEN_LEFT_BRACE array_expr_list TOKEN_RIGHT_BRACE TOKEN_SEMICOLON
+   52           | TOKEN_IDENTIFIER TOKEN_COLON array_type . TOKEN_SEMICOLON
 
-    $default  reduce using rule 38 (func_type)
+    TOKEN_ASSIGN     shift, and go to state 28
+    TOKEN_SEMICOLON  shift, and go to state 29
 
 
 State 22
 
-   29 func_decl: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type . TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_ASSIGN TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE
-   30          | TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type . TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_SEMICOLON
+   43 array_type: TOKEN_ARRAY TOKEN_LEFT_BRACKET . array_size TOKEN_RIGHT_BRACKET every_type
 
-    TOKEN_LEFT_PARENTHESIS  shift, and go to state 45
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
+
+    $default  reduce using rule 45 (array_size)
+
+    access           go to state 42
+    array_access     go to state 43
+    array_size       go to state 44
+    expr_assign      go to state 45
+    inc_or_dec       go to state 46
+    expr_val         go to state 47
+    expr             go to state 48
+    expr2            go to state 49
+    expr3            go to state 50
+    expr4            go to state 51
+    expr5            go to state 52
+    expr6            go to state 53
+    expr7            go to state 54
+    expr8            go to state 55
+    expr9            go to state 56
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
 
 
 State 23
 
-   32 var_decl: TOKEN_IDENTIFIER TOKEN_COLON type TOKEN_ASSIGN . expr_val TOKEN_SEMICOLON
+   38 func_type: TOKEN_VOID .
 
-    TOKEN_FALSE             shift, and go to state 27
-    TOKEN_TRUE              shift, and go to state 28
-    TOKEN_NEGATIVE          shift, and go to state 29
-    TOKEN_LEFT_PARENTHESIS  shift, and go to state 30
-    TOKEN_NOT               shift, and go to state 31
-    TOKEN_IDENTIFIER        shift, and go to state 32
-    TOKEN_INT_LITERAL       shift, and go to state 33
-    TOKEN_FLOAT_LITERAL     shift, and go to state 34
-    TOKEN_STRING_LITERAL    shift, and go to state 35
-    TOKEN_CHAR_LITERAL      shift, and go to state 36
-
-    access           go to state 37
-    array_access     go to state 38
-    inc_or_dec       go to state 40
-    expr_val         go to state 46
-    boolean_literal  go to state 42
-    func_call        go to state 43
-    data_atom        go to state 44
+    $default  reduce using rule 38 (func_type)
 
 
 State 24
 
-   31 var_decl: TOKEN_IDENTIFIER TOKEN_COLON type TOKEN_SEMICOLON .
+   37 func_type: type .
 
-    $default  reduce using rule 31 (var_decl)
+    $default  reduce using rule 37 (func_type)
 
 
 State 25
 
-   33 var_decl: TOKEN_IDENTIFIER TOKEN_COLON array_type TOKEN_ASSIGN . TOKEN_LEFT_BRACE expr_val_list TOKEN_RIGHT_BRACE TOKEN_SEMICOLON
+    7 func_decl: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type . TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_ASSIGN TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE
+    8          | TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type . TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_SEMICOLON
 
-    TOKEN_LEFT_BRACE  shift, and go to state 47
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 60
 
 
 State 26
 
-   34 var_decl: TOKEN_IDENTIFIER TOKEN_COLON array_type TOKEN_SEMICOLON .
+   10 var_decl: TOKEN_IDENTIFIER TOKEN_COLON type TOKEN_ASSIGN . expr TOKEN_SEMICOLON
 
-    $default  reduce using rule 34 (var_decl)
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
+
+    access           go to state 42
+    array_access     go to state 43
+    expr_assign      go to state 45
+    inc_or_dec       go to state 46
+    expr_val         go to state 47
+    expr             go to state 61
+    expr2            go to state 49
+    expr3            go to state 50
+    expr4            go to state 51
+    expr5            go to state 52
+    expr6            go to state 53
+    expr7            go to state 54
+    expr8            go to state 55
+    expr9            go to state 56
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
 
 
 State 27
 
-   93 boolean_literal: TOKEN_FALSE .
+    9 var_decl: TOKEN_IDENTIFIER TOKEN_COLON type TOKEN_SEMICOLON .
 
-    $default  reduce using rule 93 (boolean_literal)
+    $default  reduce using rule 9 (var_decl)
 
 
 State 28
 
-   92 boolean_literal: TOKEN_TRUE .
+   51 array_decl: TOKEN_IDENTIFIER TOKEN_COLON array_type TOKEN_ASSIGN . TOKEN_LEFT_BRACE array_expr_list TOKEN_RIGHT_BRACE TOKEN_SEMICOLON
 
-    $default  reduce using rule 92 (boolean_literal)
+    TOKEN_LEFT_BRACE  shift, and go to state 62
 
 
 State 29
 
-  101 data_atom: TOKEN_NEGATIVE . data_atom
+   52 array_decl: TOKEN_IDENTIFIER TOKEN_COLON array_type TOKEN_SEMICOLON .
 
-    TOKEN_FALSE             shift, and go to state 27
-    TOKEN_TRUE              shift, and go to state 28
-    TOKEN_NEGATIVE          shift, and go to state 29
-    TOKEN_LEFT_PARENTHESIS  shift, and go to state 30
-    TOKEN_NOT               shift, and go to state 31
-    TOKEN_IDENTIFIER        shift, and go to state 48
-    TOKEN_INT_LITERAL       shift, and go to state 33
-    TOKEN_FLOAT_LITERAL     shift, and go to state 34
-    TOKEN_STRING_LITERAL    shift, and go to state 35
-    TOKEN_CHAR_LITERAL      shift, and go to state 36
-
-    access           go to state 37
-    array_access     go to state 38
-    boolean_literal  go to state 42
-    func_call        go to state 43
-    data_atom        go to state 49
+    $default  reduce using rule 52 (array_decl)
 
 
 State 30
 
-  104 data_atom: TOKEN_LEFT_PARENTHESIS . expr TOKEN_RIGHT_PARENTHESIS
+  104 expr8: TOKEN_SUBTRACT . expr9
 
-    TOKEN_FALSE             shift, and go to state 27
-    TOKEN_TRUE              shift, and go to state 28
-    TOKEN_NEGATIVE          shift, and go to state 29
-    TOKEN_LEFT_PARENTHESIS  shift, and go to state 30
-    TOKEN_NOT               shift, and go to state 31
-    TOKEN_IDENTIFIER        shift, and go to state 32
-    TOKEN_INT_LITERAL       shift, and go to state 33
-    TOKEN_FLOAT_LITERAL     shift, and go to state 34
-    TOKEN_STRING_LITERAL    shift, and go to state 35
-    TOKEN_CHAR_LITERAL      shift, and go to state 36
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
 
-    access           go to state 50
-    array_access     go to state 38
-    expr_assign      go to state 51
-    inc_or_dec       go to state 40
-    expr_val         go to state 52
-    expr             go to state 53
-    boolean_literal  go to state 42
-    func_call        go to state 43
-    data_atom        go to state 44
+    access           go to state 63
+    array_access     go to state 43
+    inc_or_dec       go to state 46
+    expr9            go to state 64
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
 
 
 State 31
 
-  100 data_atom: TOKEN_NOT . data_atom
+  109 boolean_literal: TOKEN_FALSE .
 
-    TOKEN_FALSE             shift, and go to state 27
-    TOKEN_TRUE              shift, and go to state 28
-    TOKEN_NEGATIVE          shift, and go to state 29
-    TOKEN_LEFT_PARENTHESIS  shift, and go to state 30
-    TOKEN_NOT               shift, and go to state 31
-    TOKEN_IDENTIFIER        shift, and go to state 48
-    TOKEN_INT_LITERAL       shift, and go to state 33
-    TOKEN_FLOAT_LITERAL     shift, and go to state 34
-    TOKEN_STRING_LITERAL    shift, and go to state 35
-    TOKEN_CHAR_LITERAL      shift, and go to state 36
-
-    access           go to state 37
-    array_access     go to state 38
-    boolean_literal  go to state 42
-    func_call        go to state 43
-    data_atom        go to state 54
+    $default  reduce using rule 109 (boolean_literal)
 
 
 State 32
 
-   18 access: TOKEN_IDENTIFIER .
-   20 array_access: TOKEN_IDENTIFIER . TOKEN_LEFT_BRACKET expr_val TOKEN_RIGHT_BRACKET array_access_recursive
-   64 inc_or_dec: TOKEN_IDENTIFIER . TOKEN_PLUS_PLUS
-   65           | TOKEN_IDENTIFIER . TOKEN_MINUS_MINUS
-   94 func_call: TOKEN_IDENTIFIER . TOKEN_LEFT_PARENTHESIS expr_val_list TOKEN_RIGHT_PARENTHESIS
+  108 boolean_literal: TOKEN_TRUE .
 
-    TOKEN_LEFT_PARENTHESIS  shift, and go to state 55
-    TOKEN_LEFT_BRACKET      shift, and go to state 56
-    TOKEN_PLUS_PLUS         shift, and go to state 57
-    TOKEN_MINUS_MINUS       shift, and go to state 58
-
-    $default  reduce using rule 18 (access)
+    $default  reduce using rule 108 (boolean_literal)
 
 
 State 33
 
-   96 data_atom: TOKEN_INT_LITERAL .
+  105 expr8: TOKEN_ADD . expr9
 
-    $default  reduce using rule 96 (data_atom)
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
+
+    access           go to state 63
+    array_access     go to state 43
+    inc_or_dec       go to state 46
+    expr9            go to state 65
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
 
 
 State 34
 
-   98 data_atom: TOKEN_FLOAT_LITERAL .
+  116 data_atom: TOKEN_NEGATIVE . data_atom
 
-    $default  reduce using rule 98 (data_atom)
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
+
+    access           go to state 63
+    array_access     go to state 43
+    inc_or_dec       go to state 46
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 66
 
 
 State 35
 
-   95 data_atom: TOKEN_STRING_LITERAL .
+  120 data_atom: TOKEN_LEFT_PARENTHESIS . expr TOKEN_RIGHT_PARENTHESIS
 
-    $default  reduce using rule 95 (data_atom)
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
+
+    access           go to state 42
+    array_access     go to state 43
+    expr_assign      go to state 45
+    inc_or_dec       go to state 46
+    expr_val         go to state 47
+    expr             go to state 67
+    expr2            go to state 49
+    expr3            go to state 50
+    expr4            go to state 51
+    expr5            go to state 52
+    expr6            go to state 53
+    expr7            go to state 54
+    expr8            go to state 55
+    expr9            go to state 56
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
 
 
 State 36
 
-   97 data_atom: TOKEN_CHAR_LITERAL .
+  103 expr8: TOKEN_NOT . expr9
 
-    $default  reduce using rule 97 (data_atom)
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
+
+    access           go to state 63
+    array_access     go to state 43
+    inc_or_dec       go to state 46
+    expr9            go to state 68
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
 
 
 State 37
 
-  103 data_atom: access .
+   25 access: TOKEN_IDENTIFIER .
+   27 array_access: TOKEN_IDENTIFIER . TOKEN_LEFT_BRACKET expr TOKEN_RIGHT_BRACKET array_access_recursive
+   70 inc_or_dec: TOKEN_IDENTIFIER . TOKEN_PLUS_PLUS
+   71           | TOKEN_IDENTIFIER . TOKEN_MINUS_MINUS
+  110 func_call: TOKEN_IDENTIFIER . TOKEN_LEFT_PARENTHESIS expr_list TOKEN_RIGHT_PARENTHESIS
 
-    $default  reduce using rule 103 (data_atom)
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 69
+    TOKEN_LEFT_BRACKET      shift, and go to state 70
+    TOKEN_PLUS_PLUS         shift, and go to state 71
+    TOKEN_MINUS_MINUS       shift, and go to state 72
+
+    $default  reduce using rule 25 (access)
 
 
 State 38
 
-   19 access: array_access .
+  112 data_atom: TOKEN_INT_LITERAL .
 
-    $default  reduce using rule 19 (access)
+    $default  reduce using rule 112 (data_atom)
 
 
 State 39
 
-   44 array_type: TOKEN_ARRAY TOKEN_LEFT_BRACKET array_size . TOKEN_RIGHT_BRACKET every_type
+  114 data_atom: TOKEN_FLOAT_LITERAL .
 
-    TOKEN_RIGHT_BRACKET  shift, and go to state 59
+    $default  reduce using rule 114 (data_atom)
 
 
 State 40
 
-   68 expr_val: inc_or_dec .
+  111 data_atom: TOKEN_STRING_LITERAL .
 
-    $default  reduce using rule 68 (expr_val)
+    $default  reduce using rule 111 (data_atom)
 
 
 State 41
 
-   45 array_size: expr_val .
-   66 expr_val: expr_val . operator data_atom
+  113 data_atom: TOKEN_CHAR_LITERAL .
 
-    TOKEN_SUBTRACT               shift, and go to state 60
-    TOKEN_ADD                    shift, and go to state 61
-    TOKEN_MULTIPLY               shift, and go to state 62
-    TOKEN_MODULO                 shift, and go to state 63
-    TOKEN_EXPONENT               shift, and go to state 64
-    TOKEN_NOT_EQUAL              shift, and go to state 65
-    TOKEN_EQUAL                  shift, and go to state 66
-    TOKEN_LESS_THAN              shift, and go to state 67
-    TOKEN_GREATER_THAN           shift, and go to state 68
-    TOKEN_AND                    shift, and go to state 69
-    TOKEN_OR                     shift, and go to state 70
-    TOKEN_LESS_THAN_OR_EQUAL     shift, and go to state 71
-    TOKEN_GREATER_THAN_OR_EQUAL  shift, and go to state 72
-
-    $default  reduce using rule 45 (array_size)
-
-    operator  go to state 73
+    $default  reduce using rule 113 (data_atom)
 
 
 State 42
 
-   99 data_atom: boolean_literal .
+   69 expr_assign: access . TOKEN_ASSIGN expr
+  118 data_atom: access .
 
-    $default  reduce using rule 99 (data_atom)
+    TOKEN_ASSIGN  shift, and go to state 73
+
+    $default  reduce using rule 118 (data_atom)
 
 
 State 43
 
-  102 data_atom: func_call .
+   26 access: array_access .
 
-    $default  reduce using rule 102 (data_atom)
+    $default  reduce using rule 26 (access)
 
 
 State 44
 
-   67 expr_val: data_atom .
+   43 array_type: TOKEN_ARRAY TOKEN_LEFT_BRACKET array_size . TOKEN_RIGHT_BRACKET every_type
 
-    $default  reduce using rule 67 (expr_val)
+    TOKEN_RIGHT_BRACKET  shift, and go to state 74
 
 
 State 45
 
-   29 func_decl: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS . param_list TOKEN_RIGHT_PARENTHESIS TOKEN_ASSIGN TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE
-   30          | TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS . param_list TOKEN_RIGHT_PARENTHESIS TOKEN_SEMICOLON
+   73 expr: expr_assign .
 
-    TOKEN_IDENTIFIER  shift, and go to state 74
-
-    $default  reduce using rule 48 (param_list)
-
-    param_list  go to state 75
+    $default  reduce using rule 73 (expr)
 
 
 State 46
 
-   32 var_decl: TOKEN_IDENTIFIER TOKEN_COLON type TOKEN_ASSIGN expr_val . TOKEN_SEMICOLON
-   66 expr_val: expr_val . operator data_atom
+  119 data_atom: inc_or_dec .
 
-    TOKEN_SUBTRACT               shift, and go to state 60
-    TOKEN_ADD                    shift, and go to state 61
-    TOKEN_MULTIPLY               shift, and go to state 62
-    TOKEN_MODULO                 shift, and go to state 63
-    TOKEN_EXPONENT               shift, and go to state 64
-    TOKEN_NOT_EQUAL              shift, and go to state 65
-    TOKEN_EQUAL                  shift, and go to state 66
-    TOKEN_LESS_THAN              shift, and go to state 67
-    TOKEN_GREATER_THAN           shift, and go to state 68
-    TOKEN_AND                    shift, and go to state 69
-    TOKEN_OR                     shift, and go to state 70
-    TOKEN_SEMICOLON              shift, and go to state 76
-    TOKEN_LESS_THAN_OR_EQUAL     shift, and go to state 71
-    TOKEN_GREATER_THAN_OR_EQUAL  shift, and go to state 72
-
-    operator  go to state 73
+    $default  reduce using rule 119 (data_atom)
 
 
 State 47
 
-   33 var_decl: TOKEN_IDENTIFIER TOKEN_COLON array_type TOKEN_ASSIGN TOKEN_LEFT_BRACE . expr_val_list TOKEN_RIGHT_BRACE TOKEN_SEMICOLON
+   74 expr: expr_val .
 
-    TOKEN_FALSE             shift, and go to state 27
-    TOKEN_TRUE              shift, and go to state 28
-    TOKEN_NEGATIVE          shift, and go to state 29
-    TOKEN_LEFT_PARENTHESIS  shift, and go to state 30
-    TOKEN_NOT               shift, and go to state 31
-    TOKEN_IDENTIFIER        shift, and go to state 32
-    TOKEN_INT_LITERAL       shift, and go to state 33
-    TOKEN_FLOAT_LITERAL     shift, and go to state 34
-    TOKEN_STRING_LITERAL    shift, and go to state 35
-    TOKEN_CHAR_LITERAL      shift, and go to state 36
-
-    $default  reduce using rule 76 (expr_val_list)
-
-    access           go to state 37
-    array_access     go to state 38
-    inc_or_dec       go to state 40
-    expr_val         go to state 77
-    expr_val_list    go to state 78
-    boolean_literal  go to state 42
-    func_call        go to state 43
-    data_atom        go to state 44
+    $default  reduce using rule 74 (expr)
 
 
 State 48
 
-   18 access: TOKEN_IDENTIFIER .
-   20 array_access: TOKEN_IDENTIFIER . TOKEN_LEFT_BRACKET expr_val TOKEN_RIGHT_BRACKET array_access_recursive
-   94 func_call: TOKEN_IDENTIFIER . TOKEN_LEFT_PARENTHESIS expr_val_list TOKEN_RIGHT_PARENTHESIS
+   44 array_size: expr .
 
-    TOKEN_LEFT_PARENTHESIS  shift, and go to state 55
-    TOKEN_LEFT_BRACKET      shift, and go to state 56
-
-    $default  reduce using rule 18 (access)
+    $default  reduce using rule 44 (array_size)
 
 
 State 49
 
-  101 data_atom: TOKEN_NEGATIVE data_atom .
+   72 expr_val: expr2 .
+   84 expr2: expr2 . TOKEN_OR expr3
 
-    $default  reduce using rule 101 (data_atom)
+    TOKEN_OR  shift, and go to state 75
+
+    $default  reduce using rule 72 (expr_val)
 
 
 State 50
 
-   63 expr_assign: access . TOKEN_ASSIGN expr
-  103 data_atom: access .
+   83 expr2: expr3 .
+   86 expr3: expr3 . TOKEN_AND expr4
 
-    TOKEN_ASSIGN  shift, and go to state 79
+    TOKEN_AND  shift, and go to state 76
 
-    $default  reduce using rule 103 (data_atom)
+    $default  reduce using rule 83 (expr2)
 
 
 State 51
 
-   69 expr: expr_assign .
+   85 expr3: expr4 .
+   87 expr4: expr4 . TOKEN_EQUAL expr5
+   88      | expr4 . TOKEN_NOT_EQUAL expr5
 
-    $default  reduce using rule 69 (expr)
+    TOKEN_NOT_EQUAL  shift, and go to state 77
+    TOKEN_EQUAL      shift, and go to state 78
+
+    $default  reduce using rule 85 (expr3)
 
 
 State 52
 
-   66 expr_val: expr_val . operator data_atom
-   70 expr: expr_val .
+   89 expr4: expr5 .
+   91 expr5: expr5 . TOKEN_LESS_THAN_OR_EQUAL expr6
+   92      | expr5 . TOKEN_LESS_THAN expr6
+   93      | expr5 . TOKEN_GREATER_THAN expr6
+   94      | expr5 . TOKEN_GREATER_THAN_OR_EQUAL expr6
 
-    TOKEN_SUBTRACT               shift, and go to state 60
-    TOKEN_ADD                    shift, and go to state 61
-    TOKEN_MULTIPLY               shift, and go to state 62
-    TOKEN_MODULO                 shift, and go to state 63
-    TOKEN_EXPONENT               shift, and go to state 64
-    TOKEN_NOT_EQUAL              shift, and go to state 65
-    TOKEN_EQUAL                  shift, and go to state 66
-    TOKEN_LESS_THAN              shift, and go to state 67
-    TOKEN_GREATER_THAN           shift, and go to state 68
-    TOKEN_AND                    shift, and go to state 69
-    TOKEN_OR                     shift, and go to state 70
-    TOKEN_LESS_THAN_OR_EQUAL     shift, and go to state 71
-    TOKEN_GREATER_THAN_OR_EQUAL  shift, and go to state 72
+    TOKEN_LESS_THAN              shift, and go to state 79
+    TOKEN_GREATER_THAN           shift, and go to state 80
+    TOKEN_LESS_THAN_OR_EQUAL     shift, and go to state 81
+    TOKEN_GREATER_THAN_OR_EQUAL  shift, and go to state 82
 
-    $default  reduce using rule 70 (expr)
-
-    operator  go to state 73
+    $default  reduce using rule 89 (expr4)
 
 
 State 53
 
-  104 data_atom: TOKEN_LEFT_PARENTHESIS expr . TOKEN_RIGHT_PARENTHESIS
+   90 expr5: expr6 .
 
-    TOKEN_RIGHT_PARENTHESIS  shift, and go to state 80
+    $default  reduce using rule 90 (expr5)
 
 
 State 54
 
-  100 data_atom: TOKEN_NOT data_atom .
+   95 expr6: expr7 .
+   96      | expr7 . TOKEN_ADD expr6
+   97      | expr7 . TOKEN_SUBTRACT expr6
+   99 expr7: expr7 . TOKEN_MODULO expr8
+  100      | expr7 . TOKEN_MULTIPLY expr8
+  101      | expr7 . TOKEN_DIVISION expr8
 
-    $default  reduce using rule 100 (data_atom)
+    TOKEN_SUBTRACT  shift, and go to state 83
+    TOKEN_ADD       shift, and go to state 84
+    TOKEN_MULTIPLY  shift, and go to state 85
+    TOKEN_DIVISION  shift, and go to state 86
+    TOKEN_MODULO    shift, and go to state 87
+
+    $default  reduce using rule 95 (expr6)
 
 
 State 55
 
-   94 func_call: TOKEN_IDENTIFIER TOKEN_LEFT_PARENTHESIS . expr_val_list TOKEN_RIGHT_PARENTHESIS
+   98 expr7: expr8 .
 
-    TOKEN_FALSE             shift, and go to state 27
-    TOKEN_TRUE              shift, and go to state 28
-    TOKEN_NEGATIVE          shift, and go to state 29
-    TOKEN_LEFT_PARENTHESIS  shift, and go to state 30
-    TOKEN_NOT               shift, and go to state 31
-    TOKEN_IDENTIFIER        shift, and go to state 32
-    TOKEN_INT_LITERAL       shift, and go to state 33
-    TOKEN_FLOAT_LITERAL     shift, and go to state 34
-    TOKEN_STRING_LITERAL    shift, and go to state 35
-    TOKEN_CHAR_LITERAL      shift, and go to state 36
-
-    $default  reduce using rule 76 (expr_val_list)
-
-    access           go to state 37
-    array_access     go to state 38
-    inc_or_dec       go to state 40
-    expr_val         go to state 77
-    expr_val_list    go to state 81
-    boolean_literal  go to state 42
-    func_call        go to state 43
-    data_atom        go to state 44
+    $default  reduce using rule 98 (expr7)
 
 
 State 56
 
-   20 array_access: TOKEN_IDENTIFIER TOKEN_LEFT_BRACKET . expr_val TOKEN_RIGHT_BRACKET array_access_recursive
+  102 expr8: expr9 .
+  107 expr9: expr9 . TOKEN_EXPONENT data_atom
 
-    TOKEN_FALSE             shift, and go to state 27
-    TOKEN_TRUE              shift, and go to state 28
-    TOKEN_NEGATIVE          shift, and go to state 29
-    TOKEN_LEFT_PARENTHESIS  shift, and go to state 30
-    TOKEN_NOT               shift, and go to state 31
-    TOKEN_IDENTIFIER        shift, and go to state 32
-    TOKEN_INT_LITERAL       shift, and go to state 33
-    TOKEN_FLOAT_LITERAL     shift, and go to state 34
-    TOKEN_STRING_LITERAL    shift, and go to state 35
-    TOKEN_CHAR_LITERAL      shift, and go to state 36
+    TOKEN_EXPONENT  shift, and go to state 88
 
-    access           go to state 37
-    array_access     go to state 38
-    inc_or_dec       go to state 40
-    expr_val         go to state 82
-    boolean_literal  go to state 42
-    func_call        go to state 43
-    data_atom        go to state 44
+    $default  reduce using rule 102 (expr8)
 
 
 State 57
 
-   64 inc_or_dec: TOKEN_IDENTIFIER TOKEN_PLUS_PLUS .
+  115 data_atom: boolean_literal .
 
-    $default  reduce using rule 64 (inc_or_dec)
+    $default  reduce using rule 115 (data_atom)
 
 
 State 58
 
-   65 inc_or_dec: TOKEN_IDENTIFIER TOKEN_MINUS_MINUS .
+  117 data_atom: func_call .
 
-    $default  reduce using rule 65 (inc_or_dec)
+    $default  reduce using rule 117 (data_atom)
 
 
 State 59
 
-   44 array_type: TOKEN_ARRAY TOKEN_LEFT_BRACKET array_size TOKEN_RIGHT_BRACKET . every_type
+  106 expr9: data_atom .
 
-    TOKEN_ARRAY    shift, and go to state 10
-    TOKEN_BOOLEAN  shift, and go to state 11
-    TOKEN_CHAR     shift, and go to state 12
-    TOKEN_FLOAT    shift, and go to state 13
-    TOKEN_INT      shift, and go to state 15
-    TOKEN_STRING   shift, and go to state 16
-
-    $default  reduce using rule 28 (type)
-
-    type        go to state 83
-    every_type  go to state 84
-    array_type  go to state 85
+    $default  reduce using rule 106 (expr9)
 
 
 State 60
 
-   88 operator: TOKEN_SUBTRACT .
+    7 func_decl: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS . param_list TOKEN_RIGHT_PARENTHESIS TOKEN_ASSIGN TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE
+    8          | TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS . param_list TOKEN_RIGHT_PARENTHESIS TOKEN_SEMICOLON
 
-    $default  reduce using rule 88 (operator)
+    TOKEN_IDENTIFIER  shift, and go to state 89
+
+    $default  reduce using rule 54 (param_list)
+
+    param_list  go to state 90
 
 
 State 61
 
-   85 operator: TOKEN_ADD .
+   10 var_decl: TOKEN_IDENTIFIER TOKEN_COLON type TOKEN_ASSIGN expr . TOKEN_SEMICOLON
 
-    $default  reduce using rule 85 (operator)
+    TOKEN_SEMICOLON  shift, and go to state 91
 
 
 State 62
 
-   89 operator: TOKEN_MULTIPLY .
+   51 array_decl: TOKEN_IDENTIFIER TOKEN_COLON array_type TOKEN_ASSIGN TOKEN_LEFT_BRACE . array_expr_list TOKEN_RIGHT_BRACE TOKEN_SEMICOLON
 
-    $default  reduce using rule 89 (operator)
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_LEFT_BRACE        shift, and go to state 92
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
+
+    access               go to state 42
+    array_access         go to state 43
+    array_expr_list      go to state 93
+    nested_array_braces  go to state 94
+    expr_assign          go to state 45
+    inc_or_dec           go to state 46
+    expr_val             go to state 47
+    expr                 go to state 95
+    expr2                go to state 49
+    expr3                go to state 50
+    expr4                go to state 51
+    expr5                go to state 52
+    expr6                go to state 53
+    expr7                go to state 54
+    expr8                go to state 55
+    expr9                go to state 56
+    boolean_literal      go to state 57
+    func_call            go to state 58
+    data_atom            go to state 59
 
 
 State 63
 
-   90 operator: TOKEN_MODULO .
+  118 data_atom: access .
 
-    $default  reduce using rule 90 (operator)
+    $default  reduce using rule 118 (data_atom)
 
 
 State 64
 
-   91 operator: TOKEN_EXPONENT .
+  104 expr8: TOKEN_SUBTRACT expr9 .
+  107 expr9: expr9 . TOKEN_EXPONENT data_atom
 
-    $default  reduce using rule 91 (operator)
+    TOKEN_EXPONENT  shift, and go to state 88
+
+    $default  reduce using rule 104 (expr8)
 
 
 State 65
 
-   83 operator: TOKEN_NOT_EQUAL .
+  105 expr8: TOKEN_ADD expr9 .
+  107 expr9: expr9 . TOKEN_EXPONENT data_atom
 
-    $default  reduce using rule 83 (operator)
+    TOKEN_EXPONENT  shift, and go to state 88
+
+    $default  reduce using rule 105 (expr8)
 
 
 State 66
 
-   84 operator: TOKEN_EQUAL .
+  116 data_atom: TOKEN_NEGATIVE data_atom .
 
-    $default  reduce using rule 84 (operator)
+    $default  reduce using rule 116 (data_atom)
 
 
 State 67
 
-   81 operator: TOKEN_LESS_THAN .
+  120 data_atom: TOKEN_LEFT_PARENTHESIS expr . TOKEN_RIGHT_PARENTHESIS
 
-    $default  reduce using rule 81 (operator)
+    TOKEN_RIGHT_PARENTHESIS  shift, and go to state 96
 
 
 State 68
 
-   80 operator: TOKEN_GREATER_THAN .
+  103 expr8: TOKEN_NOT expr9 .
+  107 expr9: expr9 . TOKEN_EXPONENT data_atom
 
-    $default  reduce using rule 80 (operator)
+    TOKEN_EXPONENT  shift, and go to state 88
+
+    $default  reduce using rule 103 (expr8)
 
 
 State 69
 
-   86 operator: TOKEN_AND .
+  110 func_call: TOKEN_IDENTIFIER TOKEN_LEFT_PARENTHESIS . expr_list TOKEN_RIGHT_PARENTHESIS
 
-    $default  reduce using rule 86 (operator)
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
+
+    $default  reduce using rule 80 (expr_list)
+
+    access           go to state 42
+    array_access     go to state 43
+    expr_assign      go to state 45
+    inc_or_dec       go to state 46
+    expr_val         go to state 47
+    expr             go to state 97
+    expr_list        go to state 98
+    expr2            go to state 49
+    expr3            go to state 50
+    expr4            go to state 51
+    expr5            go to state 52
+    expr6            go to state 53
+    expr7            go to state 54
+    expr8            go to state 55
+    expr9            go to state 56
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
 
 
 State 70
 
-   87 operator: TOKEN_OR .
+   27 array_access: TOKEN_IDENTIFIER TOKEN_LEFT_BRACKET . expr TOKEN_RIGHT_BRACKET array_access_recursive
 
-    $default  reduce using rule 87 (operator)
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
+
+    access           go to state 42
+    array_access     go to state 43
+    expr_assign      go to state 45
+    inc_or_dec       go to state 46
+    expr_val         go to state 47
+    expr             go to state 99
+    expr2            go to state 49
+    expr3            go to state 50
+    expr4            go to state 51
+    expr5            go to state 52
+    expr6            go to state 53
+    expr7            go to state 54
+    expr8            go to state 55
+    expr9            go to state 56
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
 
 
 State 71
 
-   82 operator: TOKEN_LESS_THAN_OR_EQUAL .
+   70 inc_or_dec: TOKEN_IDENTIFIER TOKEN_PLUS_PLUS .
 
-    $default  reduce using rule 82 (operator)
+    $default  reduce using rule 70 (inc_or_dec)
 
 
 State 72
 
-   79 operator: TOKEN_GREATER_THAN_OR_EQUAL .
+   71 inc_or_dec: TOKEN_IDENTIFIER TOKEN_MINUS_MINUS .
 
-    $default  reduce using rule 79 (operator)
+    $default  reduce using rule 71 (inc_or_dec)
 
 
 State 73
 
-   66 expr_val: expr_val operator . data_atom
+   69 expr_assign: access TOKEN_ASSIGN . expr
 
-    TOKEN_FALSE             shift, and go to state 27
-    TOKEN_TRUE              shift, and go to state 28
-    TOKEN_NEGATIVE          shift, and go to state 29
-    TOKEN_LEFT_PARENTHESIS  shift, and go to state 30
-    TOKEN_NOT               shift, and go to state 31
-    TOKEN_IDENTIFIER        shift, and go to state 48
-    TOKEN_INT_LITERAL       shift, and go to state 33
-    TOKEN_FLOAT_LITERAL     shift, and go to state 34
-    TOKEN_STRING_LITERAL    shift, and go to state 35
-    TOKEN_CHAR_LITERAL      shift, and go to state 36
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
 
-    access           go to state 37
-    array_access     go to state 38
-    boolean_literal  go to state 42
-    func_call        go to state 43
-    data_atom        go to state 86
+    access           go to state 42
+    array_access     go to state 43
+    expr_assign      go to state 45
+    inc_or_dec       go to state 46
+    expr_val         go to state 47
+    expr             go to state 100
+    expr2            go to state 49
+    expr3            go to state 50
+    expr4            go to state 51
+    expr5            go to state 52
+    expr6            go to state 53
+    expr7            go to state 54
+    expr8            go to state 55
+    expr9            go to state 56
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
 
 
 State 74
 
-   47 param_list: TOKEN_IDENTIFIER . TOKEN_COLON type param_recursive
+   43 array_type: TOKEN_ARRAY TOKEN_LEFT_BRACKET array_size TOKEN_RIGHT_BRACKET . every_type
 
-    TOKEN_COLON  shift, and go to state 87
+    TOKEN_ARRAY    shift, and go to state 13
+    TOKEN_BOOLEAN  shift, and go to state 14
+    TOKEN_CHAR     shift, and go to state 15
+    TOKEN_FLOAT    shift, and go to state 16
+    TOKEN_INT      shift, and go to state 18
+    TOKEN_STRING   shift, and go to state 19
+
+    $default  reduce using rule 35 (type)
+
+    type        go to state 101
+    every_type  go to state 102
+    array_type  go to state 103
 
 
 State 75
 
-   29 func_decl: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list . TOKEN_RIGHT_PARENTHESIS TOKEN_ASSIGN TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE
-   30          | TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list . TOKEN_RIGHT_PARENTHESIS TOKEN_SEMICOLON
+   84 expr2: expr2 TOKEN_OR . expr3
 
-    TOKEN_RIGHT_PARENTHESIS  shift, and go to state 88
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
+
+    access           go to state 63
+    array_access     go to state 43
+    inc_or_dec       go to state 46
+    expr3            go to state 104
+    expr4            go to state 51
+    expr5            go to state 52
+    expr6            go to state 53
+    expr7            go to state 54
+    expr8            go to state 55
+    expr9            go to state 56
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
 
 
 State 76
 
-   32 var_decl: TOKEN_IDENTIFIER TOKEN_COLON type TOKEN_ASSIGN expr_val TOKEN_SEMICOLON .
+   86 expr3: expr3 TOKEN_AND . expr4
 
-    $default  reduce using rule 32 (var_decl)
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
+
+    access           go to state 63
+    array_access     go to state 43
+    inc_or_dec       go to state 46
+    expr4            go to state 105
+    expr5            go to state 52
+    expr6            go to state 53
+    expr7            go to state 54
+    expr8            go to state 55
+    expr9            go to state 56
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
 
 
 State 77
 
-   66 expr_val: expr_val . operator data_atom
-   75 expr_val_list: expr_val . expr_val_list_recursive
+   88 expr4: expr4 TOKEN_NOT_EQUAL . expr5
 
-    TOKEN_SUBTRACT               shift, and go to state 60
-    TOKEN_ADD                    shift, and go to state 61
-    TOKEN_MULTIPLY               shift, and go to state 62
-    TOKEN_MODULO                 shift, and go to state 63
-    TOKEN_EXPONENT               shift, and go to state 64
-    TOKEN_NOT_EQUAL              shift, and go to state 65
-    TOKEN_EQUAL                  shift, and go to state 66
-    TOKEN_LESS_THAN              shift, and go to state 67
-    TOKEN_GREATER_THAN           shift, and go to state 68
-    TOKEN_AND                    shift, and go to state 69
-    TOKEN_OR                     shift, and go to state 70
-    TOKEN_COMMA                  shift, and go to state 89
-    TOKEN_LESS_THAN_OR_EQUAL     shift, and go to state 71
-    TOKEN_GREATER_THAN_OR_EQUAL  shift, and go to state 72
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
 
-    $default  reduce using rule 78 (expr_val_list_recursive)
-
-    expr_val_list_recursive  go to state 90
-    operator                 go to state 73
+    access           go to state 63
+    array_access     go to state 43
+    inc_or_dec       go to state 46
+    expr5            go to state 106
+    expr6            go to state 53
+    expr7            go to state 54
+    expr8            go to state 55
+    expr9            go to state 56
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
 
 
 State 78
 
-   33 var_decl: TOKEN_IDENTIFIER TOKEN_COLON array_type TOKEN_ASSIGN TOKEN_LEFT_BRACE expr_val_list . TOKEN_RIGHT_BRACE TOKEN_SEMICOLON
+   87 expr4: expr4 TOKEN_EQUAL . expr5
 
-    TOKEN_RIGHT_BRACE  shift, and go to state 91
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
+
+    access           go to state 63
+    array_access     go to state 43
+    inc_or_dec       go to state 46
+    expr5            go to state 107
+    expr6            go to state 53
+    expr7            go to state 54
+    expr8            go to state 55
+    expr9            go to state 56
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
 
 
 State 79
 
-   63 expr_assign: access TOKEN_ASSIGN . expr
+   92 expr5: expr5 TOKEN_LESS_THAN . expr6
 
-    TOKEN_FALSE             shift, and go to state 27
-    TOKEN_TRUE              shift, and go to state 28
-    TOKEN_NEGATIVE          shift, and go to state 29
-    TOKEN_LEFT_PARENTHESIS  shift, and go to state 30
-    TOKEN_NOT               shift, and go to state 31
-    TOKEN_IDENTIFIER        shift, and go to state 32
-    TOKEN_INT_LITERAL       shift, and go to state 33
-    TOKEN_FLOAT_LITERAL     shift, and go to state 34
-    TOKEN_STRING_LITERAL    shift, and go to state 35
-    TOKEN_CHAR_LITERAL      shift, and go to state 36
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
 
-    access           go to state 50
-    array_access     go to state 38
-    expr_assign      go to state 51
-    inc_or_dec       go to state 40
-    expr_val         go to state 52
-    expr             go to state 92
-    boolean_literal  go to state 42
-    func_call        go to state 43
-    data_atom        go to state 44
+    access           go to state 63
+    array_access     go to state 43
+    inc_or_dec       go to state 46
+    expr6            go to state 108
+    expr7            go to state 54
+    expr8            go to state 55
+    expr9            go to state 56
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
 
 
 State 80
 
-  104 data_atom: TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS .
+   93 expr5: expr5 TOKEN_GREATER_THAN . expr6
 
-    $default  reduce using rule 104 (data_atom)
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
+
+    access           go to state 63
+    array_access     go to state 43
+    inc_or_dec       go to state 46
+    expr6            go to state 109
+    expr7            go to state 54
+    expr8            go to state 55
+    expr9            go to state 56
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
 
 
 State 81
 
-   94 func_call: TOKEN_IDENTIFIER TOKEN_LEFT_PARENTHESIS expr_val_list . TOKEN_RIGHT_PARENTHESIS
+   91 expr5: expr5 TOKEN_LESS_THAN_OR_EQUAL . expr6
 
-    TOKEN_RIGHT_PARENTHESIS  shift, and go to state 93
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
+
+    access           go to state 63
+    array_access     go to state 43
+    inc_or_dec       go to state 46
+    expr6            go to state 110
+    expr7            go to state 54
+    expr8            go to state 55
+    expr9            go to state 56
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
 
 
 State 82
 
-   20 array_access: TOKEN_IDENTIFIER TOKEN_LEFT_BRACKET expr_val . TOKEN_RIGHT_BRACKET array_access_recursive
-   66 expr_val: expr_val . operator data_atom
+   94 expr5: expr5 TOKEN_GREATER_THAN_OR_EQUAL . expr6
 
-    TOKEN_SUBTRACT               shift, and go to state 60
-    TOKEN_ADD                    shift, and go to state 61
-    TOKEN_MULTIPLY               shift, and go to state 62
-    TOKEN_MODULO                 shift, and go to state 63
-    TOKEN_EXPONENT               shift, and go to state 64
-    TOKEN_RIGHT_BRACKET          shift, and go to state 94
-    TOKEN_NOT_EQUAL              shift, and go to state 65
-    TOKEN_EQUAL                  shift, and go to state 66
-    TOKEN_LESS_THAN              shift, and go to state 67
-    TOKEN_GREATER_THAN           shift, and go to state 68
-    TOKEN_AND                    shift, and go to state 69
-    TOKEN_OR                     shift, and go to state 70
-    TOKEN_LESS_THAN_OR_EQUAL     shift, and go to state 71
-    TOKEN_GREATER_THAN_OR_EQUAL  shift, and go to state 72
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
 
-    operator  go to state 73
+    access           go to state 63
+    array_access     go to state 43
+    inc_or_dec       go to state 46
+    expr6            go to state 111
+    expr7            go to state 54
+    expr8            go to state 55
+    expr9            go to state 56
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
 
 
 State 83
 
-   42 every_type: type .
+   97 expr6: expr7 TOKEN_SUBTRACT . expr6
 
-    $default  reduce using rule 42 (every_type)
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
+
+    access           go to state 63
+    array_access     go to state 43
+    inc_or_dec       go to state 46
+    expr6            go to state 112
+    expr7            go to state 54
+    expr8            go to state 55
+    expr9            go to state 56
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
 
 
 State 84
 
-   44 array_type: TOKEN_ARRAY TOKEN_LEFT_BRACKET array_size TOKEN_RIGHT_BRACKET every_type .
+   96 expr6: expr7 TOKEN_ADD . expr6
 
-    $default  reduce using rule 44 (array_type)
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
+
+    access           go to state 63
+    array_access     go to state 43
+    inc_or_dec       go to state 46
+    expr6            go to state 113
+    expr7            go to state 54
+    expr8            go to state 55
+    expr9            go to state 56
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
 
 
 State 85
 
-   43 every_type: array_type .
+  100 expr7: expr7 TOKEN_MULTIPLY . expr8
 
-    $default  reduce using rule 43 (every_type)
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
+
+    access           go to state 63
+    array_access     go to state 43
+    inc_or_dec       go to state 46
+    expr8            go to state 114
+    expr9            go to state 56
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
 
 
 State 86
 
-   66 expr_val: expr_val operator data_atom .
+  101 expr7: expr7 TOKEN_DIVISION . expr8
 
-    $default  reduce using rule 66 (expr_val)
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
+
+    access           go to state 63
+    array_access     go to state 43
+    inc_or_dec       go to state 46
+    expr8            go to state 115
+    expr9            go to state 56
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
 
 
 State 87
 
-   47 param_list: TOKEN_IDENTIFIER TOKEN_COLON . type param_recursive
+   99 expr7: expr7 TOKEN_MODULO . expr8
 
-    TOKEN_BOOLEAN  shift, and go to state 11
-    TOKEN_CHAR     shift, and go to state 12
-    TOKEN_FLOAT    shift, and go to state 13
-    TOKEN_INT      shift, and go to state 15
-    TOKEN_STRING   shift, and go to state 16
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
 
-    $default  reduce using rule 28 (type)
-
-    type  go to state 95
+    access           go to state 63
+    array_access     go to state 43
+    inc_or_dec       go to state 46
+    expr8            go to state 116
+    expr9            go to state 56
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
 
 
 State 88
 
-   29 func_decl: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS . TOKEN_ASSIGN TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE
-   30          | TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS . TOKEN_SEMICOLON
+  107 expr9: expr9 TOKEN_EXPONENT . data_atom
 
-    TOKEN_ASSIGN     shift, and go to state 96
-    TOKEN_SEMICOLON  shift, and go to state 97
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
+
+    access           go to state 63
+    array_access     go to state 43
+    inc_or_dec       go to state 46
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 117
 
 
 State 89
 
-   77 expr_val_list_recursive: TOKEN_COMMA . expr_val_list
+   53 param_list: TOKEN_IDENTIFIER . TOKEN_COLON type param_recursive
 
-    TOKEN_FALSE             shift, and go to state 27
-    TOKEN_TRUE              shift, and go to state 28
-    TOKEN_NEGATIVE          shift, and go to state 29
-    TOKEN_LEFT_PARENTHESIS  shift, and go to state 30
-    TOKEN_NOT               shift, and go to state 31
-    TOKEN_IDENTIFIER        shift, and go to state 32
-    TOKEN_INT_LITERAL       shift, and go to state 33
-    TOKEN_FLOAT_LITERAL     shift, and go to state 34
-    TOKEN_STRING_LITERAL    shift, and go to state 35
-    TOKEN_CHAR_LITERAL      shift, and go to state 36
-
-    $default  reduce using rule 76 (expr_val_list)
-
-    access           go to state 37
-    array_access     go to state 38
-    inc_or_dec       go to state 40
-    expr_val         go to state 77
-    expr_val_list    go to state 98
-    boolean_literal  go to state 42
-    func_call        go to state 43
-    data_atom        go to state 44
+    TOKEN_COLON  shift, and go to state 118
 
 
 State 90
 
-   75 expr_val_list: expr_val expr_val_list_recursive .
+    7 func_decl: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list . TOKEN_RIGHT_PARENTHESIS TOKEN_ASSIGN TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE
+    8          | TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list . TOKEN_RIGHT_PARENTHESIS TOKEN_SEMICOLON
 
-    $default  reduce using rule 75 (expr_val_list)
+    TOKEN_RIGHT_PARENTHESIS  shift, and go to state 119
 
 
 State 91
 
-   33 var_decl: TOKEN_IDENTIFIER TOKEN_COLON array_type TOKEN_ASSIGN TOKEN_LEFT_BRACE expr_val_list TOKEN_RIGHT_BRACE . TOKEN_SEMICOLON
+   10 var_decl: TOKEN_IDENTIFIER TOKEN_COLON type TOKEN_ASSIGN expr TOKEN_SEMICOLON .
 
-    TOKEN_SEMICOLON  shift, and go to state 99
+    $default  reduce using rule 10 (var_decl)
 
 
 State 92
 
-   63 expr_assign: access TOKEN_ASSIGN expr .
+   48 nested_array_braces: TOKEN_LEFT_BRACE . array_expr_list TOKEN_RIGHT_BRACE nested_array_braces_recursive
 
-    $default  reduce using rule 63 (expr_assign)
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_LEFT_BRACE        shift, and go to state 92
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
+
+    access               go to state 42
+    array_access         go to state 43
+    array_expr_list      go to state 120
+    nested_array_braces  go to state 94
+    expr_assign          go to state 45
+    inc_or_dec           go to state 46
+    expr_val             go to state 47
+    expr                 go to state 95
+    expr2                go to state 49
+    expr3                go to state 50
+    expr4                go to state 51
+    expr5                go to state 52
+    expr6                go to state 53
+    expr7                go to state 54
+    expr8                go to state 55
+    expr9                go to state 56
+    boolean_literal      go to state 57
+    func_call            go to state 58
+    data_atom            go to state 59
 
 
 State 93
 
-   94 func_call: TOKEN_IDENTIFIER TOKEN_LEFT_PARENTHESIS expr_val_list TOKEN_RIGHT_PARENTHESIS .
+   51 array_decl: TOKEN_IDENTIFIER TOKEN_COLON array_type TOKEN_ASSIGN TOKEN_LEFT_BRACE array_expr_list . TOKEN_RIGHT_BRACE TOKEN_SEMICOLON
 
-    $default  reduce using rule 94 (func_call)
+    TOKEN_RIGHT_BRACE  shift, and go to state 121
 
 
 State 94
 
-   20 array_access: TOKEN_IDENTIFIER TOKEN_LEFT_BRACKET expr_val TOKEN_RIGHT_BRACKET . array_access_recursive
+   47 array_expr_list: nested_array_braces .
 
-    TOKEN_LEFT_BRACKET  shift, and go to state 100
-
-    $default  reduce using rule 22 (array_access_recursive)
-
-    array_access_recursive  go to state 101
+    $default  reduce using rule 47 (array_expr_list)
 
 
 State 95
 
-   47 param_list: TOKEN_IDENTIFIER TOKEN_COLON type . param_recursive
+   46 array_expr_list: expr . expr_list_recursive
 
-    TOKEN_COMMA  shift, and go to state 102
+    TOKEN_COMMA  shift, and go to state 122
 
-    $default  reduce using rule 41 (param_recursive)
+    $default  reduce using rule 82 (expr_list_recursive)
 
-    param_recursive  go to state 103
+    expr_list_recursive  go to state 123
 
 
 State 96
 
-   29 func_decl: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_ASSIGN . TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE
+  120 data_atom: TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS .
 
-    TOKEN_LEFT_BRACE  shift, and go to state 104
+    $default  reduce using rule 120 (data_atom)
 
 
 State 97
 
-   30 func_decl: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_SEMICOLON .
+   79 expr_list: expr . expr_list_recursive
 
-    $default  reduce using rule 30 (func_decl)
+    TOKEN_COMMA  shift, and go to state 122
+
+    $default  reduce using rule 82 (expr_list_recursive)
+
+    expr_list_recursive  go to state 124
 
 
 State 98
 
-   77 expr_val_list_recursive: TOKEN_COMMA expr_val_list .
+  110 func_call: TOKEN_IDENTIFIER TOKEN_LEFT_PARENTHESIS expr_list . TOKEN_RIGHT_PARENTHESIS
 
-    $default  reduce using rule 77 (expr_val_list_recursive)
+    TOKEN_RIGHT_PARENTHESIS  shift, and go to state 125
 
 
 State 99
 
-   33 var_decl: TOKEN_IDENTIFIER TOKEN_COLON array_type TOKEN_ASSIGN TOKEN_LEFT_BRACE expr_val_list TOKEN_RIGHT_BRACE TOKEN_SEMICOLON .
+   27 array_access: TOKEN_IDENTIFIER TOKEN_LEFT_BRACKET expr . TOKEN_RIGHT_BRACKET array_access_recursive
 
-    $default  reduce using rule 33 (var_decl)
+    TOKEN_RIGHT_BRACKET  shift, and go to state 126
 
 
 State 100
 
-   21 array_access_recursive: TOKEN_LEFT_BRACKET . expr_val TOKEN_RIGHT_BRACKET array_access_recursive
+   69 expr_assign: access TOKEN_ASSIGN expr .
 
-    TOKEN_FALSE             shift, and go to state 27
-    TOKEN_TRUE              shift, and go to state 28
-    TOKEN_NEGATIVE          shift, and go to state 29
-    TOKEN_LEFT_PARENTHESIS  shift, and go to state 30
-    TOKEN_NOT               shift, and go to state 31
-    TOKEN_IDENTIFIER        shift, and go to state 32
-    TOKEN_INT_LITERAL       shift, and go to state 33
-    TOKEN_FLOAT_LITERAL     shift, and go to state 34
-    TOKEN_STRING_LITERAL    shift, and go to state 35
-    TOKEN_CHAR_LITERAL      shift, and go to state 36
-
-    access           go to state 37
-    array_access     go to state 38
-    inc_or_dec       go to state 40
-    expr_val         go to state 105
-    boolean_literal  go to state 42
-    func_call        go to state 43
-    data_atom        go to state 44
+    $default  reduce using rule 69 (expr_assign)
 
 
 State 101
 
-   20 array_access: TOKEN_IDENTIFIER TOKEN_LEFT_BRACKET expr_val TOKEN_RIGHT_BRACKET array_access_recursive .
+   41 every_type: type .
 
-    $default  reduce using rule 20 (array_access)
+    $default  reduce using rule 41 (every_type)
 
 
 State 102
 
-   40 param_recursive: TOKEN_COMMA . TOKEN_IDENTIFIER TOKEN_COLON type param_recursive
+   43 array_type: TOKEN_ARRAY TOKEN_LEFT_BRACKET array_size TOKEN_RIGHT_BRACKET every_type .
 
-    TOKEN_IDENTIFIER  shift, and go to state 106
+    $default  reduce using rule 43 (array_type)
 
 
 State 103
 
-   47 param_list: TOKEN_IDENTIFIER TOKEN_COLON type param_recursive .
+   42 every_type: array_type .
 
-    $default  reduce using rule 47 (param_list)
+    $default  reduce using rule 42 (every_type)
 
 
 State 104
 
-   29 func_decl: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_ASSIGN TOKEN_LEFT_BRACE . stmt_list TOKEN_RIGHT_BRACE
+   84 expr2: expr2 TOKEN_OR expr3 .
+   86 expr3: expr3 . TOKEN_AND expr4
 
-    $default  reduce using rule 50 (stmt_list)
+    TOKEN_AND  shift, and go to state 76
 
-    stmt_list  go to state 107
+    $default  reduce using rule 84 (expr2)
 
 
 State 105
 
-   21 array_access_recursive: TOKEN_LEFT_BRACKET expr_val . TOKEN_RIGHT_BRACKET array_access_recursive
-   66 expr_val: expr_val . operator data_atom
+   86 expr3: expr3 TOKEN_AND expr4 .
+   87 expr4: expr4 . TOKEN_EQUAL expr5
+   88      | expr4 . TOKEN_NOT_EQUAL expr5
 
-    TOKEN_SUBTRACT               shift, and go to state 60
-    TOKEN_ADD                    shift, and go to state 61
-    TOKEN_MULTIPLY               shift, and go to state 62
-    TOKEN_MODULO                 shift, and go to state 63
-    TOKEN_EXPONENT               shift, and go to state 64
-    TOKEN_RIGHT_BRACKET          shift, and go to state 108
-    TOKEN_NOT_EQUAL              shift, and go to state 65
-    TOKEN_EQUAL                  shift, and go to state 66
-    TOKEN_LESS_THAN              shift, and go to state 67
-    TOKEN_GREATER_THAN           shift, and go to state 68
-    TOKEN_AND                    shift, and go to state 69
-    TOKEN_OR                     shift, and go to state 70
-    TOKEN_LESS_THAN_OR_EQUAL     shift, and go to state 71
-    TOKEN_GREATER_THAN_OR_EQUAL  shift, and go to state 72
+    TOKEN_NOT_EQUAL  shift, and go to state 77
+    TOKEN_EQUAL      shift, and go to state 78
 
-    operator  go to state 73
+    $default  reduce using rule 86 (expr3)
 
 
 State 106
 
-   40 param_recursive: TOKEN_COMMA TOKEN_IDENTIFIER . TOKEN_COLON type param_recursive
+   88 expr4: expr4 TOKEN_NOT_EQUAL expr5 .
+   91 expr5: expr5 . TOKEN_LESS_THAN_OR_EQUAL expr6
+   92      | expr5 . TOKEN_LESS_THAN expr6
+   93      | expr5 . TOKEN_GREATER_THAN expr6
+   94      | expr5 . TOKEN_GREATER_THAN_OR_EQUAL expr6
 
-    TOKEN_COLON  shift, and go to state 109
+    TOKEN_LESS_THAN              shift, and go to state 79
+    TOKEN_GREATER_THAN           shift, and go to state 80
+    TOKEN_LESS_THAN_OR_EQUAL     shift, and go to state 81
+    TOKEN_GREATER_THAN_OR_EQUAL  shift, and go to state 82
+
+    $default  reduce using rule 88 (expr4)
 
 
 State 107
 
-   29 func_decl: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_ASSIGN TOKEN_LEFT_BRACE stmt_list . TOKEN_RIGHT_BRACE
-   49 stmt_list: stmt_list . stmt
+   87 expr4: expr4 TOKEN_EQUAL expr5 .
+   91 expr5: expr5 . TOKEN_LESS_THAN_OR_EQUAL expr6
+   92      | expr5 . TOKEN_LESS_THAN expr6
+   93      | expr5 . TOKEN_GREATER_THAN expr6
+   94      | expr5 . TOKEN_GREATER_THAN_OR_EQUAL expr6
 
-    TOKEN_FOR          shift, and go to state 110
-    TOKEN_IF           shift, and go to state 111
-    TOKEN_PRINT        shift, and go to state 112
-    TOKEN_RETURN       shift, and go to state 113
-    TOKEN_LEFT_BRACE   shift, and go to state 114
-    TOKEN_RIGHT_BRACE  shift, and go to state 115
-    TOKEN_IDENTIFIER   shift, and go to state 116
+    TOKEN_LESS_THAN              shift, and go to state 79
+    TOKEN_GREATER_THAN           shift, and go to state 80
+    TOKEN_LESS_THAN_OR_EQUAL     shift, and go to state 81
+    TOKEN_GREATER_THAN_OR_EQUAL  shift, and go to state 82
 
-    access        go to state 117
-    array_access  go to state 38
-    var_decl      go to state 118
-    stmt_block    go to state 119
-    stmt          go to state 120
-    return_stmt   go to state 121
-    expr_assign   go to state 122
-    inc_or_dec    go to state 123
-    for_stmt      go to state 124
-    func_call     go to state 125
-    print_stmt    go to state 126
+    $default  reduce using rule 87 (expr4)
 
 
 State 108
 
-   21 array_access_recursive: TOKEN_LEFT_BRACKET expr_val TOKEN_RIGHT_BRACKET . array_access_recursive
+   92 expr5: expr5 TOKEN_LESS_THAN expr6 .
 
-    TOKEN_LEFT_BRACKET  shift, and go to state 100
-
-    $default  reduce using rule 22 (array_access_recursive)
-
-    array_access_recursive  go to state 127
+    $default  reduce using rule 92 (expr5)
 
 
 State 109
 
-   40 param_recursive: TOKEN_COMMA TOKEN_IDENTIFIER TOKEN_COLON . type param_recursive
+   93 expr5: expr5 TOKEN_GREATER_THAN expr6 .
 
-    TOKEN_BOOLEAN  shift, and go to state 11
-    TOKEN_CHAR     shift, and go to state 12
-    TOKEN_FLOAT    shift, and go to state 13
-    TOKEN_INT      shift, and go to state 15
-    TOKEN_STRING   shift, and go to state 16
-
-    $default  reduce using rule 28 (type)
-
-    type  go to state 128
+    $default  reduce using rule 93 (expr5)
 
 
 State 110
 
-   71 for_stmt: TOKEN_FOR . for_cond
+   91 expr5: expr5 TOKEN_LESS_THAN_OR_EQUAL expr6 .
 
-    TOKEN_LEFT_PARENTHESIS  shift, and go to state 129
-
-    for_cond  go to state 130
+    $default  reduce using rule 91 (expr5)
 
 
 State 111
 
-   52 stmt: TOKEN_IF . TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS stmt
-   53     | TOKEN_IF . TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE stmt
+   94 expr5: expr5 TOKEN_GREATER_THAN_OR_EQUAL expr6 .
 
-    TOKEN_LEFT_PARENTHESIS  shift, and go to state 131
+    $default  reduce using rule 94 (expr5)
 
 
 State 112
 
-  105 print_stmt: TOKEN_PRINT . expr_val_list
+   97 expr6: expr7 TOKEN_SUBTRACT expr6 .
 
-    TOKEN_FALSE             shift, and go to state 27
-    TOKEN_TRUE              shift, and go to state 28
-    TOKEN_NEGATIVE          shift, and go to state 29
-    TOKEN_LEFT_PARENTHESIS  shift, and go to state 30
-    TOKEN_NOT               shift, and go to state 31
-    TOKEN_IDENTIFIER        shift, and go to state 32
-    TOKEN_INT_LITERAL       shift, and go to state 33
-    TOKEN_FLOAT_LITERAL     shift, and go to state 34
-    TOKEN_STRING_LITERAL    shift, and go to state 35
-    TOKEN_CHAR_LITERAL      shift, and go to state 36
-
-    $default  reduce using rule 76 (expr_val_list)
-
-    access           go to state 37
-    array_access     go to state 38
-    inc_or_dec       go to state 40
-    expr_val         go to state 77
-    expr_val_list    go to state 132
-    boolean_literal  go to state 42
-    func_call        go to state 43
-    data_atom        go to state 44
+    $default  reduce using rule 97 (expr6)
 
 
 State 113
 
-   61 return_stmt: TOKEN_RETURN . expr
-   62            | TOKEN_RETURN .
+   96 expr6: expr7 TOKEN_ADD expr6 .
 
-    TOKEN_FALSE             shift, and go to state 27
-    TOKEN_TRUE              shift, and go to state 28
-    TOKEN_NEGATIVE          shift, and go to state 29
-    TOKEN_LEFT_PARENTHESIS  shift, and go to state 30
-    TOKEN_NOT               shift, and go to state 31
-    TOKEN_IDENTIFIER        shift, and go to state 32
-    TOKEN_INT_LITERAL       shift, and go to state 33
-    TOKEN_FLOAT_LITERAL     shift, and go to state 34
-    TOKEN_STRING_LITERAL    shift, and go to state 35
-    TOKEN_CHAR_LITERAL      shift, and go to state 36
-
-    $default  reduce using rule 62 (return_stmt)
-
-    access           go to state 50
-    array_access     go to state 38
-    expr_assign      go to state 51
-    inc_or_dec       go to state 40
-    expr_val         go to state 52
-    expr             go to state 133
-    boolean_literal  go to state 42
-    func_call        go to state 43
-    data_atom        go to state 44
+    $default  reduce using rule 96 (expr6)
 
 
 State 114
 
-   37 stmt_block: TOKEN_LEFT_BRACE . stmt_list TOKEN_RIGHT_BRACE
+  100 expr7: expr7 TOKEN_MULTIPLY expr8 .
 
-    $default  reduce using rule 50 (stmt_list)
-
-    stmt_list  go to state 134
+    $default  reduce using rule 100 (expr7)
 
 
 State 115
 
-   29 func_decl: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_ASSIGN TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE .
+  101 expr7: expr7 TOKEN_DIVISION expr8 .
 
-    $default  reduce using rule 29 (func_decl)
+    $default  reduce using rule 101 (expr7)
 
 
 State 116
 
-   18 access: TOKEN_IDENTIFIER .
-   20 array_access: TOKEN_IDENTIFIER . TOKEN_LEFT_BRACKET expr_val TOKEN_RIGHT_BRACKET array_access_recursive
-   31 var_decl: TOKEN_IDENTIFIER . TOKEN_COLON type TOKEN_SEMICOLON
-   32         | TOKEN_IDENTIFIER . TOKEN_COLON type TOKEN_ASSIGN expr_val TOKEN_SEMICOLON
-   33         | TOKEN_IDENTIFIER . TOKEN_COLON array_type TOKEN_ASSIGN TOKEN_LEFT_BRACE expr_val_list TOKEN_RIGHT_BRACE TOKEN_SEMICOLON
-   34         | TOKEN_IDENTIFIER . TOKEN_COLON array_type TOKEN_SEMICOLON
-   64 inc_or_dec: TOKEN_IDENTIFIER . TOKEN_PLUS_PLUS
-   65           | TOKEN_IDENTIFIER . TOKEN_MINUS_MINUS
-   94 func_call: TOKEN_IDENTIFIER . TOKEN_LEFT_PARENTHESIS expr_val_list TOKEN_RIGHT_PARENTHESIS
+   99 expr7: expr7 TOKEN_MODULO expr8 .
 
-    TOKEN_COLON             shift, and go to state 135
-    TOKEN_LEFT_PARENTHESIS  shift, and go to state 55
-    TOKEN_LEFT_BRACKET      shift, and go to state 56
-    TOKEN_PLUS_PLUS         shift, and go to state 57
-    TOKEN_MINUS_MINUS       shift, and go to state 58
-
-    $default  reduce using rule 18 (access)
+    $default  reduce using rule 99 (expr7)
 
 
 State 117
 
-   63 expr_assign: access . TOKEN_ASSIGN expr
+  107 expr9: expr9 TOKEN_EXPONENT data_atom .
 
-    TOKEN_ASSIGN  shift, and go to state 79
+    $default  reduce using rule 107 (expr9)
 
 
 State 118
 
-   59 stmt: var_decl .
+   53 param_list: TOKEN_IDENTIFIER TOKEN_COLON . type param_recursive
 
-    $default  reduce using rule 59 (stmt)
+    TOKEN_BOOLEAN  shift, and go to state 14
+    TOKEN_CHAR     shift, and go to state 15
+    TOKEN_FLOAT    shift, and go to state 16
+    TOKEN_INT      shift, and go to state 18
+    TOKEN_STRING   shift, and go to state 19
+
+    $default  reduce using rule 35 (type)
+
+    type  go to state 127
 
 
 State 119
 
-   58 stmt: stmt_block .
+    7 func_decl: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS . TOKEN_ASSIGN TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE
+    8          | TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS . TOKEN_SEMICOLON
 
-    $default  reduce using rule 58 (stmt)
+    TOKEN_ASSIGN     shift, and go to state 128
+    TOKEN_SEMICOLON  shift, and go to state 129
 
 
 State 120
 
-   49 stmt_list: stmt_list stmt .
+   48 nested_array_braces: TOKEN_LEFT_BRACE array_expr_list . TOKEN_RIGHT_BRACE nested_array_braces_recursive
 
-    $default  reduce using rule 49 (stmt_list)
+    TOKEN_RIGHT_BRACE  shift, and go to state 130
 
 
 State 121
 
-   55 stmt: return_stmt . TOKEN_SEMICOLON
+   51 array_decl: TOKEN_IDENTIFIER TOKEN_COLON array_type TOKEN_ASSIGN TOKEN_LEFT_BRACE array_expr_list TOKEN_RIGHT_BRACE . TOKEN_SEMICOLON
 
-    TOKEN_SEMICOLON  shift, and go to state 136
+    TOKEN_SEMICOLON  shift, and go to state 131
 
 
 State 122
 
-   54 stmt: expr_assign . TOKEN_SEMICOLON
+   81 expr_list_recursive: TOKEN_COMMA . expr expr_list_recursive
 
-    TOKEN_SEMICOLON  shift, and go to state 137
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
+
+    access           go to state 42
+    array_access     go to state 43
+    expr_assign      go to state 45
+    inc_or_dec       go to state 46
+    expr_val         go to state 47
+    expr             go to state 132
+    expr2            go to state 49
+    expr3            go to state 50
+    expr4            go to state 51
+    expr5            go to state 52
+    expr6            go to state 53
+    expr7            go to state 54
+    expr8            go to state 55
+    expr9            go to state 56
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
 
 
 State 123
 
-   57 stmt: inc_or_dec . TOKEN_SEMICOLON
+   46 array_expr_list: expr expr_list_recursive .
 
-    TOKEN_SEMICOLON  shift, and go to state 138
+    $default  reduce using rule 46 (array_expr_list)
 
 
 State 124
 
-   51 stmt: for_stmt . reg_end
+   79 expr_list: expr expr_list_recursive .
 
-    TOKEN_FOR         shift, and go to state 110
-    TOKEN_IF          shift, and go to state 111
-    TOKEN_PRINT       shift, and go to state 112
-    TOKEN_RETURN      shift, and go to state 113
-    TOKEN_LEFT_BRACE  shift, and go to state 114
-    TOKEN_SEMICOLON   shift, and go to state 139
-    TOKEN_IDENTIFIER  shift, and go to state 116
-
-    reg_end       go to state 140
-    access        go to state 117
-    array_access  go to state 38
-    var_decl      go to state 118
-    stmt_block    go to state 119
-    stmt          go to state 141
-    return_stmt   go to state 121
-    expr_assign   go to state 122
-    inc_or_dec    go to state 123
-    for_stmt      go to state 124
-    func_call     go to state 125
-    print_stmt    go to state 126
+    $default  reduce using rule 79 (expr_list)
 
 
 State 125
 
-   60 stmt: func_call . TOKEN_SEMICOLON
+  110 func_call: TOKEN_IDENTIFIER TOKEN_LEFT_PARENTHESIS expr_list TOKEN_RIGHT_PARENTHESIS .
 
-    TOKEN_SEMICOLON  shift, and go to state 142
+    $default  reduce using rule 110 (func_call)
 
 
 State 126
 
-   56 stmt: print_stmt . TOKEN_SEMICOLON
+   27 array_access: TOKEN_IDENTIFIER TOKEN_LEFT_BRACKET expr TOKEN_RIGHT_BRACKET . array_access_recursive
 
-    TOKEN_SEMICOLON  shift, and go to state 143
+    TOKEN_LEFT_BRACKET  shift, and go to state 133
+
+    $default  reduce using rule 29 (array_access_recursive)
+
+    array_access_recursive  go to state 134
 
 
 State 127
 
-   21 array_access_recursive: TOKEN_LEFT_BRACKET expr_val TOKEN_RIGHT_BRACKET array_access_recursive .
+   53 param_list: TOKEN_IDENTIFIER TOKEN_COLON type . param_recursive
 
-    $default  reduce using rule 21 (array_access_recursive)
+    TOKEN_COMMA  shift, and go to state 135
+
+    $default  reduce using rule 40 (param_recursive)
+
+    param_recursive  go to state 136
 
 
 State 128
 
-   40 param_recursive: TOKEN_COMMA TOKEN_IDENTIFIER TOKEN_COLON type . param_recursive
+    7 func_decl: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_ASSIGN . TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE
 
-    TOKEN_COMMA  shift, and go to state 102
-
-    $default  reduce using rule 41 (param_recursive)
-
-    param_recursive  go to state 144
+    TOKEN_LEFT_BRACE  shift, and go to state 137
 
 
 State 129
 
-   72 for_cond: TOKEN_LEFT_PARENTHESIS . for_expr TOKEN_SEMICOLON for_expr TOKEN_SEMICOLON for_expr TOKEN_RIGHT_PARENTHESIS
+    8 func_decl: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_SEMICOLON .
 
-    TOKEN_FALSE             shift, and go to state 27
-    TOKEN_TRUE              shift, and go to state 28
-    TOKEN_NEGATIVE          shift, and go to state 29
-    TOKEN_LEFT_PARENTHESIS  shift, and go to state 30
-    TOKEN_NOT               shift, and go to state 31
-    TOKEN_IDENTIFIER        shift, and go to state 32
-    TOKEN_INT_LITERAL       shift, and go to state 33
-    TOKEN_FLOAT_LITERAL     shift, and go to state 34
-    TOKEN_STRING_LITERAL    shift, and go to state 35
-    TOKEN_CHAR_LITERAL      shift, and go to state 36
-
-    $default  reduce using rule 74 (for_expr)
-
-    access           go to state 50
-    array_access     go to state 38
-    expr_assign      go to state 51
-    inc_or_dec       go to state 40
-    expr_val         go to state 52
-    expr             go to state 145
-    for_expr         go to state 146
-    boolean_literal  go to state 42
-    func_call        go to state 43
-    data_atom        go to state 44
+    $default  reduce using rule 8 (func_decl)
 
 
 State 130
 
-   71 for_stmt: TOKEN_FOR for_cond .
+   48 nested_array_braces: TOKEN_LEFT_BRACE array_expr_list TOKEN_RIGHT_BRACE . nested_array_braces_recursive
 
-    $default  reduce using rule 71 (for_stmt)
+    TOKEN_COMMA  shift, and go to state 138
+
+    $default  reduce using rule 50 (nested_array_braces_recursive)
+
+    nested_array_braces_recursive  go to state 139
 
 
 State 131
 
-   52 stmt: TOKEN_IF TOKEN_LEFT_PARENTHESIS . expr TOKEN_RIGHT_PARENTHESIS stmt
-   53     | TOKEN_IF TOKEN_LEFT_PARENTHESIS . expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE stmt
+   51 array_decl: TOKEN_IDENTIFIER TOKEN_COLON array_type TOKEN_ASSIGN TOKEN_LEFT_BRACE array_expr_list TOKEN_RIGHT_BRACE TOKEN_SEMICOLON .
 
-    TOKEN_FALSE             shift, and go to state 27
-    TOKEN_TRUE              shift, and go to state 28
-    TOKEN_NEGATIVE          shift, and go to state 29
-    TOKEN_LEFT_PARENTHESIS  shift, and go to state 30
-    TOKEN_NOT               shift, and go to state 31
-    TOKEN_IDENTIFIER        shift, and go to state 32
-    TOKEN_INT_LITERAL       shift, and go to state 33
-    TOKEN_FLOAT_LITERAL     shift, and go to state 34
-    TOKEN_STRING_LITERAL    shift, and go to state 35
-    TOKEN_CHAR_LITERAL      shift, and go to state 36
-
-    access           go to state 50
-    array_access     go to state 38
-    expr_assign      go to state 51
-    inc_or_dec       go to state 40
-    expr_val         go to state 52
-    expr             go to state 147
-    boolean_literal  go to state 42
-    func_call        go to state 43
-    data_atom        go to state 44
+    $default  reduce using rule 51 (array_decl)
 
 
 State 132
 
-  105 print_stmt: TOKEN_PRINT expr_val_list .
+   81 expr_list_recursive: TOKEN_COMMA expr . expr_list_recursive
 
-    $default  reduce using rule 105 (print_stmt)
+    TOKEN_COMMA  shift, and go to state 122
+
+    $default  reduce using rule 82 (expr_list_recursive)
+
+    expr_list_recursive  go to state 140
 
 
 State 133
 
-   61 return_stmt: TOKEN_RETURN expr .
+   28 array_access_recursive: TOKEN_LEFT_BRACKET . expr TOKEN_RIGHT_BRACKET array_access_recursive
 
-    $default  reduce using rule 61 (return_stmt)
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
+
+    access           go to state 42
+    array_access     go to state 43
+    expr_assign      go to state 45
+    inc_or_dec       go to state 46
+    expr_val         go to state 47
+    expr             go to state 141
+    expr2            go to state 49
+    expr3            go to state 50
+    expr4            go to state 51
+    expr5            go to state 52
+    expr6            go to state 53
+    expr7            go to state 54
+    expr8            go to state 55
+    expr9            go to state 56
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
 
 
 State 134
 
-   37 stmt_block: TOKEN_LEFT_BRACE stmt_list . TOKEN_RIGHT_BRACE
-   49 stmt_list: stmt_list . stmt
+   27 array_access: TOKEN_IDENTIFIER TOKEN_LEFT_BRACKET expr TOKEN_RIGHT_BRACKET array_access_recursive .
 
-    TOKEN_FOR          shift, and go to state 110
-    TOKEN_IF           shift, and go to state 111
-    TOKEN_PRINT        shift, and go to state 112
-    TOKEN_RETURN       shift, and go to state 113
-    TOKEN_LEFT_BRACE   shift, and go to state 114
-    TOKEN_RIGHT_BRACE  shift, and go to state 148
-    TOKEN_IDENTIFIER   shift, and go to state 116
-
-    access        go to state 117
-    array_access  go to state 38
-    var_decl      go to state 118
-    stmt_block    go to state 119
-    stmt          go to state 120
-    return_stmt   go to state 121
-    expr_assign   go to state 122
-    inc_or_dec    go to state 123
-    for_stmt      go to state 124
-    func_call     go to state 125
-    print_stmt    go to state 126
+    $default  reduce using rule 27 (array_access)
 
 
 State 135
 
-   31 var_decl: TOKEN_IDENTIFIER TOKEN_COLON . type TOKEN_SEMICOLON
-   32         | TOKEN_IDENTIFIER TOKEN_COLON . type TOKEN_ASSIGN expr_val TOKEN_SEMICOLON
-   33         | TOKEN_IDENTIFIER TOKEN_COLON . array_type TOKEN_ASSIGN TOKEN_LEFT_BRACE expr_val_list TOKEN_RIGHT_BRACE TOKEN_SEMICOLON
-   34         | TOKEN_IDENTIFIER TOKEN_COLON . array_type TOKEN_SEMICOLON
+   39 param_recursive: TOKEN_COMMA . TOKEN_IDENTIFIER TOKEN_COLON type param_recursive
 
-    TOKEN_ARRAY    shift, and go to state 10
-    TOKEN_BOOLEAN  shift, and go to state 11
-    TOKEN_CHAR     shift, and go to state 12
-    TOKEN_FLOAT    shift, and go to state 13
-    TOKEN_INT      shift, and go to state 15
-    TOKEN_STRING   shift, and go to state 16
-
-    $default  reduce using rule 28 (type)
-
-    type        go to state 17
-    array_type  go to state 18
+    TOKEN_IDENTIFIER  shift, and go to state 142
 
 
 State 136
 
-   55 stmt: return_stmt TOKEN_SEMICOLON .
+   53 param_list: TOKEN_IDENTIFIER TOKEN_COLON type param_recursive .
 
-    $default  reduce using rule 55 (stmt)
+    $default  reduce using rule 53 (param_list)
 
 
 State 137
 
-   54 stmt: expr_assign TOKEN_SEMICOLON .
+    7 func_decl: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_ASSIGN TOKEN_LEFT_BRACE . stmt_list TOKEN_RIGHT_BRACE
 
-    $default  reduce using rule 54 (stmt)
+    $default  reduce using rule 56 (stmt_list)
+
+    stmt_list  go to state 143
 
 
 State 138
 
-   57 stmt: inc_or_dec TOKEN_SEMICOLON .
+   49 nested_array_braces_recursive: TOKEN_COMMA . TOKEN_LEFT_BRACE array_expr_list TOKEN_RIGHT_BRACE nested_array_braces_recursive
 
-    $default  reduce using rule 57 (stmt)
+    TOKEN_LEFT_BRACE  shift, and go to state 144
 
 
 State 139
 
-   17 reg_end: TOKEN_SEMICOLON .
+   48 nested_array_braces: TOKEN_LEFT_BRACE array_expr_list TOKEN_RIGHT_BRACE nested_array_braces_recursive .
 
-    $default  reduce using rule 17 (reg_end)
+    $default  reduce using rule 48 (nested_array_braces)
 
 
 State 140
 
-   51 stmt: for_stmt reg_end .
+   81 expr_list_recursive: TOKEN_COMMA expr expr_list_recursive .
 
-    $default  reduce using rule 51 (stmt)
+    $default  reduce using rule 81 (expr_list_recursive)
 
 
 State 141
 
-   16 reg_end: stmt .
+   28 array_access_recursive: TOKEN_LEFT_BRACKET expr . TOKEN_RIGHT_BRACKET array_access_recursive
 
-    $default  reduce using rule 16 (reg_end)
+    TOKEN_RIGHT_BRACKET  shift, and go to state 145
 
 
 State 142
 
-   60 stmt: func_call TOKEN_SEMICOLON .
+   39 param_recursive: TOKEN_COMMA TOKEN_IDENTIFIER . TOKEN_COLON type param_recursive
 
-    $default  reduce using rule 60 (stmt)
+    TOKEN_COLON  shift, and go to state 146
 
 
 State 143
 
-   56 stmt: print_stmt TOKEN_SEMICOLON .
+    7 func_decl: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_ASSIGN TOKEN_LEFT_BRACE stmt_list . TOKEN_RIGHT_BRACE
+   55 stmt_list: stmt_list . stmt
 
-    $default  reduce using rule 56 (stmt)
+    TOKEN_FOR          shift, and go to state 147
+    TOKEN_IF           shift, and go to state 148
+    TOKEN_PRINT        shift, and go to state 149
+    TOKEN_RETURN       shift, and go to state 150
+    TOKEN_LEFT_BRACE   shift, and go to state 151
+    TOKEN_RIGHT_BRACE  shift, and go to state 152
+    TOKEN_IDENTIFIER   shift, and go to state 153
+
+    var_decl      go to state 154
+    access        go to state 155
+    array_access  go to state 43
+    stmt_block    go to state 156
+    array_decl    go to state 8
+    stmt          go to state 157
+    return_stmt   go to state 158
+    expr_assign   go to state 159
+    inc_or_dec    go to state 160
+    for_stmt      go to state 161
+    func_call     go to state 162
+    print_stmt    go to state 163
 
 
 State 144
 
-   40 param_recursive: TOKEN_COMMA TOKEN_IDENTIFIER TOKEN_COLON type param_recursive .
+   49 nested_array_braces_recursive: TOKEN_COMMA TOKEN_LEFT_BRACE . array_expr_list TOKEN_RIGHT_BRACE nested_array_braces_recursive
 
-    $default  reduce using rule 40 (param_recursive)
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_LEFT_BRACE        shift, and go to state 92
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
+
+    access               go to state 42
+    array_access         go to state 43
+    array_expr_list      go to state 164
+    nested_array_braces  go to state 94
+    expr_assign          go to state 45
+    inc_or_dec           go to state 46
+    expr_val             go to state 47
+    expr                 go to state 95
+    expr2                go to state 49
+    expr3                go to state 50
+    expr4                go to state 51
+    expr5                go to state 52
+    expr6                go to state 53
+    expr7                go to state 54
+    expr8                go to state 55
+    expr9                go to state 56
+    boolean_literal      go to state 57
+    func_call            go to state 58
+    data_atom            go to state 59
 
 
 State 145
 
-   73 for_expr: expr .
+   28 array_access_recursive: TOKEN_LEFT_BRACKET expr TOKEN_RIGHT_BRACKET . array_access_recursive
 
-    $default  reduce using rule 73 (for_expr)
+    TOKEN_LEFT_BRACKET  shift, and go to state 133
+
+    $default  reduce using rule 29 (array_access_recursive)
+
+    array_access_recursive  go to state 165
 
 
 State 146
 
-   72 for_cond: TOKEN_LEFT_PARENTHESIS for_expr . TOKEN_SEMICOLON for_expr TOKEN_SEMICOLON for_expr TOKEN_RIGHT_PARENTHESIS
+   39 param_recursive: TOKEN_COMMA TOKEN_IDENTIFIER TOKEN_COLON . type param_recursive
 
-    TOKEN_SEMICOLON  shift, and go to state 149
+    TOKEN_BOOLEAN  shift, and go to state 14
+    TOKEN_CHAR     shift, and go to state 15
+    TOKEN_FLOAT    shift, and go to state 16
+    TOKEN_INT      shift, and go to state 18
+    TOKEN_STRING   shift, and go to state 19
+
+    $default  reduce using rule 35 (type)
+
+    type  go to state 166
 
 
 State 147
 
-   52 stmt: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr . TOKEN_RIGHT_PARENTHESIS stmt
-   53     | TOKEN_IF TOKEN_LEFT_PARENTHESIS expr . TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE stmt
+   75 for_stmt: TOKEN_FOR . for_cond
 
-    TOKEN_RIGHT_PARENTHESIS  shift, and go to state 150
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 167
+
+    for_cond  go to state 168
 
 
 State 148
 
-   37 stmt_block: TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE .
+   58 stmt: TOKEN_IF . TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS stmt
+   59     | TOKEN_IF . TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE stmt
 
-    $default  reduce using rule 37 (stmt_block)
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 169
 
 
 State 149
 
-   72 for_cond: TOKEN_LEFT_PARENTHESIS for_expr TOKEN_SEMICOLON . for_expr TOKEN_SEMICOLON for_expr TOKEN_RIGHT_PARENTHESIS
+  121 print_stmt: TOKEN_PRINT . expr_list
 
-    TOKEN_FALSE             shift, and go to state 27
-    TOKEN_TRUE              shift, and go to state 28
-    TOKEN_NEGATIVE          shift, and go to state 29
-    TOKEN_LEFT_PARENTHESIS  shift, and go to state 30
-    TOKEN_NOT               shift, and go to state 31
-    TOKEN_IDENTIFIER        shift, and go to state 32
-    TOKEN_INT_LITERAL       shift, and go to state 33
-    TOKEN_FLOAT_LITERAL     shift, and go to state 34
-    TOKEN_STRING_LITERAL    shift, and go to state 35
-    TOKEN_CHAR_LITERAL      shift, and go to state 36
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
 
-    $default  reduce using rule 74 (for_expr)
+    $default  reduce using rule 80 (expr_list)
 
-    access           go to state 50
-    array_access     go to state 38
-    expr_assign      go to state 51
-    inc_or_dec       go to state 40
-    expr_val         go to state 52
-    expr             go to state 145
-    for_expr         go to state 151
-    boolean_literal  go to state 42
-    func_call        go to state 43
-    data_atom        go to state 44
+    access           go to state 42
+    array_access     go to state 43
+    expr_assign      go to state 45
+    inc_or_dec       go to state 46
+    expr_val         go to state 47
+    expr             go to state 97
+    expr_list        go to state 170
+    expr2            go to state 49
+    expr3            go to state 50
+    expr4            go to state 51
+    expr5            go to state 52
+    expr6            go to state 53
+    expr7            go to state 54
+    expr8            go to state 55
+    expr9            go to state 56
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
 
 
 State 150
 
-   52 stmt: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS . stmt
-   53     | TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS . if_dangle TOKEN_ELSE stmt
+   67 return_stmt: TOKEN_RETURN . expr
+   68            | TOKEN_RETURN .
 
-    TOKEN_FOR         shift, and go to state 110
-    TOKEN_IF          shift, and go to state 152
-    TOKEN_PRINT       shift, and go to state 112
-    TOKEN_RETURN      shift, and go to state 113
-    TOKEN_LEFT_BRACE  shift, and go to state 153
-    TOKEN_IDENTIFIER  shift, and go to state 116
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
 
-    if_dangle     go to state 154
-    access        go to state 117
-    array_access  go to state 38
-    var_decl      go to state 155
-    stmt_block    go to state 119
-    stmt          go to state 156
-    return_stmt   go to state 157
-    expr_assign   go to state 158
-    inc_or_dec    go to state 159
-    for_stmt      go to state 160
-    func_call     go to state 161
-    print_stmt    go to state 162
+    $default  reduce using rule 68 (return_stmt)
+
+    access           go to state 42
+    array_access     go to state 43
+    expr_assign      go to state 45
+    inc_or_dec       go to state 46
+    expr_val         go to state 47
+    expr             go to state 171
+    expr2            go to state 49
+    expr3            go to state 50
+    expr4            go to state 51
+    expr5            go to state 52
+    expr6            go to state 53
+    expr7            go to state 54
+    expr8            go to state 55
+    expr9            go to state 56
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
 
 
 State 151
 
-   72 for_cond: TOKEN_LEFT_PARENTHESIS for_expr TOKEN_SEMICOLON for_expr . TOKEN_SEMICOLON for_expr TOKEN_RIGHT_PARENTHESIS
+   36 stmt_block: TOKEN_LEFT_BRACE . stmt_list TOKEN_RIGHT_BRACE
 
-    TOKEN_SEMICOLON  shift, and go to state 163
+    $default  reduce using rule 56 (stmt_list)
+
+    stmt_list  go to state 172
 
 
 State 152
 
-    5 if_dangle: TOKEN_IF . TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE if_dangle
-   52 stmt: TOKEN_IF . TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS stmt
-   53     | TOKEN_IF . TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE stmt
+    7 func_decl: TOKEN_IDENTIFIER TOKEN_COLON TOKEN_FUNCTION func_type TOKEN_LEFT_PARENTHESIS param_list TOKEN_RIGHT_PARENTHESIS TOKEN_ASSIGN TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE .
 
-    TOKEN_LEFT_PARENTHESIS  shift, and go to state 164
+    $default  reduce using rule 7 (func_decl)
 
 
 State 153
 
-   12 if_dangle: TOKEN_LEFT_BRACE . stmt_list TOKEN_RIGHT_BRACE
-   37 stmt_block: TOKEN_LEFT_BRACE . stmt_list TOKEN_RIGHT_BRACE
+    9 var_decl: TOKEN_IDENTIFIER . TOKEN_COLON type TOKEN_SEMICOLON
+   10         | TOKEN_IDENTIFIER . TOKEN_COLON type TOKEN_ASSIGN expr TOKEN_SEMICOLON
+   25 access: TOKEN_IDENTIFIER .
+   27 array_access: TOKEN_IDENTIFIER . TOKEN_LEFT_BRACKET expr TOKEN_RIGHT_BRACKET array_access_recursive
+   51 array_decl: TOKEN_IDENTIFIER . TOKEN_COLON array_type TOKEN_ASSIGN TOKEN_LEFT_BRACE array_expr_list TOKEN_RIGHT_BRACE TOKEN_SEMICOLON
+   52           | TOKEN_IDENTIFIER . TOKEN_COLON array_type TOKEN_SEMICOLON
+   70 inc_or_dec: TOKEN_IDENTIFIER . TOKEN_PLUS_PLUS
+   71           | TOKEN_IDENTIFIER . TOKEN_MINUS_MINUS
+  110 func_call: TOKEN_IDENTIFIER . TOKEN_LEFT_PARENTHESIS expr_list TOKEN_RIGHT_PARENTHESIS
 
-    $default  reduce using rule 50 (stmt_list)
+    TOKEN_COLON             shift, and go to state 173
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 69
+    TOKEN_LEFT_BRACKET      shift, and go to state 70
+    TOKEN_PLUS_PLUS         shift, and go to state 71
+    TOKEN_MINUS_MINUS       shift, and go to state 72
 
-    stmt_list  go to state 165
+    $default  reduce using rule 25 (access)
 
 
 State 154
 
-   53 stmt: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle . TOKEN_ELSE stmt
+   65 stmt: var_decl .
 
-    TOKEN_ELSE  shift, and go to state 166
+    $default  reduce using rule 65 (stmt)
 
 
 State 155
 
-    6 if_dangle: var_decl .
-   59 stmt: var_decl .
+   69 expr_assign: access . TOKEN_ASSIGN expr
 
-    TOKEN_ELSE  reduce using rule 6 (if_dangle)
-    $default    reduce using rule 59 (stmt)
+    TOKEN_ASSIGN  shift, and go to state 73
 
 
 State 156
 
-   52 stmt: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS stmt .
+   64 stmt: stmt_block .
 
-    $default  reduce using rule 52 (stmt)
+    $default  reduce using rule 64 (stmt)
 
 
 State 157
 
-    9 if_dangle: return_stmt . TOKEN_SEMICOLON
-   55 stmt: return_stmt . TOKEN_SEMICOLON
+   55 stmt_list: stmt_list stmt .
 
-    TOKEN_SEMICOLON  shift, and go to state 167
+    $default  reduce using rule 55 (stmt_list)
 
 
 State 158
 
-   13 if_dangle: expr_assign . TOKEN_SEMICOLON
-   54 stmt: expr_assign . TOKEN_SEMICOLON
-
-    TOKEN_SEMICOLON  shift, and go to state 168
-
-
-State 159
-
-   11 if_dangle: inc_or_dec . TOKEN_SEMICOLON
-   57 stmt: inc_or_dec . TOKEN_SEMICOLON
-
-    TOKEN_SEMICOLON  shift, and go to state 169
-
-
-State 160
-
-    7 if_dangle: for_stmt . dangle_end
-   51 stmt: for_stmt . reg_end
-
-    TOKEN_FOR         shift, and go to state 110
-    TOKEN_IF          shift, and go to state 152
-    TOKEN_PRINT       shift, and go to state 112
-    TOKEN_RETURN      shift, and go to state 113
-    TOKEN_LEFT_BRACE  shift, and go to state 153
-    TOKEN_SEMICOLON   shift, and go to state 170
-    TOKEN_IDENTIFIER  shift, and go to state 116
-
-    if_dangle     go to state 171
-    dangle_end    go to state 172
-    reg_end       go to state 140
-    access        go to state 117
-    array_access  go to state 38
-    var_decl      go to state 155
-    stmt_block    go to state 119
-    stmt          go to state 141
-    return_stmt   go to state 157
-    expr_assign   go to state 158
-    inc_or_dec    go to state 159
-    for_stmt      go to state 160
-    func_call     go to state 161
-    print_stmt    go to state 162
-
-
-State 161
-
-    8 if_dangle: func_call . TOKEN_SEMICOLON
-   60 stmt: func_call . TOKEN_SEMICOLON
-
-    TOKEN_SEMICOLON  shift, and go to state 173
-
-
-State 162
-
-   10 if_dangle: print_stmt . TOKEN_SEMICOLON
-   56 stmt: print_stmt . TOKEN_SEMICOLON
+   61 stmt: return_stmt . TOKEN_SEMICOLON
 
     TOKEN_SEMICOLON  shift, and go to state 174
 
 
+State 159
+
+   60 stmt: expr_assign . TOKEN_SEMICOLON
+
+    TOKEN_SEMICOLON  shift, and go to state 175
+
+
+State 160
+
+   63 stmt: inc_or_dec . TOKEN_SEMICOLON
+
+    TOKEN_SEMICOLON  shift, and go to state 176
+
+
+State 161
+
+   57 stmt: for_stmt . reg_end
+
+    TOKEN_FOR         shift, and go to state 147
+    TOKEN_IF          shift, and go to state 148
+    TOKEN_PRINT       shift, and go to state 149
+    TOKEN_RETURN      shift, and go to state 150
+    TOKEN_LEFT_BRACE  shift, and go to state 151
+    TOKEN_SEMICOLON   shift, and go to state 177
+    TOKEN_IDENTIFIER  shift, and go to state 153
+
+    var_decl      go to state 154
+    reg_end       go to state 178
+    access        go to state 155
+    array_access  go to state 43
+    stmt_block    go to state 156
+    array_decl    go to state 8
+    stmt          go to state 179
+    return_stmt   go to state 158
+    expr_assign   go to state 159
+    inc_or_dec    go to state 160
+    for_stmt      go to state 161
+    func_call     go to state 162
+    print_stmt    go to state 163
+
+
+State 162
+
+   66 stmt: func_call . TOKEN_SEMICOLON
+
+    TOKEN_SEMICOLON  shift, and go to state 180
+
+
 State 163
 
-   72 for_cond: TOKEN_LEFT_PARENTHESIS for_expr TOKEN_SEMICOLON for_expr TOKEN_SEMICOLON . for_expr TOKEN_RIGHT_PARENTHESIS
+   62 stmt: print_stmt . TOKEN_SEMICOLON
 
-    TOKEN_FALSE             shift, and go to state 27
-    TOKEN_TRUE              shift, and go to state 28
-    TOKEN_NEGATIVE          shift, and go to state 29
-    TOKEN_LEFT_PARENTHESIS  shift, and go to state 30
-    TOKEN_NOT               shift, and go to state 31
-    TOKEN_IDENTIFIER        shift, and go to state 32
-    TOKEN_INT_LITERAL       shift, and go to state 33
-    TOKEN_FLOAT_LITERAL     shift, and go to state 34
-    TOKEN_STRING_LITERAL    shift, and go to state 35
-    TOKEN_CHAR_LITERAL      shift, and go to state 36
-
-    $default  reduce using rule 74 (for_expr)
-
-    access           go to state 50
-    array_access     go to state 38
-    expr_assign      go to state 51
-    inc_or_dec       go to state 40
-    expr_val         go to state 52
-    expr             go to state 145
-    for_expr         go to state 175
-    boolean_literal  go to state 42
-    func_call        go to state 43
-    data_atom        go to state 44
+    TOKEN_SEMICOLON  shift, and go to state 181
 
 
 State 164
 
-    5 if_dangle: TOKEN_IF TOKEN_LEFT_PARENTHESIS . expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE if_dangle
-   52 stmt: TOKEN_IF TOKEN_LEFT_PARENTHESIS . expr TOKEN_RIGHT_PARENTHESIS stmt
-   53     | TOKEN_IF TOKEN_LEFT_PARENTHESIS . expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE stmt
+   49 nested_array_braces_recursive: TOKEN_COMMA TOKEN_LEFT_BRACE array_expr_list . TOKEN_RIGHT_BRACE nested_array_braces_recursive
 
-    TOKEN_FALSE             shift, and go to state 27
-    TOKEN_TRUE              shift, and go to state 28
-    TOKEN_NEGATIVE          shift, and go to state 29
-    TOKEN_LEFT_PARENTHESIS  shift, and go to state 30
-    TOKEN_NOT               shift, and go to state 31
-    TOKEN_IDENTIFIER        shift, and go to state 32
-    TOKEN_INT_LITERAL       shift, and go to state 33
-    TOKEN_FLOAT_LITERAL     shift, and go to state 34
-    TOKEN_STRING_LITERAL    shift, and go to state 35
-    TOKEN_CHAR_LITERAL      shift, and go to state 36
-
-    access           go to state 50
-    array_access     go to state 38
-    expr_assign      go to state 51
-    inc_or_dec       go to state 40
-    expr_val         go to state 52
-    expr             go to state 176
-    boolean_literal  go to state 42
-    func_call        go to state 43
-    data_atom        go to state 44
+    TOKEN_RIGHT_BRACE  shift, and go to state 182
 
 
 State 165
 
-   12 if_dangle: TOKEN_LEFT_BRACE stmt_list . TOKEN_RIGHT_BRACE
-   37 stmt_block: TOKEN_LEFT_BRACE stmt_list . TOKEN_RIGHT_BRACE
-   49 stmt_list: stmt_list . stmt
+   28 array_access_recursive: TOKEN_LEFT_BRACKET expr TOKEN_RIGHT_BRACKET array_access_recursive .
 
-    TOKEN_FOR          shift, and go to state 110
-    TOKEN_IF           shift, and go to state 111
-    TOKEN_PRINT        shift, and go to state 112
-    TOKEN_RETURN       shift, and go to state 113
-    TOKEN_LEFT_BRACE   shift, and go to state 114
-    TOKEN_RIGHT_BRACE  shift, and go to state 177
-    TOKEN_IDENTIFIER   shift, and go to state 116
-
-    access        go to state 117
-    array_access  go to state 38
-    var_decl      go to state 118
-    stmt_block    go to state 119
-    stmt          go to state 120
-    return_stmt   go to state 121
-    expr_assign   go to state 122
-    inc_or_dec    go to state 123
-    for_stmt      go to state 124
-    func_call     go to state 125
-    print_stmt    go to state 126
+    $default  reduce using rule 28 (array_access_recursive)
 
 
 State 166
 
-   53 stmt: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE . stmt
+   39 param_recursive: TOKEN_COMMA TOKEN_IDENTIFIER TOKEN_COLON type . param_recursive
 
-    TOKEN_FOR         shift, and go to state 110
-    TOKEN_IF          shift, and go to state 111
-    TOKEN_PRINT       shift, and go to state 112
-    TOKEN_RETURN      shift, and go to state 113
-    TOKEN_LEFT_BRACE  shift, and go to state 114
-    TOKEN_IDENTIFIER  shift, and go to state 116
+    TOKEN_COMMA  shift, and go to state 135
 
-    access        go to state 117
-    array_access  go to state 38
-    var_decl      go to state 118
-    stmt_block    go to state 119
-    stmt          go to state 178
-    return_stmt   go to state 121
-    expr_assign   go to state 122
-    inc_or_dec    go to state 123
-    for_stmt      go to state 124
-    func_call     go to state 125
-    print_stmt    go to state 126
+    $default  reduce using rule 40 (param_recursive)
+
+    param_recursive  go to state 183
 
 
 State 167
 
-    9 if_dangle: return_stmt TOKEN_SEMICOLON .
-   55 stmt: return_stmt TOKEN_SEMICOLON .
+   76 for_cond: TOKEN_LEFT_PARENTHESIS . for_expr TOKEN_SEMICOLON for_expr TOKEN_SEMICOLON for_expr TOKEN_RIGHT_PARENTHESIS
 
-    TOKEN_ELSE  reduce using rule 9 (if_dangle)
-    $default    reduce using rule 55 (stmt)
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
+
+    $default  reduce using rule 78 (for_expr)
+
+    access           go to state 42
+    array_access     go to state 43
+    expr_assign      go to state 45
+    inc_or_dec       go to state 46
+    expr_val         go to state 47
+    expr             go to state 184
+    for_expr         go to state 185
+    expr2            go to state 49
+    expr3            go to state 50
+    expr4            go to state 51
+    expr5            go to state 52
+    expr6            go to state 53
+    expr7            go to state 54
+    expr8            go to state 55
+    expr9            go to state 56
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
 
 
 State 168
 
-   13 if_dangle: expr_assign TOKEN_SEMICOLON .
-   54 stmt: expr_assign TOKEN_SEMICOLON .
+   75 for_stmt: TOKEN_FOR for_cond .
 
-    TOKEN_ELSE  reduce using rule 13 (if_dangle)
-    $default    reduce using rule 54 (stmt)
+    $default  reduce using rule 75 (for_stmt)
 
 
 State 169
 
-   11 if_dangle: inc_or_dec TOKEN_SEMICOLON .
-   57 stmt: inc_or_dec TOKEN_SEMICOLON .
+   58 stmt: TOKEN_IF TOKEN_LEFT_PARENTHESIS . expr TOKEN_RIGHT_PARENTHESIS stmt
+   59     | TOKEN_IF TOKEN_LEFT_PARENTHESIS . expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE stmt
 
-    TOKEN_ELSE  reduce using rule 11 (if_dangle)
-    $default    reduce using rule 57 (stmt)
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
+
+    access           go to state 42
+    array_access     go to state 43
+    expr_assign      go to state 45
+    inc_or_dec       go to state 46
+    expr_val         go to state 47
+    expr             go to state 186
+    expr2            go to state 49
+    expr3            go to state 50
+    expr4            go to state 51
+    expr5            go to state 52
+    expr6            go to state 53
+    expr7            go to state 54
+    expr8            go to state 55
+    expr9            go to state 56
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
 
 
 State 170
 
-   14 dangle_end: TOKEN_SEMICOLON .
-   17 reg_end: TOKEN_SEMICOLON .
+  121 print_stmt: TOKEN_PRINT expr_list .
 
-    TOKEN_ELSE  reduce using rule 14 (dangle_end)
-    $default    reduce using rule 17 (reg_end)
+    $default  reduce using rule 121 (print_stmt)
 
 
 State 171
 
-   15 dangle_end: if_dangle .
+   67 return_stmt: TOKEN_RETURN expr .
 
-    $default  reduce using rule 15 (dangle_end)
+    $default  reduce using rule 67 (return_stmt)
 
 
 State 172
 
-    7 if_dangle: for_stmt dangle_end .
+   36 stmt_block: TOKEN_LEFT_BRACE stmt_list . TOKEN_RIGHT_BRACE
+   55 stmt_list: stmt_list . stmt
 
-    $default  reduce using rule 7 (if_dangle)
+    TOKEN_FOR          shift, and go to state 147
+    TOKEN_IF           shift, and go to state 148
+    TOKEN_PRINT        shift, and go to state 149
+    TOKEN_RETURN       shift, and go to state 150
+    TOKEN_LEFT_BRACE   shift, and go to state 151
+    TOKEN_RIGHT_BRACE  shift, and go to state 187
+    TOKEN_IDENTIFIER   shift, and go to state 153
+
+    var_decl      go to state 154
+    access        go to state 155
+    array_access  go to state 43
+    stmt_block    go to state 156
+    array_decl    go to state 8
+    stmt          go to state 157
+    return_stmt   go to state 158
+    expr_assign   go to state 159
+    inc_or_dec    go to state 160
+    for_stmt      go to state 161
+    func_call     go to state 162
+    print_stmt    go to state 163
 
 
 State 173
 
-    8 if_dangle: func_call TOKEN_SEMICOLON .
-   60 stmt: func_call TOKEN_SEMICOLON .
+    9 var_decl: TOKEN_IDENTIFIER TOKEN_COLON . type TOKEN_SEMICOLON
+   10         | TOKEN_IDENTIFIER TOKEN_COLON . type TOKEN_ASSIGN expr TOKEN_SEMICOLON
+   51 array_decl: TOKEN_IDENTIFIER TOKEN_COLON . array_type TOKEN_ASSIGN TOKEN_LEFT_BRACE array_expr_list TOKEN_RIGHT_BRACE TOKEN_SEMICOLON
+   52           | TOKEN_IDENTIFIER TOKEN_COLON . array_type TOKEN_SEMICOLON
 
-    TOKEN_ELSE  reduce using rule 8 (if_dangle)
-    $default    reduce using rule 60 (stmt)
+    TOKEN_ARRAY    shift, and go to state 13
+    TOKEN_BOOLEAN  shift, and go to state 14
+    TOKEN_CHAR     shift, and go to state 15
+    TOKEN_FLOAT    shift, and go to state 16
+    TOKEN_INT      shift, and go to state 18
+    TOKEN_STRING   shift, and go to state 19
+
+    $default  reduce using rule 35 (type)
+
+    type        go to state 20
+    array_type  go to state 21
 
 
 State 174
 
-   10 if_dangle: print_stmt TOKEN_SEMICOLON .
-   56 stmt: print_stmt TOKEN_SEMICOLON .
+   61 stmt: return_stmt TOKEN_SEMICOLON .
 
-    TOKEN_ELSE  reduce using rule 10 (if_dangle)
-    $default    reduce using rule 56 (stmt)
+    $default  reduce using rule 61 (stmt)
 
 
 State 175
 
-   72 for_cond: TOKEN_LEFT_PARENTHESIS for_expr TOKEN_SEMICOLON for_expr TOKEN_SEMICOLON for_expr . TOKEN_RIGHT_PARENTHESIS
+   60 stmt: expr_assign TOKEN_SEMICOLON .
 
-    TOKEN_RIGHT_PARENTHESIS  shift, and go to state 179
+    $default  reduce using rule 60 (stmt)
 
 
 State 176
 
-    5 if_dangle: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr . TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE if_dangle
-   52 stmt: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr . TOKEN_RIGHT_PARENTHESIS stmt
-   53     | TOKEN_IF TOKEN_LEFT_PARENTHESIS expr . TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE stmt
+   63 stmt: inc_or_dec TOKEN_SEMICOLON .
 
-    TOKEN_RIGHT_PARENTHESIS  shift, and go to state 180
+    $default  reduce using rule 63 (stmt)
 
 
 State 177
 
-   12 if_dangle: TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE .
-   37 stmt_block: TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE .
+   24 reg_end: TOKEN_SEMICOLON .
 
-    TOKEN_ELSE  reduce using rule 12 (if_dangle)
-    $default    reduce using rule 37 (stmt_block)
+    $default  reduce using rule 24 (reg_end)
 
 
 State 178
 
-   53 stmt: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE stmt .
+   57 stmt: for_stmt reg_end .
 
-    $default  reduce using rule 53 (stmt)
+    $default  reduce using rule 57 (stmt)
 
 
 State 179
 
-   72 for_cond: TOKEN_LEFT_PARENTHESIS for_expr TOKEN_SEMICOLON for_expr TOKEN_SEMICOLON for_expr TOKEN_RIGHT_PARENTHESIS .
+   23 reg_end: stmt .
 
-    $default  reduce using rule 72 (for_cond)
+    $default  reduce using rule 23 (reg_end)
 
 
 State 180
 
-    5 if_dangle: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS . if_dangle TOKEN_ELSE if_dangle
-   52 stmt: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS . stmt
-   53     | TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS . if_dangle TOKEN_ELSE stmt
+   66 stmt: func_call TOKEN_SEMICOLON .
 
-    TOKEN_FOR         shift, and go to state 110
-    TOKEN_IF          shift, and go to state 152
-    TOKEN_PRINT       shift, and go to state 112
-    TOKEN_RETURN      shift, and go to state 113
-    TOKEN_LEFT_BRACE  shift, and go to state 153
-    TOKEN_IDENTIFIER  shift, and go to state 116
-
-    if_dangle     go to state 181
-    access        go to state 117
-    array_access  go to state 38
-    var_decl      go to state 155
-    stmt_block    go to state 119
-    stmt          go to state 156
-    return_stmt   go to state 157
-    expr_assign   go to state 158
-    inc_or_dec    go to state 159
-    for_stmt      go to state 160
-    func_call     go to state 161
-    print_stmt    go to state 162
+    $default  reduce using rule 66 (stmt)
 
 
 State 181
 
-    5 if_dangle: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle . TOKEN_ELSE if_dangle
-   53 stmt: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle . TOKEN_ELSE stmt
+   62 stmt: print_stmt TOKEN_SEMICOLON .
 
-    TOKEN_ELSE  shift, and go to state 182
+    $default  reduce using rule 62 (stmt)
 
 
 State 182
 
-    5 if_dangle: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE . if_dangle
-   53 stmt: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE . stmt
+   49 nested_array_braces_recursive: TOKEN_COMMA TOKEN_LEFT_BRACE array_expr_list TOKEN_RIGHT_BRACE . nested_array_braces_recursive
 
-    TOKEN_FOR         shift, and go to state 110
-    TOKEN_IF          shift, and go to state 152
-    TOKEN_PRINT       shift, and go to state 112
-    TOKEN_RETURN      shift, and go to state 113
-    TOKEN_LEFT_BRACE  shift, and go to state 153
-    TOKEN_IDENTIFIER  shift, and go to state 116
+    TOKEN_COMMA  shift, and go to state 138
 
-    if_dangle     go to state 183
-    access        go to state 117
-    array_access  go to state 38
-    var_decl      go to state 155
-    stmt_block    go to state 119
-    stmt          go to state 178
-    return_stmt   go to state 157
-    expr_assign   go to state 158
-    inc_or_dec    go to state 159
-    for_stmt      go to state 160
-    func_call     go to state 161
-    print_stmt    go to state 162
+    $default  reduce using rule 50 (nested_array_braces_recursive)
+
+    nested_array_braces_recursive  go to state 188
 
 
 State 183
 
-    5 if_dangle: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE if_dangle .
+   39 param_recursive: TOKEN_COMMA TOKEN_IDENTIFIER TOKEN_COLON type param_recursive .
 
-    $default  reduce using rule 5 (if_dangle)
+    $default  reduce using rule 39 (param_recursive)
+
+
+State 184
+
+   77 for_expr: expr .
+
+    $default  reduce using rule 77 (for_expr)
+
+
+State 185
+
+   76 for_cond: TOKEN_LEFT_PARENTHESIS for_expr . TOKEN_SEMICOLON for_expr TOKEN_SEMICOLON for_expr TOKEN_RIGHT_PARENTHESIS
+
+    TOKEN_SEMICOLON  shift, and go to state 189
+
+
+State 186
+
+   58 stmt: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr . TOKEN_RIGHT_PARENTHESIS stmt
+   59     | TOKEN_IF TOKEN_LEFT_PARENTHESIS expr . TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE stmt
+
+    TOKEN_RIGHT_PARENTHESIS  shift, and go to state 190
+
+
+State 187
+
+   36 stmt_block: TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE .
+
+    $default  reduce using rule 36 (stmt_block)
+
+
+State 188
+
+   49 nested_array_braces_recursive: TOKEN_COMMA TOKEN_LEFT_BRACE array_expr_list TOKEN_RIGHT_BRACE nested_array_braces_recursive .
+
+    $default  reduce using rule 49 (nested_array_braces_recursive)
+
+
+State 189
+
+   76 for_cond: TOKEN_LEFT_PARENTHESIS for_expr TOKEN_SEMICOLON . for_expr TOKEN_SEMICOLON for_expr TOKEN_RIGHT_PARENTHESIS
+
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
+
+    $default  reduce using rule 78 (for_expr)
+
+    access           go to state 42
+    array_access     go to state 43
+    expr_assign      go to state 45
+    inc_or_dec       go to state 46
+    expr_val         go to state 47
+    expr             go to state 184
+    for_expr         go to state 191
+    expr2            go to state 49
+    expr3            go to state 50
+    expr4            go to state 51
+    expr5            go to state 52
+    expr6            go to state 53
+    expr7            go to state 54
+    expr8            go to state 55
+    expr9            go to state 56
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
+
+
+State 190
+
+   58 stmt: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS . stmt
+   59     | TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS . if_dangle TOKEN_ELSE stmt
+
+    TOKEN_FOR         shift, and go to state 147
+    TOKEN_IF          shift, and go to state 192
+    TOKEN_PRINT       shift, and go to state 149
+    TOKEN_RETURN      shift, and go to state 150
+    TOKEN_LEFT_BRACE  shift, and go to state 193
+    TOKEN_IDENTIFIER  shift, and go to state 153
+
+    var_decl      go to state 194
+    if_dangle     go to state 195
+    access        go to state 155
+    array_access  go to state 43
+    stmt_block    go to state 156
+    array_decl    go to state 8
+    stmt          go to state 196
+    return_stmt   go to state 197
+    expr_assign   go to state 198
+    inc_or_dec    go to state 199
+    for_stmt      go to state 200
+    func_call     go to state 201
+    print_stmt    go to state 202
+
+
+State 191
+
+   76 for_cond: TOKEN_LEFT_PARENTHESIS for_expr TOKEN_SEMICOLON for_expr . TOKEN_SEMICOLON for_expr TOKEN_RIGHT_PARENTHESIS
+
+    TOKEN_SEMICOLON  shift, and go to state 203
+
+
+State 192
+
+   12 if_dangle: TOKEN_IF . TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE if_dangle
+   58 stmt: TOKEN_IF . TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS stmt
+   59     | TOKEN_IF . TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE stmt
+
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 204
+
+
+State 193
+
+   19 if_dangle: TOKEN_LEFT_BRACE . stmt_list TOKEN_RIGHT_BRACE
+   36 stmt_block: TOKEN_LEFT_BRACE . stmt_list TOKEN_RIGHT_BRACE
+
+    $default  reduce using rule 56 (stmt_list)
+
+    stmt_list  go to state 205
+
+
+State 194
+
+   13 if_dangle: var_decl .
+   65 stmt: var_decl .
+
+    TOKEN_ELSE  reduce using rule 13 (if_dangle)
+    $default    reduce using rule 65 (stmt)
+
+
+State 195
+
+   59 stmt: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle . TOKEN_ELSE stmt
+
+    TOKEN_ELSE  shift, and go to state 206
+
+
+State 196
+
+   58 stmt: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS stmt .
+
+    $default  reduce using rule 58 (stmt)
+
+
+State 197
+
+   16 if_dangle: return_stmt . TOKEN_SEMICOLON
+   61 stmt: return_stmt . TOKEN_SEMICOLON
+
+    TOKEN_SEMICOLON  shift, and go to state 207
+
+
+State 198
+
+   20 if_dangle: expr_assign . TOKEN_SEMICOLON
+   60 stmt: expr_assign . TOKEN_SEMICOLON
+
+    TOKEN_SEMICOLON  shift, and go to state 208
+
+
+State 199
+
+   18 if_dangle: inc_or_dec . TOKEN_SEMICOLON
+   63 stmt: inc_or_dec . TOKEN_SEMICOLON
+
+    TOKEN_SEMICOLON  shift, and go to state 209
+
+
+State 200
+
+   14 if_dangle: for_stmt . dangle_end
+   57 stmt: for_stmt . reg_end
+
+    TOKEN_FOR         shift, and go to state 147
+    TOKEN_IF          shift, and go to state 192
+    TOKEN_PRINT       shift, and go to state 149
+    TOKEN_RETURN      shift, and go to state 150
+    TOKEN_LEFT_BRACE  shift, and go to state 193
+    TOKEN_SEMICOLON   shift, and go to state 210
+    TOKEN_IDENTIFIER  shift, and go to state 153
+
+    var_decl      go to state 194
+    if_dangle     go to state 211
+    dangle_end    go to state 212
+    reg_end       go to state 178
+    access        go to state 155
+    array_access  go to state 43
+    stmt_block    go to state 156
+    array_decl    go to state 8
+    stmt          go to state 179
+    return_stmt   go to state 197
+    expr_assign   go to state 198
+    inc_or_dec    go to state 199
+    for_stmt      go to state 200
+    func_call     go to state 201
+    print_stmt    go to state 202
+
+
+State 201
+
+   15 if_dangle: func_call . TOKEN_SEMICOLON
+   66 stmt: func_call . TOKEN_SEMICOLON
+
+    TOKEN_SEMICOLON  shift, and go to state 213
+
+
+State 202
+
+   17 if_dangle: print_stmt . TOKEN_SEMICOLON
+   62 stmt: print_stmt . TOKEN_SEMICOLON
+
+    TOKEN_SEMICOLON  shift, and go to state 214
+
+
+State 203
+
+   76 for_cond: TOKEN_LEFT_PARENTHESIS for_expr TOKEN_SEMICOLON for_expr TOKEN_SEMICOLON . for_expr TOKEN_RIGHT_PARENTHESIS
+
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
+
+    $default  reduce using rule 78 (for_expr)
+
+    access           go to state 42
+    array_access     go to state 43
+    expr_assign      go to state 45
+    inc_or_dec       go to state 46
+    expr_val         go to state 47
+    expr             go to state 184
+    for_expr         go to state 215
+    expr2            go to state 49
+    expr3            go to state 50
+    expr4            go to state 51
+    expr5            go to state 52
+    expr6            go to state 53
+    expr7            go to state 54
+    expr8            go to state 55
+    expr9            go to state 56
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
+
+
+State 204
+
+   12 if_dangle: TOKEN_IF TOKEN_LEFT_PARENTHESIS . expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE if_dangle
+   58 stmt: TOKEN_IF TOKEN_LEFT_PARENTHESIS . expr TOKEN_RIGHT_PARENTHESIS stmt
+   59     | TOKEN_IF TOKEN_LEFT_PARENTHESIS . expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE stmt
+
+    TOKEN_SUBTRACT          shift, and go to state 30
+    TOKEN_FALSE             shift, and go to state 31
+    TOKEN_TRUE              shift, and go to state 32
+    TOKEN_ADD               shift, and go to state 33
+    TOKEN_NEGATIVE          shift, and go to state 34
+    TOKEN_LEFT_PARENTHESIS  shift, and go to state 35
+    TOKEN_NOT               shift, and go to state 36
+    TOKEN_IDENTIFIER        shift, and go to state 37
+    TOKEN_INT_LITERAL       shift, and go to state 38
+    TOKEN_FLOAT_LITERAL     shift, and go to state 39
+    TOKEN_STRING_LITERAL    shift, and go to state 40
+    TOKEN_CHAR_LITERAL      shift, and go to state 41
+
+    access           go to state 42
+    array_access     go to state 43
+    expr_assign      go to state 45
+    inc_or_dec       go to state 46
+    expr_val         go to state 47
+    expr             go to state 216
+    expr2            go to state 49
+    expr3            go to state 50
+    expr4            go to state 51
+    expr5            go to state 52
+    expr6            go to state 53
+    expr7            go to state 54
+    expr8            go to state 55
+    expr9            go to state 56
+    boolean_literal  go to state 57
+    func_call        go to state 58
+    data_atom        go to state 59
+
+
+State 205
+
+   19 if_dangle: TOKEN_LEFT_BRACE stmt_list . TOKEN_RIGHT_BRACE
+   36 stmt_block: TOKEN_LEFT_BRACE stmt_list . TOKEN_RIGHT_BRACE
+   55 stmt_list: stmt_list . stmt
+
+    TOKEN_FOR          shift, and go to state 147
+    TOKEN_IF           shift, and go to state 148
+    TOKEN_PRINT        shift, and go to state 149
+    TOKEN_RETURN       shift, and go to state 150
+    TOKEN_LEFT_BRACE   shift, and go to state 151
+    TOKEN_RIGHT_BRACE  shift, and go to state 217
+    TOKEN_IDENTIFIER   shift, and go to state 153
+
+    var_decl      go to state 154
+    access        go to state 155
+    array_access  go to state 43
+    stmt_block    go to state 156
+    array_decl    go to state 8
+    stmt          go to state 157
+    return_stmt   go to state 158
+    expr_assign   go to state 159
+    inc_or_dec    go to state 160
+    for_stmt      go to state 161
+    func_call     go to state 162
+    print_stmt    go to state 163
+
+
+State 206
+
+   59 stmt: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE . stmt
+
+    TOKEN_FOR         shift, and go to state 147
+    TOKEN_IF          shift, and go to state 148
+    TOKEN_PRINT       shift, and go to state 149
+    TOKEN_RETURN      shift, and go to state 150
+    TOKEN_LEFT_BRACE  shift, and go to state 151
+    TOKEN_IDENTIFIER  shift, and go to state 153
+
+    var_decl      go to state 154
+    access        go to state 155
+    array_access  go to state 43
+    stmt_block    go to state 156
+    array_decl    go to state 8
+    stmt          go to state 218
+    return_stmt   go to state 158
+    expr_assign   go to state 159
+    inc_or_dec    go to state 160
+    for_stmt      go to state 161
+    func_call     go to state 162
+    print_stmt    go to state 163
+
+
+State 207
+
+   16 if_dangle: return_stmt TOKEN_SEMICOLON .
+   61 stmt: return_stmt TOKEN_SEMICOLON .
+
+    TOKEN_ELSE  reduce using rule 16 (if_dangle)
+    $default    reduce using rule 61 (stmt)
+
+
+State 208
+
+   20 if_dangle: expr_assign TOKEN_SEMICOLON .
+   60 stmt: expr_assign TOKEN_SEMICOLON .
+
+    TOKEN_ELSE  reduce using rule 20 (if_dangle)
+    $default    reduce using rule 60 (stmt)
+
+
+State 209
+
+   18 if_dangle: inc_or_dec TOKEN_SEMICOLON .
+   63 stmt: inc_or_dec TOKEN_SEMICOLON .
+
+    TOKEN_ELSE  reduce using rule 18 (if_dangle)
+    $default    reduce using rule 63 (stmt)
+
+
+State 210
+
+   21 dangle_end: TOKEN_SEMICOLON .
+   24 reg_end: TOKEN_SEMICOLON .
+
+    TOKEN_ELSE  reduce using rule 21 (dangle_end)
+    $default    reduce using rule 24 (reg_end)
+
+
+State 211
+
+   22 dangle_end: if_dangle .
+
+    $default  reduce using rule 22 (dangle_end)
+
+
+State 212
+
+   14 if_dangle: for_stmt dangle_end .
+
+    $default  reduce using rule 14 (if_dangle)
+
+
+State 213
+
+   15 if_dangle: func_call TOKEN_SEMICOLON .
+   66 stmt: func_call TOKEN_SEMICOLON .
+
+    TOKEN_ELSE  reduce using rule 15 (if_dangle)
+    $default    reduce using rule 66 (stmt)
+
+
+State 214
+
+   17 if_dangle: print_stmt TOKEN_SEMICOLON .
+   62 stmt: print_stmt TOKEN_SEMICOLON .
+
+    TOKEN_ELSE  reduce using rule 17 (if_dangle)
+    $default    reduce using rule 62 (stmt)
+
+
+State 215
+
+   76 for_cond: TOKEN_LEFT_PARENTHESIS for_expr TOKEN_SEMICOLON for_expr TOKEN_SEMICOLON for_expr . TOKEN_RIGHT_PARENTHESIS
+
+    TOKEN_RIGHT_PARENTHESIS  shift, and go to state 219
+
+
+State 216
+
+   12 if_dangle: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr . TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE if_dangle
+   58 stmt: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr . TOKEN_RIGHT_PARENTHESIS stmt
+   59     | TOKEN_IF TOKEN_LEFT_PARENTHESIS expr . TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE stmt
+
+    TOKEN_RIGHT_PARENTHESIS  shift, and go to state 220
+
+
+State 217
+
+   19 if_dangle: TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE .
+   36 stmt_block: TOKEN_LEFT_BRACE stmt_list TOKEN_RIGHT_BRACE .
+
+    TOKEN_ELSE  reduce using rule 19 (if_dangle)
+    $default    reduce using rule 36 (stmt_block)
+
+
+State 218
+
+   59 stmt: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE stmt .
+
+    $default  reduce using rule 59 (stmt)
+
+
+State 219
+
+   76 for_cond: TOKEN_LEFT_PARENTHESIS for_expr TOKEN_SEMICOLON for_expr TOKEN_SEMICOLON for_expr TOKEN_RIGHT_PARENTHESIS .
+
+    $default  reduce using rule 76 (for_cond)
+
+
+State 220
+
+   12 if_dangle: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS . if_dangle TOKEN_ELSE if_dangle
+   58 stmt: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS . stmt
+   59     | TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS . if_dangle TOKEN_ELSE stmt
+
+    TOKEN_FOR         shift, and go to state 147
+    TOKEN_IF          shift, and go to state 192
+    TOKEN_PRINT       shift, and go to state 149
+    TOKEN_RETURN      shift, and go to state 150
+    TOKEN_LEFT_BRACE  shift, and go to state 193
+    TOKEN_IDENTIFIER  shift, and go to state 153
+
+    var_decl      go to state 194
+    if_dangle     go to state 221
+    access        go to state 155
+    array_access  go to state 43
+    stmt_block    go to state 156
+    array_decl    go to state 8
+    stmt          go to state 196
+    return_stmt   go to state 197
+    expr_assign   go to state 198
+    inc_or_dec    go to state 199
+    for_stmt      go to state 200
+    func_call     go to state 201
+    print_stmt    go to state 202
+
+
+State 221
+
+   12 if_dangle: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle . TOKEN_ELSE if_dangle
+   59 stmt: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle . TOKEN_ELSE stmt
+
+    TOKEN_ELSE  shift, and go to state 222
+
+
+State 222
+
+   12 if_dangle: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE . if_dangle
+   59 stmt: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE . stmt
+
+    TOKEN_FOR         shift, and go to state 147
+    TOKEN_IF          shift, and go to state 192
+    TOKEN_PRINT       shift, and go to state 149
+    TOKEN_RETURN      shift, and go to state 150
+    TOKEN_LEFT_BRACE  shift, and go to state 193
+    TOKEN_IDENTIFIER  shift, and go to state 153
+
+    var_decl      go to state 194
+    if_dangle     go to state 223
+    access        go to state 155
+    array_access  go to state 43
+    stmt_block    go to state 156
+    array_decl    go to state 8
+    stmt          go to state 218
+    return_stmt   go to state 197
+    expr_assign   go to state 198
+    inc_or_dec    go to state 199
+    for_stmt      go to state 200
+    func_call     go to state 201
+    print_stmt    go to state 202
+
+
+State 223
+
+   12 if_dangle: TOKEN_IF TOKEN_LEFT_PARENTHESIS expr TOKEN_RIGHT_PARENTHESIS if_dangle TOKEN_ELSE if_dangle .
+
+    $default  reduce using rule 12 (if_dangle)

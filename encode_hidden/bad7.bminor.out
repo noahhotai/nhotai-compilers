@@ -1,0 +1,22 @@
+IDENTIFIER     main
+COLON :
+FUNCTION            function
+INT            integer
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+RETURN         return
+IDENTIFIER     x
+ADD            +
+MULTIPLY       *
+INT LITERAL    0
+MULTIPLY       *
+SUBTRACT           -
+INT LITERAL    0
+SEMICOLON      ;
+RIGHT BRACE    }
+parse error: syntax error

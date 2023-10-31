@@ -1,0 +1,220 @@
+IDENTIFIER     testfunc
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     y
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IDENTIFIER     i
+COLON :
+INT            integer
+SEMICOLON      ;
+IDENTIFIER     j
+COLON :
+INT            integer
+SEMICOLON      ;
+IDENTIFIER     a
+COLON :
+ARRAY          array
+LEFT BRACKET   [
+INT LITERAL    0
+RIGHT BRACKET  ]
+INT            integer
+ASSIGN         =
+LEFT BRACE     {
+INT LITERAL    0
+COMMA          ,
+INT LITERAL    0
+COMMA          ,
+INT LITERAL    0
+COMMA          ,
+INT LITERAL    0
+COMMA          ,
+INT LITERAL    0
+COMMA          ,
+INT LITERAL    0
+COMMA          ,
+INT LITERAL    0
+COMMA          ,
+INT LITERAL    0
+COMMA          ,
+INT LITERAL    0
+RIGHT BRACE    }
+SEMICOLON      ;
+IDENTIFIER     b
+COLON :
+ARRAY          array
+LEFT BRACKET   [
+IDENTIFIER     x
+RIGHT BRACKET  ]
+INT            integer
+SEMICOLON      ;
+IDENTIFIER     c
+COLON :
+ARRAY          array
+LEFT BRACKET   [
+IDENTIFIER     x
+RIGHT BRACKET  ]
+ARRAY          array
+LEFT BRACKET   [
+IDENTIFIER     y
+RIGHT BRACKET  ]
+INT            integer
+SEMICOLON      ;
+FOR            for
+LEFT PARENTHEIS     (
+IDENTIFIER     i
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+LESS THAN      <
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+INCREMENT      ++
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+IDENTIFIER     b
+LEFT BRACKET   [
+IDENTIFIER     i
+RIGHT BRACKET  ]
+ASSIGN         =
+IDENTIFIER     a
+LEFT BRACKET   [
+IDENTIFIER     i
+RIGHT BRACKET  ]
+MULTIPLY       *
+INT LITERAL    0
+SEMICOLON      ;
+RIGHT BRACE    }
+FOR            for
+LEFT PARENTHEIS     (
+IDENTIFIER     i
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+LESS THAN      <
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+INCREMENT      ++
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+IDENTIFIER     b
+LEFT BRACKET   [
+IDENTIFIER     i
+MULTIPLY       *
+INT LITERAL    0
+RIGHT BRACKET  ]
+ASSIGN         =
+IDENTIFIER     a
+LEFT BRACKET   [
+IDENTIFIER     i
+RIGHT BRACKET  ]
+ADD            +
+IDENTIFIER     b
+LEFT BRACKET   [
+IDENTIFIER     i
+RIGHT BRACKET  ]
+SEMICOLON      ;
+RIGHT BRACE    }
+FOR            for
+LEFT PARENTHEIS     (
+IDENTIFIER     j
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     j
+LESS THAN      <
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+INCREMENT      ++
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+FOR            for
+LEFT PARENTHEIS     (
+IDENTIFIER     i
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+LESS THAN      <
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+INCREMENT      ++
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+IDENTIFIER     c
+LEFT BRACKET   [
+IDENTIFIER     i
+RIGHT BRACKET  ]
+LEFT BRACKET   [
+IDENTIFIER     j
+RIGHT BRACKET  ]
+ASSIGN         =
+IDENTIFIER     i
+MULTIPLY       *
+IDENTIFIER     j
+SEMICOLON      ;
+RIGHT BRACE    }
+RIGHT BRACE    }
+FOR            for
+LEFT PARENTHEIS     (
+IDENTIFIER     j
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     j
+LESS THAN      <
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+INCREMENT      ++
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+FOR            for
+LEFT PARENTHEIS     (
+IDENTIFIER     i
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+LESS THAN      <
+INT LITERAL    0
+SEMICOLON      ;
+IDENTIFIER     i
+INCREMENT      ++
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+PRINT          print
+IDENTIFIER     c
+LEFT BRACKET   [
+IDENTIFIER     i
+RIGHT BRACKET  ]
+LEFT BRACKET   [
+IDENTIFIER     j
+RIGHT BRACKET  ]
+SEMICOLON      ;
+PRINT          print
+STRING LITERAL  
+SEMICOLON      ;
+RIGHT BRACE    }
+PRINT          print
+STRING LITERAL 
+
+SEMICOLON      ;
+RIGHT BRACE    }
+RIGHT BRACE    }
+HEREProgram parsed successfully.

@@ -1,6 +1,0 @@
-IDENTIFIER     dsfsdfsdfsdfsfdsf
-IDENTIFIER     x
-ASSIGN         =
-INT LITERAL    0
-SEMICOLON      ;
-parse error: syntax error

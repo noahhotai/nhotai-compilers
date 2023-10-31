@@ -1,0 +1,46 @@
+IDENTIFIER     ComputeAscii
+COLON :
+FUNCTION            function
+CHAR           char
+LEFT PARENTHEIS     (
+IDENTIFIER     c
+COLON :
+CHAR           char
+RIGHT PARENTHESIS    )
+SEMICOLON      ;
+IDENTIFIER     GetLength
+COLON :
+FUNCTION            function
+INT            integer
+LEFT PARENTHEIS     (
+IDENTIFIER     s
+COLON :
+STRING         string
+COMMA          ,
+IDENTIFIER     i
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+SEMICOLON      ;
+IDENTIFIER     GetArea
+COLON :
+FUNCTION            function
+INT            integer
+LEFT PARENTHEIS     (
+IDENTIFIER     width
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     height
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+RETURN         return
+IDENTIFIER     width
+MULTIPLY       *
+IDENTIFIER     height
+SEMICOLON      ;
+RIGHT BRACE    }
+HEREProgram parsed successfully.

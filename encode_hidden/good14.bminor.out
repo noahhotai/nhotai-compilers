@@ -1,0 +1,52 @@
+IDENTIFIER     testfunc
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     y
+COLON :
+INT            integer
+COMMA          ,
+IDENTIFIER     z
+COLON :
+INT            integer
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+RETURN         return
+IDENTIFIER     x
+SEMICOLON      ;
+RETURN         return
+STRING LITERAL hello
+SEMICOLON      ;
+RETURN         return
+IDENTIFIER     x
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+RETURN         return
+IDENTIFIER     x
+EQUALITY       ==
+INT LITERAL    0
+SEMICOLON      ;
+RETURN         return
+IDENTIFIER     x
+GREATER THAN   >
+INT LITERAL    0
+SEMICOLON      ;
+RETURN         return
+IDENTIFIER     testfunc
+LEFT PARENTHEIS     (
+IDENTIFIER     x
+COMMA          ,
+IDENTIFIER     y
+COMMA          ,
+IDENTIFIER     z
+RIGHT PARENTHESIS    )
+SEMICOLON      ;
+RIGHT BRACE    }
+HEREProgram parsed successfully.

@@ -1,0 +1,24 @@
+IDENTIFIER     main
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+RIGHT PARENTHESIS    )
+ASSIGN         =
+LEFT BRACE     {
+IDENTIFIER     i
+COLON :
+INT            integer
+SEMICOLON      ;
+FOR            for
+LEFT PARENTHEIS     (
+IDENTIFIER     i
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+RIGHT PARENTHESIS    )
+PRINT          print
+IDENTIFIER     i
+SEMICOLON      ;
+RIGHT BRACE    }
+parse error: syntax error

@@ -1,0 +1,14 @@
+IDENTIFIER     main
+COLON :
+FUNCTION            function
+VOID           void
+LEFT PARENTHEIS     (
+RIGHT PARENTHESIS    )
+LEFT BRACE     {
+PRINT          print
+IDENTIFIER     x
+IDENTIFIER     y
+IDENTIFIER     z
+SEMICOLON      ;
+RIGHT BRACE    }
+parse error: syntax error
