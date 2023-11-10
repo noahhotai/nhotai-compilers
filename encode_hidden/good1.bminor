@@ -10,6 +10,7 @@ s: string;
 t: string = "hello\n";
 d: char;
 e: char = 'x';
+e: char = 'x';
 
 x: array [] string;
 y: array [] string = { "a", "b", "c" };

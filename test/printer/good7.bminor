@@ -1,1 +1,1 @@
-barr:array [] boolean = {};
+barr:array [] boolean = {7};

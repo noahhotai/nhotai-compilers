@@ -34,7 +34,7 @@
 # define YY_YY_TOKEN_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 0
+# define YYDEBUG 1
 #endif
 #if YYDEBUG
 extern int yydebug;
@@ -80,30 +80,46 @@ extern int yydebug;
     TOKEN_LEFT_BRACKET = 289,
     TOKEN_RIGHT_BRACKET = 290,
     TOKEN_NOT_EQUAL = 291,
-    TOKEN_EQUAL = 292,
-    TOKEN_NOT = 293,
-    TOKEN_LESS_THAN = 294,
-    TOKEN_GREATER_THAN = 295,
-    TOKEN_AND = 296,
-    TOKEN_OR = 297,
-    TOKEN_TYPE_SET = 298,
-    TOKEN_SEMICOLON = 299,
-    TOKEN_COMMA = 300,
-    TOKEN_PLUS_PLUS = 301,
-    TOKEN_MINUS_MINUS = 302,
-    TOKEN_LESS_THAN_OR_EQUAL = 303,
-    TOKEN_GREATER_THAN_OR_EQUAL = 304,
-    TOKEN_IDENTIFIER = 305,
-    TOKEN_INT_LITERAL = 306,
-    TOKEN_FLOAT_LITERAL = 307,
-    TOKEN_STRING_LITERAL = 308,
-    TOKEN_CHAR_LITERAL = 309
+    TOKEN_NOT = 292,
+    TOKEN_EQUAL = 293,
+    TOKEN_NO = 294,
+    TOKEN_LESS_THAN = 295,
+    TOKEN_GREATER_THAN = 296,
+    TOKEN_AND = 297,
+    TOKEN_OR = 298,
+    TOKEN_TYPE_SET = 299,
+    TOKEN_SEMICOLON = 300,
+    TOKEN_COMMA = 301,
+    TOKEN_PLUS_PLUS = 302,
+    TOKEN_MINUS_MINUS = 303,
+    TOKEN_LESS_THAN_OR_EQUAL = 304,
+    TOKEN_GREATER_THAN_OR_EQUAL = 305,
+    TOKEN_IDENTIFIER = 306,
+    TOKEN_INT_LITERAL = 307,
+    TOKEN_FLOAT_LITERAL = 308,
+    TOKEN_STRING_LITERAL = 309,
+    TOKEN_CHAR_LITERAL = 310
   };
 #endif
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+
+union YYSTYPE
+{
+#line 29 "parser.bison" /* yacc.c:1909  */
+
+	struct decl *decl;
+	struct stmt *stmt;
+	struct expr *expr;
+	char * name;
+	struct type *type;
+	struct param_list *param_list;
+
+#line 120 "token.h" /* yacc.c:1909  */
+};
+
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif

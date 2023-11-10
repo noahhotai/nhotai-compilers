@@ -62,6 +62,8 @@ while                                                 { return TOKEN_WHILE; }
                                     return TOKEN_ERROR;
                                 } 
                                 else{
+                                    char *s = strdup(yytext);
+                                    yylval.name = s;
                                     return TOKEN_IDENTIFIER;
                                 }
 }

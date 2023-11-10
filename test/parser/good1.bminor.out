@@ -1,13 +1,1 @@
-IDENTIFIER     x
-COLON :
-INT            integer
-SEMICOLON      ;
-IDENTIFIER     y
-COLON :
-INT            integer
-SEMICOLON      ;
-IDENTIFIER     z
-COLON :
-INT            integer
-SEMICOLON      ;
-HEREProgram parsed successfully.
+Program parsed successfully.

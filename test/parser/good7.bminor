@@ -1,1 +1,38 @@
-barr:array [] boolean = {};
+main: function integer (x: integer, y: integer, z: integer);
+main: function integer (x: integer, y: integer, z: integer);
+main: function integer (x: integer, y: integer, z: integer);
+main: function integer (x: integer, y: integer, z: integer);
+main: function integer (x: integer, y: integer, z: integer);
+test: function char ();
+x: integer = 3;
+
+main: function integer (x: integer, y: integer, z: integer) = {
+    x: integer = 3;
+    y: integer = x + y + z;
+    i: integer;
+    for (i=0; i<x; i++) {
+        x: integer = 3;
+        y = z + x + y + i;
+        y++;
+        y: integer = 3;
+        if (3) {
+            x: integer = y + z;
+        } else if (2) {
+            x: integer = 1;
+        } else if (4) {
+            z: integer = main(x, y, z);
+            if (2) {
+                x: integer;
+                x = y = z;
+                y = test(1, 2, z);
+            }
+        }
+    }
+}
+
+main: function integer (x: integer, y: integer, z: integer);
+test: function char ();
+test: function char () = {
+    return 4;
+}
+

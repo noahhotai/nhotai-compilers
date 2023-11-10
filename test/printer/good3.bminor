@@ -1,8 +1,2 @@
-square: function integer ( x: integer ) = {
-    {
-        {
-            {
-            }
-        }
-    }
-}
+main:function void() =
+{}

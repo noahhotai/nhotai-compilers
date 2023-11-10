@@ -159,4 +159,4 @@ RETURN         return
 TRUE           true
 SEMICOLON      ;
 RIGHT BRACE    }
-HEREProgram parsed successfully.
+Program parsed successfully.

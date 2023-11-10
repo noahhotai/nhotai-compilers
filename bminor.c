@@ -3,7 +3,21 @@
 #include <string.h>
 #include "scanner_func.c"
 #include "string_encode.c"
+#include "decl.h"
+#include "hash_table.h"
+#include "scope.h"
+
+
+struct decl *parser_result;
 extern int yyparse();
+int resolve_error;
+
+void indent(int indents){
+    for (int i = 0; i < indents; i++){
+        printf("    ");
+    }
+}
+
 
 int main(int argc, char* argv[]){
     // call scanner
@@ -40,11 +54,32 @@ int main(int argc, char* argv[]){
             fprintf(stderr, "Could not open %s\n", argv[2]);
             return 1;
         };
-        if (scanner()) {
-            fprintf(stderr, "ERROR: Scanning error.\n");
+
+        if (yyparse()) {
             return 1;
+        } else {
+            fprintf(stdout, "Program parsed successfully.\n");
         }
         fclose(yyin);
+    }
+    else if (!strcmp(argv[1], "--print")) {
+        if (!(yyin = fopen(argv[2], "r"))) {
+            fprintf(stderr, "Could not open %s\n", argv[2]);
+            return 1;
+        };
+        if (yyparse()) {
+            return 1;
+        } else {
+            // printf("else");
+            fprintf(stdout, "Program parsed successfully.\n");
+            // printf("else");
+        }
+        // printf("before111");
+        fclose(yyin);
+        // printf("before");
+        decl_print(parser_result, 0);
+    }
+    else if (!strcmp(argv[1], "--resolve")) {
         if (!(yyin = fopen(argv[2], "r"))) {
             fprintf(stderr, "Could not open %s\n", argv[2]);
             return 1;
@@ -55,6 +90,16 @@ int main(int argc, char* argv[]){
             fprintf(stdout, "Program parsed successfully.\n");
         }
         fclose(yyin);
+        the_stack = scope_stack_creator();
+        decl_resolve(parser_result);
+        if (!resolve_error){
+            fprintf(stdout, "Program resolved successfully.\n");
+            return 0;
+        }
+        else{
+            fprintf(stdout, "Program failed to resolve.\n");
+            return 1;
+        }
     }
     else{
         return 1;

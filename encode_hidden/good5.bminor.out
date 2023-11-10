@@ -37,4 +37,4 @@ RETURN         return
 IDENTIFIER     v
 SEMICOLON      ;
 RIGHT BRACE    }
-HEREProgram parsed successfully.
+Program parsed successfully.

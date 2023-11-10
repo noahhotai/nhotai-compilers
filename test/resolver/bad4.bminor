@@ -1,0 +1,4 @@
+main:function void()={
+
+    test_funct();
+}

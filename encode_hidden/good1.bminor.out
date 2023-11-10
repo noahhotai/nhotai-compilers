@@ -143,4 +143,4 @@ STRING LITERAL z
 RIGHT BRACE    }
 RIGHT BRACE    }
 SEMICOLON      ;
-HEREProgram parsed successfully.
+Program parsed successfully.

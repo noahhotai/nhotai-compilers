@@ -1,6 +1,6 @@
 #!/bin/sh
 
-for testfile in encode_hidden/good*.bminor
+for testfile in test/parser/good*.bminor
 do
 	if ./bminor --parse $testfile > $testfile.out
 	then
@@ -10,7 +10,7 @@ do
 	fi
 done
 
-for testfile in encode_hidden/bad*.bminor
+for testfile in test/parser/bad*.bminor
 do
 	if ./bminor --parse $testfile > $testfile.out
 	then

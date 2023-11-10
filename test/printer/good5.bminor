@@ -1,11 +1,2 @@
-square: function integer ( x: integer ) = {
-	return x^2;
-}
-d
-main: function integer ( x: integer ) = {
-	if (x == 5){
-		int r = 5;
-	}
-}
-
-
+usleep: function void ( usecs: integer );
+rand: function integer();

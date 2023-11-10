@@ -78,4 +78,4 @@ EQUALITY       ==
 INT LITERAL    0
 SEMICOLON      ;
 RIGHT BRACE    }
-HEREProgram parsed successfully.
+Program parsed successfully.

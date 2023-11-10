@@ -1,0 +1,12 @@
+main: function integer (x: integer, y: integer, z: integer) = {
+
+    x++;
+    y:integer = x;
+    z--;
+    z = z = x;
+    if (z){
+        x = 6;
+    }
+}
+
+main2: function integer (x: integer, y: integer, z: integer);

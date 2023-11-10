@@ -1,6 +1,1 @@
-IDENTIFIER     x
-COLON :
-INT            integer
-ASSIGN         =
-INT LITERAL    0
 parse error: syntax error

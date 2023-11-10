@@ -1,8 +1,9 @@
 
 #ifndef EXPR_H
 #define EXPR_H
-
+#include <stdbool.h>
 #include "symbol.h"
+#include "scope.h"
 
 typedef enum {
 	EXPR_ADD,
@@ -32,7 +33,11 @@ typedef enum {
 	EXPR_FUNC_CALL,
 	EXPR_NESTED_ARRAY_ACCESS,
 	EXPR_LIST,
-	EXPR_NESTED_BRACES
+	EXPR_NESTED_BRACES,
+	EXPR_POS,
+	EXPR_PAREN,
+	EXPR_INC,
+	EXPR_DEC
 	/* many more kinds of exprs to add here */
 } expr_t;
 
@@ -43,13 +48,11 @@ struct expr {
 	struct expr *right;
 
 	/* used by various leaf exprs */
-	const char *ident;
-	const char char_literal;
+	char* ident;
 	int int_literal;
-	const char * string_literal;
+	char * string_literal;
 	float float_literal;
 	bool bool_literal;
-
 	struct symbol *symbol;
 } ;
 
@@ -58,8 +61,10 @@ struct expr * expr_create_ident( const char *n );
 struct expr * expr_create_integer_literal( int c );
 struct expr * expr_create_boolean_literal( int c );
 struct expr * expr_create_float_literal( float c );
-struct expr * expr_create_char_literal( char c );
+struct expr * expr_create_char_literal( char * c );
 struct expr * expr_create_string_literal( const char *str );
 void expr_print( struct expr *e );
+void expr_resolve( struct expr *e );
+// struct type * expr_typecheck( struct expr *e );
 
 #endif

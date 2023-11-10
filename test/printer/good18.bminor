@@ -1,0 +1,8 @@
+testit: function boolean ( x: integer, y: integer ) = {
+
+    	/* try the other way around */
+    i:integer = 0;
+	for(i=0;i<x;i++) {
+            return 5; 
+    }
+}

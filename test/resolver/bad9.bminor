@@ -1,0 +1,19 @@
+func1: function integer (x:integer, y:char) =
+{	
+	for (;;){
+		if (x){
+			for (; ; ){
+				return z;
+			}
+				
+		}
+		else if{
+
+			return z;
+		}
+		else{
+			return z;
+		}
+	}
+        
+}

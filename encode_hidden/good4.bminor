@@ -9,16 +9,6 @@ simplefunc: function boolean ( x: integer, y: integer ) = {
      // An expression with a semicolon
      z = 16 + x / y;
 
-     // Print statement
-     print "input is: ", x, " and ", y, "\n";
-
-     // Simple if-else statement
-     if( x < y ) {
-         return true;
-     } else {
-         return false;
-     }
-
 }
 
 

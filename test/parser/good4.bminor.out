@@ -1,8 +1,1 @@
-IDENTIFIER     main
-COLON :
-FUNCTION            function
-VOID           void
-LEFT PARENTHEIS     (
-RIGHT PARENTHESIS    )
-SEMICOLON      ;
-HEREProgram parsed successfully.
+Program parsed successfully.

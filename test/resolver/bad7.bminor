@@ -1,0 +1,9 @@
+
+
+func1: function integer (x:integer, y:char) =
+{
+    if (1){
+        return z;
+    }
+        
+}

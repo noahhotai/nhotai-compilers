@@ -1632,42 +1632,44 @@ YY_RULE_SETUP
                                     return TOKEN_ERROR;
                                 } 
                                 else{
+                                    char *s = strdup(yytext);
+                                    yylval.name = s;
                                     return TOKEN_IDENTIFIER;
                                 }
 }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 68 "scanner.flex"
+#line 70 "scanner.flex"
 { return TOKEN_STRING_LITERAL; }
 	YY_BREAK
 case 51:
 /* rule 51 can match eol */
 YY_RULE_SETUP
-#line 69 "scanner.flex"
+#line 71 "scanner.flex"
 { return TOKEN_CHAR_LITERAL; }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 70 "scanner.flex"
+#line 72 "scanner.flex"
 { return TOKEN_INT_LITERAL; }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 71 "scanner.flex"
+#line 73 "scanner.flex"
 { return TOKEN_FLOAT_LITERAL; }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 73 "scanner.flex"
+#line 75 "scanner.flex"
 { return TOKEN_ERROR; }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 74 "scanner.flex"
+#line 76 "scanner.flex"
 ECHO;
 	YY_BREAK
-#line 1671 "scanner.c"
+#line 1673 "scanner.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2668,7 +2670,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 74 "scanner.flex"
+#line 76 "scanner.flex"
 
 
 int yywrap() { return 1; }

@@ -1,0 +1,6 @@
+main: function void() ={
+	
+	print x
+	x:integer = 5 ** 5;
+	
+}

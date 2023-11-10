@@ -1,13 +1,1 @@
-IDENTIFIER     main
-COLON :
-FUNCTION            function
-VOID           void
-LEFT PARENTHEIS     (
-RIGHT PARENTHESIS    )
-ASSIGN         =
-LEFT BRACE     {
-PRINT          print
-STRING LITERAL hi
-SEMICOLON      ;
-RIGHT BRACE    }
-HEREProgram parsed successfully.
+Program parsed successfully.

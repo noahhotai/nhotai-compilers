@@ -1,18 +1,1 @@
-IDENTIFIER     usleep
-COLON :
-FUNCTION            function
-VOID           void
-LEFT PARENTHEIS     (
-IDENTIFIER     usecs
-COLON :
-INT            integer
-RIGHT PARENTHESIS    )
-SEMICOLON      ;
-IDENTIFIER     rand
-COLON :
-FUNCTION            function
-INT            integer
-LEFT PARENTHEIS     (
-RIGHT PARENTHESIS    )
-SEMICOLON      ;
-HEREProgram parsed successfully.
+Program parsed successfully.

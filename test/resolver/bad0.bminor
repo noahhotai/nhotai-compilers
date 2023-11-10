@@ -1,0 +1,5 @@
+
+main: function void () = {
+    print i;
+	print "hi";
+}

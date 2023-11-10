@@ -1,0 +1,8 @@
+
+
+main: function void() ={
+	
+	if (x) return 5;
+
+	
+}
