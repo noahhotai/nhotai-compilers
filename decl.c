@@ -130,10 +130,9 @@ void decl_typecheck( struct decl *d ){
         // expr_print(d->value);
         // printf("%s: %d", d->name, expr_type->kind);
         if (expr_type->kind == TYPE_ARRAY){
-            if (!array_content_check(d->type, d->value)){
+            if (array_content_check(d->type, d->value)){
                 typecheck_error = 1;
-                printf("type error: cannot assign type ");
-                type_print(expr_type);
+                printf("type error: cannot assign ");
                 printf(" (");
                 expr_print(d->value);
                 printf(") to type ");

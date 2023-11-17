@@ -218,7 +218,13 @@ struct type* array_access_func(struct type * left_type, struct expr* right_expr)
 
 struct type * type_copy( struct type *t )
 {
-    return type_create( t->kind, t->subtype, t->params, t->array_size );
+    if (!t) {
+        return 0;
+    }
+    else{
+        return type_create(t->kind, type_copy(t->subtype), t->params, t->array_size );
+    }   
+    
 // Return a duplicate copy of t, making sure
 // to duplicate subtype and params recursively.
 
@@ -230,9 +236,7 @@ void type_delete( struct type *t ){
     }
     // printf("1");
     // type_print(t);
-    // if (t->subtype){
-    //     type_delete(t->subtype);
-    // }
+    type_delete(t->subtype);
     param_delete(t->params);
     free(t);
 // Free all the elements of t recursively.
@@ -252,12 +256,12 @@ bool array_content_check(struct type * left_type, struct expr * array_expr){
     }
     if (array_expr->kind == EXPR_NESTED_BRACES || array_expr->kind == EXPR_ARRAY_BRACES ){
         // return_val = 1;
-        if (!array_content_check(left_type->subtype, array_expr->left)){
+        if (array_content_check(left_type->subtype, array_expr->left)){
             return 1;
         }
     }
     else if  (array_expr->kind == EXPR_LIST){
-        if (!expr_list_check(array_expr, left_type)){
+        if (expr_list_check(left_type, array_expr)){
             return 1;
         }
         // return_val 
@@ -266,22 +270,25 @@ bool array_content_check(struct type * left_type, struct expr * array_expr){
     if (array_expr->right){
         return array_content_check(left_type, array_expr->right);
     }
-
+    return 0;
     // array_content_check(left_type->subtype, array_expr->left);
 
 }
 
 
-bool expr_list_check( struct expr* expr_list, struct type* type_benchmark){
+bool expr_list_check( struct type* type_benchmark, struct expr* expr_list){
     // extern int typecheck_error;
-    while (expr_list){
-        if (!type_check(expr_list->symbol->type, type_benchmark)){
+    // temp_expr = 
+
+    while (expr_list && expr_list->left){
+
+        if (!type_check(expr_typecheck(expr_list->left), type_benchmark)){
             // typecheck_error = 1;
-            printf("type error: wrong type given in array (");
-            type_print(expr_list->symbol->type);
-            printf("), where type (");
-            type_print(type_benchmark);
-            printf("),expected.");
+            // printf("type error: wrong type given in array (");
+            // type_print(expr_list->symbol->type);
+            // printf("), where type (");
+            // type_print(type_benchmark);
+            // printf("),expected.");
             return 1;
         }
         expr_list = expr_list->right;

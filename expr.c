@@ -268,7 +268,7 @@ struct type * expr_typecheck( struct expr *e ){
     struct type *lt = expr_typecheck(e->left);
     struct type *rt = expr_typecheck(e->right);
     struct type *result;
-
+    // printf("expr_typecheck\n\n\n\n");
     switch (e->kind) {
         case EXPR_ADD:
             if ( lt->kind ==TYPE_INTEGER && rt->kind == TYPE_INTEGER){
@@ -624,11 +624,16 @@ struct type * expr_typecheck( struct expr *e ){
             // if (type_check(lt, rt)){
             //     printf("array elements are not subtype\n");
             // }
-            result = type_copy(lt);
+            // printf("%d", lt->kind);
+            // printf("case expr_list\n");
+
+            // result = type_copy(lt);
+            result = type_create(TYPE_INTEGER, 0, 0, 0);
+            // printf("result: %d", result->kind);
             break;
         case EXPR_NESTED_BRACES:
             // printf("hererere");
-            result = type_create(TYPE_ARRAY, lt, 0, 0);
+            result = type_create(TYPE_ARRAY, type_copy(lt), 0, 0);
             break;
         case EXPR_PAREN:
             // printf("expr paren\n");
@@ -655,10 +660,14 @@ struct type * expr_typecheck( struct expr *e ){
         case EXPR_DEC:
             break;
     }
+    // printf("out of case\n\n\n");
     if (lt){
+    //     printf("lt\n\n\n");
+        // print(" ");
         type_delete(lt);
     }
     if (rt){
+        // printf("rt\n\n\n");
         type_delete(rt);
     }
 

@@ -1,5 +1,6 @@
 f: function void ( a: integer, b: integer ) = {
-     j: array [1] array [2] boolean = {8,false};
+     j: array [] array [] integer  = {{5}, {"o"}};
      print j;
+     //z: array [1] array [2]  = {{},false};
      //j: array [2] boolean = {true,false};
 }
