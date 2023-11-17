@@ -52,7 +52,7 @@ int scope_level(){
 
 }
 
-void scope_bind( const char *name, struct symbol *sym ){
+void scope_bind( char *name, struct symbol *sym ){
     extern int resolve_error;
     // printf("scope_bind: %s\n", name);
     // print("scope_bind: %s");
@@ -77,14 +77,14 @@ void scope_bind( const char *name, struct symbol *sym ){
 
 
 // }
-struct symbol *scope_lookup_current( const char *name ){
+struct symbol *scope_lookup_current( char *name ){
     
     return hash_table_lookup(the_stack->top->ht, name);
 
 }
 
 
-struct symbol *scope_lookup( const char *name ){
+struct symbol *scope_lookup( char *name ){
 
     struct scope_stack_node* curr = the_stack->top;
     struct symbol* return_symbol = 0;

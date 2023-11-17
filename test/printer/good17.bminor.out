@@ -1,9 +1,0 @@
-Program parsed successfully.
-testfunc: function void () = {
-    i: integer;
-    j: integer;
-    for(i=0;i<10;i++){
-        b[i]=a[i]*10;
-    }
-}
-

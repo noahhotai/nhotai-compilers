@@ -103,7 +103,6 @@ void stmt_print(struct stmt *s, int indents ){
     }
 
 	
-	// printf("s->next");
 	if (s->next){
         stmt_print(s->next, indents);
     }
@@ -144,7 +143,6 @@ void stmt_resolve(struct stmt * s){
 			}
             break;
         case STMT_BLOCK:
-			
 			scope_enter();
 			stmt_resolve(s->body);
 			scope_exit();
@@ -154,8 +152,84 @@ void stmt_resolve(struct stmt * s){
     }
 
 	if (s->next){
-
-
 		stmt_resolve(s->next);
     }
+}
+
+void stmt_typecheck(struct stmt *s, struct type *decl_subtype, int returned, char* func_name){
+	if (!s) return;	
+
+	extern int typecheck_error;
+	struct type *t;
+	switch (s->kind) {
+		case STMT_DECL:
+			decl_typecheck(s->decl);
+			break;
+        case STMT_EXPR:
+			t = expr_typecheck(s->expr);
+			type_delete(t);
+			break;
+			struct type *t;
+        case STMT_IF_ELSE:
+			// printf("\nif else\n");
+			if (s->expr){
+				t = expr_typecheck(s->expr);
+				if (t->kind != TYPE_BOOLEAN){
+					typecheck_error = 1;
+					printf("if condition must be boolean");
+				}
+			}
+			type_delete(t);
+			stmt_typecheck(s->body, decl_subtype, returned, func_name);
+			stmt_typecheck(s->else_body, decl_subtype, returned, func_name);
+			break;
+
+        case STMT_FOR:
+			t = expr_typecheck(s->init_expr);
+			type_delete(t);
+			t = expr_typecheck(s->expr);
+			type_delete(t);
+			t = expr_typecheck(s->next_expr);
+			type_delete(t);
+			stmt_typecheck(s->body, decl_subtype, returned, func_name);
+			break;
+        case STMT_PRINT:
+            break;
+        case STMT_RETURN:
+			if (s->expr) {
+				// struct type *expr_type = expr_typecheck(s->expr, 0, 0);
+				struct type *expr_type = expr_typecheck(s->expr);
+				if (!type_check(decl_subtype, expr_type)){
+            		//type error: cannot return a boolean (x<5) in a function (fibonnacci) that returns integer
+					typecheck_error = 1;
+            		printf("type error: cannot return a ");
+					type_print(expr_type);
+            		expr_print(s->expr);
+					printf(" in a function (%s) that returns ", func_name);
+					type_print(decl_subtype);
+        		}
+				returned = 1;
+			}
+			break;
+        case STMT_BLOCK:
+			stmt_typecheck(s->body, decl_subtype, returned, func_name);
+            break;
+			
+        default:
+            break;
+    }
+
+	
+	if (s->next){
+        stmt_typecheck(s->next, decl_subtype, returned, func_name);
+    }
+	else{
+		// printf("returned: %d", returned);
+		// printf("decl type: %d", decl_type->kind)
+		if (decl_subtype->kind != TYPE_VOID && !returned){
+			typecheck_error = 1;
+			printf("type error: non void function did not give appropriate return statement.\n");
+		}
+	}
+	
 }

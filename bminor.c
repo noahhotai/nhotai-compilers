@@ -11,6 +11,7 @@
 struct decl *parser_result;
 extern int yyparse();
 int resolve_error;
+int typecheck_error;
 
 void indent(int indents){
     for (int i = 0; i < indents; i++){
@@ -100,6 +101,40 @@ int main(int argc, char* argv[]){
             fprintf(stdout, "Program failed to resolve.\n");
             return 1;
         }
+    }
+    else if (!strcmp(argv[1], "--typecheck")) {
+        if (!(yyin = fopen(argv[2], "r"))) {
+            fprintf(stderr, "Could not open %s\n", argv[2]);
+            return 1;
+        };
+        if (yyparse()) {
+            return 1;
+        } else {
+            fprintf(stdout, "Program parsed successfully.\n");
+        }
+        fclose(yyin);
+        the_stack = scope_stack_creator();
+        decl_resolve(parser_result);
+        if (!resolve_error){
+            fprintf(stdout, "Program resolved successfully.\n");
+        }
+        else{
+            fprintf(stdout, "Program failed to resolve.\n");
+            // return 1;
+        }
+        // the_stack = scope_stack_creator();
+        typecheck_error = 0;
+        decl_typecheck(parser_result);
+        if (!typecheck_error){
+            fprintf(stdout, "Program type checked successfully.\n");
+            return 0;
+        }
+        else{
+            fprintf(stdout, "Program failed to typecheck.\n");
+            
+            return 1;
+        }
+        
     }
     else{
         return 1;

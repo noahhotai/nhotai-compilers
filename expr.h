@@ -6,6 +6,7 @@
 #include "scope.h"
 
 typedef enum {
+	EXPR_ARRAY_BRACES,
 	EXPR_ADD,
 	EXPR_SUB,
 	EXPR_MUL,
@@ -48,7 +49,7 @@ struct expr {
 	struct expr *right;
 
 	/* used by various leaf exprs */
-	char* ident;
+	char * ident;
 	int int_literal;
 	char * string_literal;
 	float float_literal;
@@ -57,12 +58,13 @@ struct expr {
 } ;
 
 struct expr * expr_create( expr_t kind, struct expr *left, struct expr *right );
-struct expr * expr_create_ident( const char *n );
+struct expr * expr_create_ident(char *n );
 struct expr * expr_create_integer_literal( int c );
 struct expr * expr_create_boolean_literal( int c );
 struct expr * expr_create_float_literal( float c );
 struct expr * expr_create_char_literal( char * c );
-struct expr * expr_create_string_literal( const char *str );
+struct expr * expr_create_string_literal(char *str );
+struct type * expr_typecheck(struct expr * e);
 void expr_print( struct expr *e );
 void expr_resolve( struct expr *e );
 // struct type * expr_typecheck( struct expr *e );

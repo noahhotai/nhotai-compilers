@@ -96,7 +96,7 @@ Grammar
    57 array_decl: identifier TOKEN_COLON array_type TOKEN_ASSIGN TOKEN_LEFT_BRACE array_expr_list TOKEN_RIGHT_BRACE TOKEN_SEMICOLON
    58           | identifier TOKEN_COLON array_type TOKEN_SEMICOLON
 
-   59 param_list: identifier TOKEN_COLON type param_recursive
+   59 param_list: identifier TOKEN_COLON every_type param_recursive
    60           | %empty
 
    61 stmt_list: stmt stmt_list
@@ -273,7 +273,7 @@ array_access (70)
 array_access_recursive (71)
     on left: 35 36, on right: 34 35
 type (72)
-    on left: 37 38 39 40 41, on right: 10 11 43 45 47 59
+    on left: 37 38 39 40 41, on right: 10 11 43 45 47
 stmt_block (73)
     on left: 42, on right: 8 23
 func_type (74)
@@ -281,7 +281,7 @@ func_type (74)
 param_recursive (75)
     on left: 45 46, on right: 45 59
 every_type (76)
-    on left: 47 48, on right: 49
+    on left: 47 48, on right: 49 59
 array_type (77)
     on left: 49, on right: 48 57 58
 array_size (78)
@@ -1647,7 +1647,7 @@ State 87
 
 State 88
 
-   59 param_list: identifier . TOKEN_COLON type param_recursive
+   59 param_list: identifier . TOKEN_COLON every_type param_recursive
 
     TOKEN_COLON  shift, and go to state 117
 
@@ -1917,15 +1917,18 @@ State 116
 
 State 117
 
-   59 param_list: identifier TOKEN_COLON . type param_recursive
+   59 param_list: identifier TOKEN_COLON . every_type param_recursive
 
+    TOKEN_ARRAY    shift, and go to state 14
     TOKEN_BOOLEAN  shift, and go to state 15
     TOKEN_CHAR     shift, and go to state 16
     TOKEN_FLOAT    shift, and go to state 17
     TOKEN_INT      shift, and go to state 19
     TOKEN_STRING   shift, and go to state 20
 
-    type  go to state 126
+    type        go to state 100
+    every_type  go to state 126
+    array_type  go to state 102
 
 
 State 118
@@ -2021,7 +2024,7 @@ State 125
 
 State 126
 
-   59 param_list: identifier TOKEN_COLON type . param_recursive
+   59 param_list: identifier TOKEN_COLON every_type . param_recursive
 
     TOKEN_COMMA  shift, and go to state 134
 
@@ -2129,7 +2132,7 @@ State 134
 
 State 135
 
-   59 param_list: identifier TOKEN_COLON type param_recursive .
+   59 param_list: identifier TOKEN_COLON every_type param_recursive .
 
     $default  reduce using rule 59 (param_list)
 

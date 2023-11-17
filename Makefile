@@ -1,6 +1,6 @@
 CC=      gcc
 LD=      gcc
-CFLAGS=  -g -Wall -std=gnu99 
+CFLAGS=  -g -Wall -Wextra #-Werror #-std=gnu99 
 
 .PHONY: test
 

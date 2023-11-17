@@ -30,10 +30,8 @@ void param_list_resolve( struct param_list *a ){
             the_stack->top->count++;
             struct symbol* new_symbol = symbol_create(SYMBOL_PARAM, a->type, a->name, 0, the_stack->top->count);
             scope_bind(a->name, new_symbol);
-            a = a->next;
-
         }
-        
+        a = a->next;
     }
 }
 
@@ -52,5 +50,15 @@ int param_check(struct param_list* param_1, struct param_list* param_2){
         else{
             return 0;
         }
+    }
+}
+
+void param_delete(struct param_list* param){
+
+    struct param_list* temp;
+    while (param){
+        temp = param->next;
+        free(param);
+        param = temp;
     }
 }

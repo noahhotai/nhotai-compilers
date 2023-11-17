@@ -68,6 +68,64 @@ void type_print(struct type *t ){
     }
 }
 
+void type_print_error(struct type *t ){
+    // printf("type_print");
+    switch (t->kind) {
+        case TYPE_VOID:
+            // Code for handling TYPE_VOID
+            printf("void");
+            break;
+        case TYPE_BOOLEAN:
+            printf("boolean");
+            // Code for handling TYPE_BOOLEAN
+            break;
+        case TYPE_CHAR:
+            printf("char");
+            // Code for handling TYPE_CHAR
+            break;
+        case TYPE_FLOAT:
+            printf("float");
+            // Code for handling TYPE_FLOAT
+            break;
+        case TYPE_INTEGER:
+            printf("integer");
+            // Code for handling TYPE_INTEGER
+            break;
+        case TYPE_STRING:
+            printf("string");
+            // Code for handling TYPE_STRING
+            break;
+        case TYPE_ARRAY:
+            if (t->array_size){
+                printf("array [");
+                expr_print(t->array_size);
+                printf("] ");
+            }
+            else{
+                printf("array [] "); 
+            } 
+    
+            type_print(t->subtype);
+            // Code for handling TYPE_ARRAY
+            break;
+
+        case TYPE_FUNCTION:
+            printf("function ");
+	        type_print(t->subtype);
+            // printf(" (");
+            // param_list_print(t->params);
+            // printf(")");
+            // Code for handling TYPE_FUNCTION
+            break;
+        default:
+            printf("unknown");
+            // Code for handling unknown enum values (if necessary)
+        break;
+    }
+}
+
+
+
 int type_check(struct type* type_1, struct type* type_2){
 
     if (!type_1 && !type_2){
@@ -78,10 +136,155 @@ int type_check(struct type* type_1, struct type* type_2){
     }
     else{
         if (type_1->kind == type_2->kind){
-            return type_check(type_1->subtype, type_2->subtype);
+            return type_check(type_1->subtype, type_2->subtype) && param_check(type_1->params, type_2->params);
         }
         else{
             return 0;
         }
     }
 }
+
+bool atomic_type(struct type* t){
+    if (t->kind != TYPE_ARRAY && t->kind != TYPE_FUNCTION){
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+bool func_arguments_type_check(struct expr* arg_list_expr, struct param_list* func_param_list, char* func_name){
+    struct expr* curr_expr = arg_list_expr;
+    struct param_list*  curr_param = func_param_list;
+    struct type* expr_type = expr_typecheck(arg_list_expr);
+    while (curr_expr){
+        expr_type = expr_typecheck(curr_expr);
+        if (!type_check(expr_type, curr_param->type)){
+            printf("type error: argument of type ");
+            type_print(expr_type);
+            printf(" does not match parameter %s of type ", curr_param->name);
+            type_print(curr_param->type);
+            printf("of function %s.\n", func_name);
+            return false;
+        }
+        curr_expr = curr_expr->right;
+        curr_param = curr_param->next;
+    }
+    if ((!curr_expr) && (curr_param)){
+        return true;
+    }
+    else{
+        printf("paramater error: wrong of arguments given to the function %s.\n", func_name);
+        return false;
+    }
+}
+
+
+struct type* array_access_func(struct type * left_type, struct expr* right_expr){
+
+    while(right_expr){
+        left_type = left_type->subtype;
+        right_expr = right_expr->right;
+    }
+    return left_type; 
+    //array_type;
+}
+// bool type_equals( struct type *a, struct type *b ) {
+//     if( a->kind == b->kind ) {
+//         if(atomic_type(a)){
+//             return true;
+//         }
+//         else if (a->kind == TYPE_ARRAY) {
+//             if subtype is recursively equal{
+//                 return true 
+//             }
+//             else{
+//                 return false;
+//             }
+//         } 
+//         else if (a->kind == TYPE_FUNCTION) {
+//             if (param_check(a->params, b->params)){
+//                 return true;//both subtype and params
+//             }    // are recursively equal
+//             else{
+//                 return false;
+//             }
+//         }
+//     } 
+//     else {
+//         return false;
+//     }
+// }
+
+struct type * type_copy( struct type *t )
+{
+    return type_create( t->kind, t->subtype, t->params, t->array_size );
+// Return a duplicate copy of t, making sure
+// to duplicate subtype and params recursively.
+
+// }
+}
+void type_delete( struct type *t ){   
+    if (!t){
+        return;
+    }
+    // printf("1");
+    // type_print(t);
+    // if (t->subtype){
+    //     type_delete(t->subtype);
+    // }
+    param_delete(t->params);
+    free(t);
+// Free all the elements of t recursively.
+}
+
+
+bool array_content_check(struct type * left_type, struct expr * array_expr){
+    // extern int typecheck_error;
+
+    // printf("here\n\n\n\n\n\n\n\n\n\n\n");
+    if (!left_type || !array_expr){
+        // return_val = 1;
+
+        return 1;
+        // printf("chelsea")
+        // printf("here");
+    }
+    if (array_expr->kind == EXPR_NESTED_BRACES || array_expr->kind == EXPR_ARRAY_BRACES ){
+        // return_val = 1;
+        if (!array_content_check(left_type->subtype, array_expr->left)){
+            return 1;
+        }
+    }
+    else if  (array_expr->kind == EXPR_LIST){
+        if (!expr_list_check(array_expr, left_type)){
+            return 1;
+        }
+        // return_val 
+    }
+    
+    if (array_expr->right){
+        return array_content_check(left_type, array_expr->right);
+    }
+
+    // array_content_check(left_type->subtype, array_expr->left);
+
+}
+
+
+bool expr_list_check( struct expr* expr_list, struct type* type_benchmark){
+    // extern int typecheck_error;
+    while (expr_list){
+        if (!type_check(expr_list->symbol->type, type_benchmark)){
+            // typecheck_error = 1;
+            printf("type error: wrong type given in array (");
+            type_print(expr_list->symbol->type);
+            printf("), where type (");
+            type_print(type_benchmark);
+            printf("),expected.");
+            return 1;
+        }
+        expr_list = expr_list->right;
+    }
+    return 0;
+ }

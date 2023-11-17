@@ -202,12 +202,12 @@ nested_array_braces_recursive: TOKEN_COMMA TOKEN_LEFT_BRACE array_expr_list TOKE
 | { $$ = 0; }
 ;
 
-array_decl: identifier TOKEN_COLON array_type TOKEN_ASSIGN TOKEN_LEFT_BRACE array_expr_list TOKEN_RIGHT_BRACE TOKEN_SEMICOLON {$$ = decl_create($1, $3, $6, 0, 0 );}
+array_decl: identifier TOKEN_COLON array_type TOKEN_ASSIGN TOKEN_LEFT_BRACE array_expr_list TOKEN_RIGHT_BRACE TOKEN_SEMICOLON {struct expr* temp = expr_create(EXPR_ARRAY_BRACES, $6, 0); $$ = decl_create($1, $3, temp, 0, 0 );}
 | identifier TOKEN_COLON array_type TOKEN_SEMICOLON {$$ = decl_create($1, $3, 0, 0, 0);}
 ;
 
 
-param_list: identifier TOKEN_COLON type param_recursive {$$ = param_list_create($1, $3, $4); }
+param_list: identifier TOKEN_COLON every_type param_recursive {$$ = param_list_create($1, $3, $4); }
 | {$$ = 0;}
 ;
 
