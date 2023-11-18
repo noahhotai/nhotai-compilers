@@ -74,7 +74,7 @@ Grammar
    43 func_type: type
    44          | TOKEN_VOID
 
-   45 param_recursive: TOKEN_COMMA identifier TOKEN_COLON type param_recursive
+   45 param_recursive: TOKEN_COMMA identifier TOKEN_COLON every_type param_recursive
    46                | %empty
 
    47 every_type: type
@@ -273,7 +273,7 @@ array_access (70)
 array_access_recursive (71)
     on left: 35 36, on right: 34 35
 type (72)
-    on left: 37 38 39 40 41, on right: 10 11 43 45 47
+    on left: 37 38 39 40 41, on right: 10 11 43 47
 stmt_block (73)
     on left: 42, on right: 8 23
 func_type (74)
@@ -281,7 +281,7 @@ func_type (74)
 param_recursive (75)
     on left: 45 46, on right: 45 59
 every_type (76)
-    on left: 47 48, on right: 49 59
+    on left: 47 48, on right: 45 49 59
 array_type (77)
     on left: 49, on right: 48 57 58
 array_size (78)
@@ -2123,7 +2123,7 @@ State 133
 
 State 134
 
-   45 param_recursive: TOKEN_COMMA . identifier TOKEN_COLON type param_recursive
+   45 param_recursive: TOKEN_COMMA . identifier TOKEN_COLON every_type param_recursive
 
     TOKEN_IDENTIFIER  shift, and go to state 2
 
@@ -2205,7 +2205,7 @@ State 141
 
 State 142
 
-   45 param_recursive: TOKEN_COMMA identifier . TOKEN_COLON type param_recursive
+   45 param_recursive: TOKEN_COMMA identifier . TOKEN_COLON every_type param_recursive
 
     TOKEN_COLON  shift, and go to state 163
 
@@ -2516,15 +2516,18 @@ State 162
 
 State 163
 
-   45 param_recursive: TOKEN_COMMA identifier TOKEN_COLON . type param_recursive
+   45 param_recursive: TOKEN_COMMA identifier TOKEN_COLON . every_type param_recursive
 
+    TOKEN_ARRAY    shift, and go to state 14
     TOKEN_BOOLEAN  shift, and go to state 15
     TOKEN_CHAR     shift, and go to state 16
     TOKEN_FLOAT    shift, and go to state 17
     TOKEN_INT      shift, and go to state 19
     TOKEN_STRING   shift, and go to state 20
 
-    type  go to state 182
+    type        go to state 100
+    every_type  go to state 182
+    array_type  go to state 102
 
 
 State 164
@@ -2728,7 +2731,7 @@ State 181
 
 State 182
 
-   45 param_recursive: TOKEN_COMMA identifier TOKEN_COLON type . param_recursive
+   45 param_recursive: TOKEN_COMMA identifier TOKEN_COLON every_type . param_recursive
 
     TOKEN_COMMA  shift, and go to state 134
 
@@ -2772,7 +2775,7 @@ State 186
 
 State 187
 
-   45 param_recursive: TOKEN_COMMA identifier TOKEN_COLON type param_recursive .
+   45 param_recursive: TOKEN_COMMA identifier TOKEN_COLON every_type param_recursive .
 
     $default  reduce using rule 45 (param_recursive)
 

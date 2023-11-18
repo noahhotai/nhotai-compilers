@@ -1,0 +1,5 @@
+Program parsed successfully.
+b resolves to local 1
+c resolves to local 2
+Program resolved successfully.
+if condition must be booleanProgram failed to typecheck.

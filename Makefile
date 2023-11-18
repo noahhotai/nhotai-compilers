@@ -55,6 +55,7 @@ test:
 	./run_parser_tests.sh
 	./run_printer_tests.sh
 	./run_resolver_tests.sh
+	./run_typechecker_tests.sh
 
 clean: 
 	rm -f *.o bminor scanner.c test/*/*.out

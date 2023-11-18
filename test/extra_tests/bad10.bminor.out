@@ -1,0 +1,4 @@
+Program parsed successfully.
+Program resolved successfully.
+type error: cannot assign declare array non-globally (c)
+Program failed to typecheck.

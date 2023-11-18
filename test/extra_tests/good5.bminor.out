@@ -1,0 +1,9 @@
+Program parsed successfully.
+x resolves to local 1
+y resolves to param 2
+x resolves to local 1
+x resolves to local 1
+x resolves to local 1
+v resolves to local 4
+Program resolved successfully.
+Program type checked successfully.

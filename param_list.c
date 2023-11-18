@@ -73,3 +73,14 @@ struct param_list * param_copy(struct param_list * param_1){
     return param_list_create( param_1->name, type_copy(param_1->type), param_copy(param_1->next));
 }
 
+bool param_typecheck(struct param_list * param1){
+    // extern int typecheck_error;
+    while (param1){
+        if (param1->type->kind == TYPE_ARRAY && param1->type->array_size != 0){
+            // printf("type error: paramter arrays cannot have an array size");    
+            return 1;
+        }
+        param1 = param1->next;
+    }
+    return 0;
+}

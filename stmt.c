@@ -196,7 +196,9 @@ void stmt_typecheck(struct stmt *s, struct type *decl_subtype, int returned, cha
         case STMT_PRINT:
             break;
         case STMT_RETURN:
+			// printf("case return\n");
 			if (s->expr) {
+				// printf("inside if \n");
 				// struct type *expr_type = expr_typecheck(s->expr, 0, 0);
 				struct type *expr_type = expr_typecheck(s->expr);
 				if (!type_check(decl_subtype, expr_type)){
@@ -226,10 +228,11 @@ void stmt_typecheck(struct stmt *s, struct type *decl_subtype, int returned, cha
 	else{
 		// printf("returned: %d", returned);
 		// printf("decl type: %d", decl_type->kind)
-		if (decl_subtype->kind != TYPE_VOID && !returned){
-			typecheck_error = 1;
-			printf("type error: non void function did not give appropriate return statement.\n");
-		}
+		// if (decl_subtype->kind != TYPE_VOID && !returned){
+		// 	printf("%d\n", returned);
+		// 	typecheck_error = 1;
+		// 	printf("type error: non void function did not give appropriate return statement.\n");
+		// }
 	}
 	
 }

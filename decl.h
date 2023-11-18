@@ -27,6 +27,7 @@ struct decl * decl_create( char *name, struct type *type, struct expr *value, st
 void decl_print(struct decl *d, int indent );
 void decl_resolve( struct decl *d );
 void decl_typecheck( struct decl *d );
+void decl_print_error(struct decl *d);
 
 
 #endif

@@ -1,0 +1,8 @@
+Program parsed successfully.
+a resolves to param 1
+b resolves to param 2
+a resolves to param 1
+b resolves to param 2
+min resolves to global min
+Program resolved successfully.
+Program type checked successfully.

@@ -1,0 +1,7 @@
+Program parsed successfully.
+s resolves to local 1
+i resolves to local 2
+i resolves to local 2
+i resolves to local 2
+Program resolved successfully.
+type error: cannot return a string"bad\n" in a function (main) that returns integerProgram failed to typecheck.

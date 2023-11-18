@@ -652,12 +652,31 @@ struct type * expr_typecheck( struct expr *e ){
             break;
         case EXPR_ARRAY_BRACES:
             result = type_create(TYPE_ARRAY, lt, 0, 0);
+            break;
             // printf("{");
             // expr_print(e->left);
             // printf("}");
         case EXPR_INC:
+            if (lt->kind != TYPE_INTEGER){
+                typecheck_error = 1;
+                printf("type error: cannot increment ");
+                type_print(lt);
+                printf(" (");
+                expr_print(e->left);
+                printf(")\n");
+            }
+            result = type_create(TYPE_INTEGER, 0, 0, 0);
             break;
         case EXPR_DEC:
+            if (lt->kind != TYPE_INTEGER){
+                typecheck_error = 1;
+                printf("type error: cannot decrement ");
+                type_print(lt);
+                printf(" (");
+                expr_print(e->left);
+                printf(")\n");
+            }
+            result = type_create(TYPE_INTEGER, 0, 0, 0);
             break;
     }
     // printf("out of case\n\n\n");
@@ -673,4 +692,59 @@ struct type * expr_typecheck( struct expr *e ){
 
     return result;
     }
+
+
+struct type * expr_typecheck_global( struct expr *e ){
+    if(!e) return 0;
+    struct type * lt = expr_typecheck_global(e->left);
+    extern int typecheck_error;
+    struct type *result;
+    switch (e->kind) {
+        case EXPR_INT:
+            result = type_create(TYPE_INTEGER,0,0, 0);
+            break;
+        case EXPR_FLOAT:
+            result = type_create(TYPE_FLOAT,0,0, 0);
+            break;
+        case EXPR_BOOL:
+            result = type_create(TYPE_BOOLEAN,0,0, 0);
+            break;
+        case EXPR_CHAR:
+            result = type_create(TYPE_CHAR, 0,0, 0);
+            break;
+        case EXPR_STRING:
+            result = type_create(TYPE_STRING,0,0, 0);
+            break;
+        case EXPR_POS:
+            if (lt->kind!=TYPE_INTEGER && lt->kind!=TYPE_FLOAT){
+                typecheck_error = 1;
+                printf("type error: cannot apply positive operation to type %s.\n", e->ident);
+                type_create(TYPE_INTEGER, 0, 0, 0);
+                result =  type_create(TYPE_INTEGER, 0, 0, 0);
+            }
+            else{
+                result =  type_create(lt->kind, 0, 0, 0);
+            }
+            break;
+
+        case EXPR_NEG:
+            if (lt->kind!=TYPE_INTEGER && lt->kind!=TYPE_FLOAT){
+                typecheck_error = 1;
+                printf("type error: cannot apply positive operation to type %s.\n", e->ident);
+                type_create(TYPE_INTEGER, 0, 0, 0);
+                result =  type_create(TYPE_INTEGER, 0, 0, 0);
+            }
+            else{
+                result =  type_create(lt->kind, 0, 0, 0);
+            }
+            break;
+
+        default:
+            typecheck_error = 1;
+            printf("type error: only atomic types allowed to be declared globally\n");
+            result = type_create(TYPE_INTEGER, 0, 0, 0);
+    }
+
+    return result;
+}
 

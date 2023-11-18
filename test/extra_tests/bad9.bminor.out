@@ -1,0 +1,5 @@
+Program parsed successfully.
+test resolves to global test
+Program resolved successfully.
+type error: cannot assign declare array non-globally (a)
+Program failed to typecheck.

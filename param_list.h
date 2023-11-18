@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include "symbol.h"
 #include <string.h>
+#include <stdbool.h>
 
 struct expr;
 
@@ -22,4 +23,5 @@ void param_list_resolve( struct param_list *a );
 int param_check(struct param_list* param_1, struct param_list* param_2);
 void param_delete(struct param_list* param);
 struct param_list * param_copy(struct param_list * param_1);
+bool param_typecheck(struct param_list * param1);
 #endif

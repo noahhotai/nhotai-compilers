@@ -1,0 +1,7 @@
+Program parsed successfully.
+c resolves to local 3
+d resolves to local 4
+Program resolved successfully.
+type error: cannot compare a integer (3) with a float (4.200000).
+type error: cannot compare a string ("hi") with a string ("bar").
+Program failed to typecheck.

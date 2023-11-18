@@ -176,7 +176,7 @@ func_type: type { $$ = $1;	}
 | TOKEN_VOID { $$ = type_create(TYPE_VOID, 0, 0, 0);	}
 ;
 
-param_recursive: TOKEN_COMMA identifier TOKEN_COLON type param_recursive {$$ = param_list_create($2, $4, $5);}
+param_recursive: TOKEN_COMMA identifier TOKEN_COLON every_type param_recursive {$$ = param_list_create($2, $4, $5);}
 | {$$ = 0;}
 ;
 

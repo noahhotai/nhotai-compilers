@@ -115,11 +115,13 @@ int main(int argc, char* argv[]){
         fclose(yyin);
         the_stack = scope_stack_creator();
         decl_resolve(parser_result);
+        int return_val = 0;
         if (!resolve_error){
             fprintf(stdout, "Program resolved successfully.\n");
         }
         else{
             fprintf(stdout, "Program failed to resolve.\n");
+            return_val = 1;
             // return 1;
         }
         // the_stack = scope_stack_creator();
@@ -127,13 +129,13 @@ int main(int argc, char* argv[]){
         decl_typecheck(parser_result);
         if (!typecheck_error){
             fprintf(stdout, "Program type checked successfully.\n");
-            return 0;
         }
         else{
             fprintf(stdout, "Program failed to typecheck.\n");
+            return_val = 1;
             
-            return 1;
         }
+        return return_val;
         
     }
     else{

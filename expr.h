@@ -67,6 +67,7 @@ struct expr * expr_create_string_literal(char *str );
 struct type * expr_typecheck(struct expr * e);
 void expr_print( struct expr *e );
 void expr_resolve( struct expr *e );
+struct type * expr_typecheck_global( struct expr *e );
 // struct type * expr_typecheck( struct expr *e );
 
 #endif
