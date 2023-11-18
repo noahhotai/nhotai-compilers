@@ -1,6 +1,7 @@
 // Too many array subscripts
 
+
 main: function integer ()  = {
-    a: array [4] array [4] integer;
-    a[2][3][4] = 3;
+    z: array [4] array [4] integer;
+    z[2][3][4] = 3;
 }

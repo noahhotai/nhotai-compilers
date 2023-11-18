@@ -1,0 +1,9 @@
+	  
+
+main: function integer (r:integer, x:integer, y:integer, z:integer) = {	  
+	  
+	r = x+(y/z);
+	r = (x+y)+z;
+	b:boolean = (x+y) < (x+z);
+	b = (true&&false) || (false&&true);
+}

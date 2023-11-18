@@ -1,0 +1,10 @@
+
+
+
+main: function integer () = {
+
+    if (true){
+        x: string = "dfsdfs";
+    }
+
+}

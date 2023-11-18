@@ -1,0 +1,5 @@
+main: function integer () = {
+    y: integer = 4.6;
+    z: integer = 3;
+    x: float = 0.6 + 9.4 + 1 + z;
+}

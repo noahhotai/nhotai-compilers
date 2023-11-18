@@ -1,0 +1,4 @@
+
+
+x:integer = 8;
+a: array [x] integer = {1, 2, 3};

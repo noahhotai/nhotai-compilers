@@ -1,0 +1,14 @@
+
+y: array [2] integer = {1, 1};
+
+main: function integer () = {
+
+    for (;;){
+        x: string = "dfsdfs";
+        y[0] = 3;
+    }
+    if (true){
+        print y;
+    }
+
+}

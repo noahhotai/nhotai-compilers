@@ -1,0 +1,4 @@
+j: function integer (z: integer, y: char, t: float) = {
+    foo: integer = z + 2 + 3;
+    return foo;
+}

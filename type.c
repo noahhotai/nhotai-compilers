@@ -14,6 +14,7 @@ struct type * type_create( type_t kind, struct type *subtype, struct param_list*
 
 void type_print(struct type *t ){
     // printf("type_print");
+    // if (!t) return;
     switch (t->kind) {
         case TYPE_VOID:
             // Code for handling TYPE_VOID
@@ -182,13 +183,31 @@ bool func_arguments_type_check(struct expr* arg_list_expr, struct param_list* fu
 
 struct type* array_access_func(struct type * left_type, struct expr* right_expr){
 
-    while(right_expr){
+    extern int typecheck_error;
+    while(right_expr && left_type){
         left_type = left_type->subtype;
         right_expr = right_expr->right;
     }
-    return type_copy(left_type); 
-    //array_type;
+    // printf("herrreeeee\n\n");
+
+    // printf("after\n\n");
+    if (right_expr){
+        typecheck_error = 1;
+        printf("type error: over referencing array with index (\n\n\n\n");
+        expr_print(right_expr);
+        printf(")\n");
+    }
+    if (!left_type){
+        typecheck_error = 1;
+        return type_create(TYPE_INTEGER, 0, 0, 0);
+    }
+    else{
+        return type_copy(left_type); 
+    }
+   
 }
+    //array_type;
+
 // bool type_equals( struct type *a, struct type *b ) {
 //     if( a->kind == b->kind ) {
 //         if(atomic_type(a)){

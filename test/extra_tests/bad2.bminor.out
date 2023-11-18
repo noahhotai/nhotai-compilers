@@ -6,6 +6,6 @@ type error: cannot assign  ({{{1},{2}},{{3},{4}}}) to type array [2] array [2] a
 type error: cannot assign  ({{1, 2},{3.200000, "hello"}}) to type array [2] array [2] integer (c).
 type error: cannot assign  ({{{1},{2}},{{3},{4}}}) to type array [2] array [2] integer (z).
 type error: cannot assign  ({1, 2}) to type array [2] array [2] integer (t).
-type error: cannot assign type float (3.500000) to type float (a[1][0]).
-type error: cannot assign type string ("hello") to type string (b[0][0][0]).
+type error: cannot assign type integer (3.500000) to type float (a[1][0]).
+type error: cannot assign type float ("hello") to type string (b[0][0][0]).
 Program failed to typecheck.

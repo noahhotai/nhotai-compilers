@@ -1,0 +1,5 @@
+main: function integer () = {
+    x: integer = 5;
+    a: array [4] integer = {1, 2, 3, 4}
+
+}

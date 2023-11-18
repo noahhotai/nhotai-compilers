@@ -1,0 +1,6 @@
+
+a: array [2] array [2] integer = {{1, 2}, {3, 4}};
+
+main: function integer () = {
+    a[1][0] = 3.5;
+}

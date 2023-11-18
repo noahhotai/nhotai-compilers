@@ -1,0 +1,7 @@
+main: function integer () = {
+    z: float = 1.0;
+    h: float = 3.2 + z;
+    if (z) {
+        print " "
+    }
+}

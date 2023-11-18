@@ -527,7 +527,7 @@ struct type * expr_typecheck( struct expr *e ){
             else if (!type_check(lt, rt)){
                 typecheck_error = 1;
                 printf("type error: cannot assign type ");
-                type_print(rt);
+                type_print(lt);
                 printf(" (");
                 expr_print(e->right);
                 printf(") to type ");
@@ -546,7 +546,7 @@ struct type * expr_typecheck( struct expr *e ){
                 printf(" (");
                 expr_print(e->left);
                 printf(") with a ");
-                type_print(lt);
+                type_print(rt);
                 printf(" (");
                 expr_print(e->right);
                 printf(").\n");
@@ -561,7 +561,7 @@ struct type * expr_typecheck( struct expr *e ){
                 printf(" (");
                 expr_print(e->left);
                 printf(") with a ");
-                type_print(lt);
+                type_print(rt);
                 printf(" (");
                 expr_print(e->right);
                 printf(").\n");
@@ -584,7 +584,12 @@ struct type * expr_typecheck( struct expr *e ){
             result = type_create(TYPE_STRING,0,0, 0);
             break;
         case EXPR_IDENT:
-            result = type_copy(e->symbol->type);
+            if (e->symbol){
+                result = type_copy(e->symbol->type);
+            }
+            else{
+                result = type_create(TYPE_INTEGER,0,0, 0);
+            }
             break;
         case EXPR_ARRAY_ACCESS:
             if (lt->kind != TYPE_ARRAY){
@@ -603,11 +608,17 @@ struct type * expr_typecheck( struct expr *e ){
                 result = type_copy(lt);
             }
             else{
-                result = type_copy(lt->subtype);
-                func_arguments_type_check(e->right, lt->params, e->left->ident);
-                if (!e->left->symbol->has_code){
+                if (e->left->symbol){
+                    result = type_copy(lt->subtype);
+                    func_arguments_type_check(e->right, lt->params, e->left->ident);
+                        if (!e->left->symbol->has_code){
+                            typecheck_error = 1;
+                            printf("type error: function (%s) has not been defined\n", e->left->ident);
+                        }
+                }
+                else{
                     typecheck_error = 1;
-                    printf("type error: function (%s) has not been defined\n", e->ident);
+                    printf("type error: function (%s) has not been declared\n", e->left->ident);
                 }
             }
             break;

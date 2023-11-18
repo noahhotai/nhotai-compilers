@@ -1,0 +1,5 @@
+main: function integer ()  = {
+    x:integer = 8;
+    y: integer = 9;
+    z: integer = x+y + 1000 - 50;
+}

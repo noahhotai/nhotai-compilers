@@ -85,6 +85,7 @@ void decl_resolve( struct decl *d ){
     }
 
     expr_resolve(d->value);
+    if (d->symbol->type->array_size) expr_resolve(d->type->array_size);
     
     // checking if theres's already a function declared
     if (d->type->kind == TYPE_FUNCTION){
@@ -124,6 +125,7 @@ void decl_resolve( struct decl *d ){
         if(d->code) {
             stmt_resolve(d->code);
         }
+        
         scope_exit();
     }   
     else {
@@ -166,6 +168,9 @@ void decl_typecheck(struct decl *d ){
             }
             break;
         case(TYPE_ARRAY):
+            // if (array_size_check){
+            //     return 
+            // }
             if (d->value){
                 if (!is_global){
                     typecheck_error = 1;
@@ -183,15 +188,40 @@ void decl_typecheck(struct decl *d ){
                     }
                 }
             }
+            if (!is_global){
+                if (!d->type->array_size){
+                    printf("type error: no array size given to %s\n", d->name);
+                
+                }
+                
+                else if (expr_typecheck(d->type->array_size)->kind != TYPE_INTEGER){
+                    typecheck_error = 1;
+                    printf("type error: array size initializer must be of type intger (");
+                    decl_print_error(d);
+                    printf(")\n");
+                }
+            }
+            else{
+                if (!d->type->array_size){
+                    printf("type error: no array size given to %s\n", d->name);
+                }
+                else if (expr_typecheck_global(d->type->array_size)->kind != TYPE_INTEGER){
+                    typecheck_error = 1;
+                    printf("type error: array size initializer must be of type intger (");
+                    decl_print_error(d);
+                    printf(")\n");
+                }
+            }
             break;
 
         default: 
-            if(is_global){
-                expr_type = expr_typecheck_global(d->value);
-            }
-            else{
-                expr_type = expr_typecheck(d->value);
-            }
+            if (d->value){
+                if(is_global){
+                    expr_type = expr_typecheck_global(d->value);
+                }
+                else{
+                    expr_type = expr_typecheck(d->value);
+                }
 
             if (!type_check(expr_type, d->type)){
                 typecheck_error = 1;
@@ -202,6 +232,7 @@ void decl_typecheck(struct decl *d ){
                 printf(") to type ");
                 type_print(d->type);
                 printf(" (%s).\n", d->name);
+            }
             }
             break; // Add this break statement
 

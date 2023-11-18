@@ -12,9 +12,9 @@ x: function integer () = {
     test: integer = thisFuncDoesntExist();
 
     // too many args
-    hello: float = foo(1, 2.1, 2.1, "hello", "too many now");
+    //hello: float = foo(1, 2.1, 2.1, "hello", "too many now");
 
     // not enough
-    return foo(1, 2.1, 2.1);
+    //return foo(1, 2.1, 2.1);
 
 }

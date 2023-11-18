@@ -1,6 +1,6 @@
 #!/bin/sh
 
-for testfile in test/extra_tests/good*.bminor
+for testfile in test/typechecker/good*.bminor
 do
 	if ./bminor --typecheck $testfile > $testfile.out
 	then
@@ -10,7 +10,7 @@ do
 	fi
 done
 
-for testfile in test/extra_tests/bad*.bminor
+for testfile in test/typechecker/bad*.bminor
 do
 	if ./bminor --typecheck $testfile > $testfile.out
 	then

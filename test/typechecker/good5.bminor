@@ -1,0 +1,14 @@
+
+main : function integer ();
+
+
+main : function integer() =  { // A float declaration
+     q: float = 10e9;
+
+     // another float
+     v: float = 2.10e2;
+     
+     // a float operation
+     return 0;
+
+}

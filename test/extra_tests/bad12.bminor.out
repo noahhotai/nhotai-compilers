@@ -1,0 +1,9 @@
+Program parsed successfully.
+foo resolves to global foo
+bar resolves to local 2
+resolve error: thisFuncDoesntExist is not defined
+Program failed to resolve.
+type error: argument of type integer does not match parameter b of type floatof function foo.
+paramater error: wrong of arguments given to the function bar.
+type error: function (bar) has not been defined
+Program failed to typecheck.

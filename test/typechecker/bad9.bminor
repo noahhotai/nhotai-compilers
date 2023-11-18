@@ -1,0 +1,7 @@
+testfunc: function void ( x: integer, y:integer, z:integer ) = {
+
+          x: integer;
+	  y: boolean;
+
+	  z = (x+y)/9;
+}

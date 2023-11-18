@@ -1,4 +1,7 @@
 Program parsed successfully.
 Program resolved successfully.
+type error: no array size given to a
+type error: no array size given to b
 type error: cannot assign declare array non-globally (c)
+type error: no array size given to c
 Program failed to typecheck.

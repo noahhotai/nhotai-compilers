@@ -1,0 +1,13 @@
+ 
+ 
+main: function integer () = {
+	
+	x: integer = 2;
+	if (9==x) print " ";
+		{
+		    
+            {
+                y:integer = 8;
+            }
+		}
+}

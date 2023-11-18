@@ -1,0 +1,12 @@
+
+main: function integer ( a: integer, b: integer ) =
+{
+	
+}
+
+testfunc: function void ( z: integer ) =
+{
+	// Nested integer operators.
+	y: integer = z*(z*10 + 55%6 + z/10);
+
+}

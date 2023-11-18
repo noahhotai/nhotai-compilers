@@ -1,4 +1,5 @@
 Program parsed successfully.
-a resolves to local 1
+x resolves to global x
 Program resolved successfully.
+type error: only atomic types allowed to be declared globally
 Program failed to typecheck.

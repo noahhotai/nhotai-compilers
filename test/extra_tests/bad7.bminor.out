@@ -1,5 +1,8 @@
 Program parsed successfully.
+c resolves to global c
 error: redeclarationc resolves to global c
 c resolves to global c
 Program failed to resolve.
-Program type checked successfully.
+type error: only atomic types allowed to be declared globally
+type error: only atomic types allowed to be declared globally
+Program failed to typecheck.

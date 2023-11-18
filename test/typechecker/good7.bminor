@@ -1,0 +1,9 @@
+main: function boolean ( x: integer, y: integer ) = {
+
+
+	if( x<y ) print "less\n"; else print "slow\n";
+
+	if( 90000<y ) { print "less\n"; } else { print "low\n"; }
+
+    if(20<10) if(10<20) print "incorrect!"; else print "dangling else!";
+}
