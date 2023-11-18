@@ -516,7 +516,7 @@ struct type * expr_typecheck( struct expr *e ){
             result = type_create(TYPE_BOOLEAN, 0, 0, 0);
             break;
         case EXPR_ASSIGN:
-            printf("expr-assign");
+            // printf("expr-assign");
             if (rt->kind == TYPE_ARRAY){
                 typecheck_error = 1;
                 printf("type error: cannot assign array type ");
@@ -662,7 +662,7 @@ struct type * expr_typecheck( struct expr *e ){
     }
     // printf("out of case\n\n\n");
     if (lt){
-    //     printf("lt\n\n\n");
+        // printf("lt\n\n\n");
         // print(" ");
         type_delete(lt);
     }

@@ -56,9 +56,20 @@ int param_check(struct param_list* param_1, struct param_list* param_2){
 void param_delete(struct param_list* param){
 
     struct param_list* temp;
-    while (param){
-        temp = param->next;
-        free(param);
-        param = temp;
+    if (param){
+        while (param->next){
+            temp = param->next;
+            free(param);
+            param = temp;
+        }
     }
+    free(param);
 }
+struct param_list * param_copy(struct param_list * param_1){
+
+    if (!param_1){
+        return 0;
+    }
+    return param_list_create( param_1->name, type_copy(param_1->type), param_copy(param_1->next));
+}
+

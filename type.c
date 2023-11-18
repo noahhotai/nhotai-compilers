@@ -186,7 +186,7 @@ struct type* array_access_func(struct type * left_type, struct expr* right_expr)
         left_type = left_type->subtype;
         right_expr = right_expr->right;
     }
-    return left_type; 
+    return type_copy(left_type); 
     //array_type;
 }
 // bool type_equals( struct type *a, struct type *b ) {
@@ -222,7 +222,7 @@ struct type * type_copy( struct type *t )
         return 0;
     }
     else{
-        return type_create(t->kind, type_copy(t->subtype), t->params, t->array_size );
+        return type_create(t->kind, type_copy(t->subtype), param_copy(t->params), t->array_size);
     }   
     
 // Return a duplicate copy of t, making sure

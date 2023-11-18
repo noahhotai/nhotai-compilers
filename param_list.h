@@ -21,6 +21,5 @@ void param_list_print( struct param_list *a );
 void param_list_resolve( struct param_list *a );
 int param_check(struct param_list* param_1, struct param_list* param_2);
 void param_delete(struct param_list* param);
-
-
+struct param_list * param_copy(struct param_list * param_1);
 #endif

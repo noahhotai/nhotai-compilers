@@ -130,14 +130,20 @@ void decl_typecheck( struct decl *d ){
         // expr_print(d->value);
         // printf("%s: %d", d->name, expr_type->kind);
         if (expr_type->kind == TYPE_ARRAY){
-            if (array_content_check(d->type, d->value)){
+            if (d->symbol->kind != SYMBOL_GLOBAL){
                 typecheck_error = 1;
-                printf("type error: cannot assign ");
-                printf(" (");
-                expr_print(d->value);
-                printf(") to type ");
-                type_print(d->type);
-                printf(" (%s).\n", d->name);
+                printf("type error: cannot assign declare array non-globally (%s)\n", d->name);
+            }
+            else{
+                if (array_content_check(d->type, d->value)){
+                    typecheck_error = 1;
+                    printf("type error: cannot assign ");
+                    printf(" (");
+                    expr_print(d->value);
+                    printf(") to type ");
+                    type_print(d->type);
+                    printf(" (%s).\n", d->name);
+                }
             }
             // printf("gerdfsdf");
             // expr_list_check(e->left, lt);
