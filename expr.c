@@ -244,7 +244,8 @@ void expr_resolve( struct expr *e ){
         }
         else{
             if (symbol_val->kind == SYMBOL_GLOBAL){
-                printf("%s resolves to global %s\n", symbol_val->name, symbol_val->name);
+                printf("%s resolves to global %d\n", symbol_val->name, symbol_val->which);
+                // printf(" dfkldfjhskldjfkjsd.hf .\n");
             }
             else if (symbol_val->kind == SYMBOL_PARAM){
                 printf("%s resolves to param %d\n", symbol_val->name, symbol_val->which);
@@ -268,7 +269,6 @@ struct type * expr_typecheck( struct expr *e ){
     struct type *lt = expr_typecheck(e->left);
     struct type *rt = expr_typecheck(e->right);
     struct type *result;
-    // printf("expr_typecheck\n\n\n\n");
     switch (e->kind) {
         case EXPR_ADD:
             if ( lt->kind ==TYPE_INTEGER && rt->kind == TYPE_INTEGER){
@@ -278,7 +278,6 @@ struct type * expr_typecheck( struct expr *e ){
                 result = type_create(TYPE_FLOAT, 0, 0, 0 );
             }
             else{
-                // type error: cannot add a string ("abc") to an integer (3+5) //      "%s") to an integer (3+5)", );
                 typecheck_error = 1;
                 printf("type error: cannot add a ");
                 type_print(lt);
@@ -300,7 +299,6 @@ struct type * expr_typecheck( struct expr *e ){
                 result = type_create(TYPE_FLOAT, 0, 0, 0 );
             }
             else{
-                // type error: cannot add a string ("abc") to an integer (3+5) //      "%s") to an integer (3+5)", );
                 typecheck_error = 1;
                 printf("type error: cannot subtract a ");
                 type_print(lt);
@@ -322,7 +320,6 @@ struct type * expr_typecheck( struct expr *e ){
                 result = type_create(TYPE_FLOAT, 0, 0, 0 );
             }
             else{
-                // type error: cannot add a string ("abc") to an integer (3+5) //      "%s") to an integer (3+5)", );
                 typecheck_error = 1;
                 printf("type error: cannot multiply a ");
                 type_print(lt);
@@ -344,7 +341,6 @@ struct type * expr_typecheck( struct expr *e ){
                 result = type_create(TYPE_FLOAT, 0, 0, 0 );
             }
             else{
-                // type error: cannot add a string ("abc") to an integer (3+5) //      "%s") to an integer (3+5)", );
                 typecheck_error = 1;
                 printf("type error: cannot modulo a ");
                 type_print(lt);
@@ -366,7 +362,6 @@ struct type * expr_typecheck( struct expr *e ){
                 result = type_create(TYPE_FLOAT, 0, 0, 0 );
             }
             else{
-                // type error: cannot add a string ("abc") to an integer (3+5) //      "%s") to an integer (3+5)", );
                 typecheck_error = 1;
                 printf("type error: cannot divide a ");
                 type_print(lt);
@@ -388,7 +383,6 @@ struct type * expr_typecheck( struct expr *e ){
                 result = type_create(TYPE_FLOAT, 0, 0, 0 );
             }
             else{
-                // type error: cannot add a string ("abc") to an integer (3+5) //      "%s") to an integer (3+5)", );
                 typecheck_error = 1;
                 printf("type error: cannot exponentiate a ");
                 type_print(lt);
@@ -414,8 +408,6 @@ struct type * expr_typecheck( struct expr *e ){
             break;
         case EXPR_LTE:
             if (!(( lt->kind ==TYPE_INTEGER && rt->kind == TYPE_INTEGER) || (lt->kind==TYPE_FLOAT && rt->kind == TYPE_FLOAT))){
-                // result = type_create(TYPE_INTEGER, 0, 0, 0);
-                // type error: cannot add a string ("abc") to an integer (3+5) //      "%s") to an integer (3+5)", );
                 typecheck_error = 1;
                 printf("type error: cannot compare a ");
                 type_print(lt);
@@ -632,22 +624,12 @@ struct type * expr_typecheck( struct expr *e ){
             result = type_create(TYPE_INTEGER, 0, 0, 0);
             break;
         case EXPR_LIST:
-            // if (type_check(lt, rt)){
-            //     printf("array elements are not subtype\n");
-            // }
-            // printf("%d", lt->kind);
-            // printf("case expr_list\n");
-
-            // result = type_copy(lt);
             result = type_create(TYPE_INTEGER, 0, 0, 0);
-            // printf("result: %d", result->kind);
             break;
         case EXPR_NESTED_BRACES:
-            // printf("hererere");
             result = type_create(TYPE_ARRAY, type_copy(lt), 0, 0);
             break;
         case EXPR_PAREN:
-            // printf("expr paren\n");
             result = type_copy(lt);
             break;
         case EXPR_POS:
@@ -664,9 +646,6 @@ struct type * expr_typecheck( struct expr *e ){
         case EXPR_ARRAY_BRACES:
             result = type_create(TYPE_ARRAY, lt, 0, 0);
             break;
-            // printf("{");
-            // expr_print(e->left);
-            // printf("}");
         case EXPR_INC:
             if (lt->kind != TYPE_INTEGER){
                 typecheck_error = 1;
@@ -690,14 +669,10 @@ struct type * expr_typecheck( struct expr *e ){
             result = type_create(TYPE_INTEGER, 0, 0, 0);
             break;
     }
-    // printf("out of case\n\n\n");
     if (lt){
-        // printf("lt\n\n\n");
-        // print(" ");
         type_delete(lt);
     }
     if (rt){
-        // printf("rt\n\n\n");
         type_delete(rt);
     }
 
@@ -759,3 +734,270 @@ struct type * expr_typecheck_global( struct expr *e ){
     return result;
 }
 
+
+void expr_codegen(struct expr *e){
+    if(!e) return;
+    
+    switch(e->kind) {
+// Leaf node: allocate register and load value.
+        case EXPR_IDENT:
+            e->reg = scratch_alloc();
+            printf("MOVQ %s, %s\n",
+            symbol_codegen(e->symbol),
+            scratch_name(e->reg));
+            break;
+    // Interior node: generate children, then add them.
+        case EXPR_ADD:
+            expr_codegen(e->left);
+            expr_codegen(e->right);
+            printf("ADDQ %s, %s\n",
+            scratch_name(e->left->reg),
+            scratch_name(e->right->reg));
+            e->reg = e->right->reg;
+            scratch_free(e->left->reg);
+            break;
+        case EXPR_ASSIGN:
+            expr_codegen(e->left);
+            printf("MOVQ %s, %s\n",
+            scratch_name(e->left->reg),
+            symbol_codegen(e->right->symbol));
+            e->reg = e->left->reg;
+            break;
+        case EXPR_SUB:
+            expr_codegen(e->left);
+            expr_codegen(e->right);
+            printf("SUBQ %s, %s\n",
+            scratch_name(e->left->reg),
+            scratch_name(e->right->reg));
+            e->reg = e->right->reg;
+            scratch_free(e->left->reg);
+            break;
+        case EXPR_MUL:
+            expr_codegen(e->left);
+            expr_codegen(e->right);
+
+            // calculating multiplication
+            printf("MOVQ %s, %%rax", scratch_name(e->right->reg)); 
+            printf("IMULQ %s", scratch_name(e->left-reg));     
+
+            // free right side register
+            scratch_free(e->right->reg);
+            
+            //moving answer to left register
+            printf("MOVQ %%rax, %s,", scratch_name(e->left->reg)); 
+
+            // setting current register to left
+            e->reg = e->left->reg;
+            break;
+        case EXPR_MOD:
+            expr_codegen(e->left);
+            expr_codegen(e->right);
+
+            // calculating multiplication
+            printf("MOVQ %s, %%rax", scratch_name(e->left->reg)); 
+            printf("IDIVQ %s", scratch_name(e->left->reg));     
+
+            // free right side register
+            scratch_free(e->right->reg);
+            
+            //moving answer to left register
+            printf("MOVQ %%rax, %s,", scratch_name(e->left->reg)); 
+
+            // setting current register to left
+            e->reg = e->left->reg; 
+            break;
+        case EXPR_DIV:
+            expr_codegen(e->left);
+            expr_codegen(e->right);
+
+            // calculating multiplication
+            printf("MOVQ %s, %%rax\n", scratch_name(e->left->reg)); 
+            printf("CQO\n");
+            printf("IDIVQ %s\n", scratch_name(e->left->reg));     
+
+            // free right side register
+            scratch_free(e->right->reg);
+            
+            //moving answer to left register
+            printf("MOVQ %%rax, %s\n", scratch_name(e->left->reg)); 
+
+            // setting current register to left
+            e->reg = e->left->reg; 
+            break;
+        case EXPR_EXP:
+            expr_print(e->left);
+            printf("^");
+            expr_print(e->right);
+            break;
+        case EXPR_NEG:
+            expr_codegen(e->left);
+
+            // calculating multiplication
+            printf("MOVQ $-1, %%rax"); 
+            printf("IMULQ %s", scratch_name(e->left->reg));     
+            
+            //moving answer to left register
+            printf("MOVQ %%rax, %s,", scratch_name(e->left->reg)); 
+
+            // setting current register to left
+            e->reg = e->left->reg;
+            break;
+        case EXPR_LTE:
+            expr_print(e->left);
+            printf("<=");
+            expr_print(e->right);
+            break;
+        case EXPR_GTE:
+            expr_print(e->left);
+            printf(">=");
+            expr_print(e->right);
+            break;
+        case EXPR_LT:
+            expr_print(e->left);
+            printf("<");
+            expr_print(e->right);
+            break;
+        case EXPR_GT:
+            expr_print(e->left);
+            printf(">");
+            expr_print(e->right);
+            break;
+        case EXPR_EQ:
+            expr_print(e->left);
+            printf("==");
+            expr_print(e->right);
+            break;
+        case EXPR_NOT:
+            printf("!");
+            expr_print(e->left);
+            expr_print(e->right);
+            break;
+        case EXPR_NOT_EQ:
+            expr_print(e->left);
+            printf("!=");
+            expr_print(e->right);
+            break;
+        case EXPR_PAREN:
+            printf("(");
+            expr_print(e->left);
+            printf(")");
+            expr_print(e->right);
+            break;
+        case EXPR_AND:
+            expr_codegen(e->left);
+            expr_codegen(e->right);
+            printf("ANDQ %s, %s", scratch_name(e->left->reg), scratch_name(e->right->reg));
+
+
+            // free right side register
+            scratch_free(e->left->reg);
+            e->reg = e->left->reg;
+            break;
+        case EXPR_OR:
+            expr_codegen(e->left);
+            expr_codegen(e->right);
+            printf("ORQ %s, %s", scratch_name(e->left->reg), scratch_name(e->right->reg));
+            // free right side register
+            scratch_free(e->left->reg);
+            e->reg = e->left->reg;
+            break;
+        case EXPR_INT:
+            e->reg = scratch_alloc();
+            printf("MOVQ $%d, %s", e->int_literal, scratch_name(e->reg));
+            break;
+        case EXPR_FLOAT:
+            printf("%f", e->float_literal);
+            break;
+        case EXPR_BOOL:
+        
+            if (e->bool_literal){
+                printf("true");
+            }
+            else{
+                printf("false");
+            }
+            break;
+        case EXPR_CHAR:
+            printf("%s", e->string_literal);
+            break;
+        case EXPR_STRING:
+            printf("%s", e->string_literal);
+            break;
+        case EXPR_ARRAY_ACCESS:
+            expr_print(e->left);
+            expr_print(e->right);
+            break;
+        case EXPR_FUNC_CALL:
+            expr_codegen(e->right);
+            func_call_args_reg_fixer(e->right);
+
+            // MOVQ $10, %rbx
+            // MOVQ b, %r10
+            // MOVQ c, %r11
+            // ADDQ %r10, %r11
+            // MOVQ %r11, %rsi
+            // MOVQ %rbx, %rdi
+            printf("PUSHQ %%r10");
+            printf("PUSHQ %%r11");
+            // CALL f
+            printf("POPQ %%r10");
+            printf("POPQ %%r11");
+
+            
+            // MOVQ %rax, %rbx
+            // MOVQ %rbx, a
+            // if (e->symbol->type->subtype != void)
+            e->reg = scratch_alloc();
+            printf("MOVQ (%%rax), %s", scratch_name(e->reg));
+            break;
+        case EXPR_NESTED_ARRAY_ACCESS:
+            printf("[");
+            expr_print(e->left);
+            printf("]");
+            expr_print(e->right);
+            break;
+        case EXPR_LIST:
+            expr_print(e->left);
+            if (e->right){
+                printf(", ");
+                expr_print(e->right);
+            }
+            break;
+        case EXPR_NESTED_BRACES:
+            printf("{");
+            expr_print(e->left);
+            printf("}");
+            if (e->right){
+                printf(",");
+                expr_print(e->right);
+            }
+            break;
+        case EXPR_POS:
+            expr_codegen(e->left);
+            e->reg = e->left->reg;
+            break;
+        case EXPR_INC:
+            expr_codegen(e->left);
+            printf("INCQ %s\n", scratch_name(e->left->reg));
+            e->reg = e->left->reg;
+            break;
+        case EXPR_DEC:
+        expr_codegen(e->left);
+            printf("DECQ %s\n", scratch_name(e->left->reg));
+            e->reg = e->left->reg;
+            break;
+        case EXPR_ARRAY_BRACES:
+            printf("{");
+            expr_print(e->left);
+            printf("}");
+        default:
+            break;
+    }
+}
+
+void func_call_args_reg_fixer(struct expr * e, int num){
+    if (!e) return;
+    
+    printf("");
+
+}

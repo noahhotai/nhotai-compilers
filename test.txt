@@ -1,6 +1,20 @@
 // Too many array subscripts
-
-main: function integer ()  = {
-    a: array [4] array [4] integer;
-    a[2][3][4] = 3;
+y : integer = 7;
+z: integer = 0;
+main2: function integer () = {
+    print y;
+    print z;
+    x : integer = 9;
+    {
+        print x;
+        x:integer = 5;
+        print x;
+    }
 }
+
+
+main: function integer (a: integer, b: integer) = {
+    print a;
+    print b;
+}
+

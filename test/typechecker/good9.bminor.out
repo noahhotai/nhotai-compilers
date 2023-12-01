@@ -11,6 +11,6 @@ x resolves to param 2
 y resolves to param 3
 x resolves to param 2
 z resolves to param 4
-b resolves to local 1
+b resolves to local 0
 Program resolved successfully.
 Program type checked successfully.

@@ -25,6 +25,7 @@ struct stmt {
 	struct stmt *body;
 	struct stmt *else_body;
 	struct stmt *next;
+	// int reg;
 } ;
 
 struct stmt * stmt_create( stmt_t kind,  struct decl* decl, struct expr *init_expr, struct expr *expr, struct expr *next_expr, struct stmt *body, struct stmt *else_body, struct stmt *next );

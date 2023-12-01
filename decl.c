@@ -62,26 +62,36 @@ void decl_print_error(struct decl *d){
 void decl_resolve( struct decl *d ){
 
     extern int resolve_error;
-
+    extern int func_local_count;
+    extern int global_count;
     if(!d) return;
 
+    // determining kind before creating symbol
     symbol_t kind;
-
     if (scope_level() > 1) {
+        func_local_count++;
         kind = SYMBOL_LOCAL;
     } 
     else {
+        global_count++;
+        // printf("here\n");
+        // decl_print_error(d);
+        // printf("\n");
         kind = SYMBOL_GLOBAL;
     }
 
-
-    the_stack->top->count++;
+    // determining code status before symbol creation
     if (d->code){
-        d->symbol = symbol_create(kind, d->type, d->name, 1, the_stack->top->count);
-
+        func_local_count = -1;
+        d->symbol = symbol_create(kind, d->type, d->name, 1, global_count);
     }
     else{
-        d->symbol = symbol_create(kind, d->type, d->name, 0, the_stack->top->count);
+        if (kind == SYMBOL_GLOBAL){
+            d->symbol = symbol_create(kind, d->type, d->name, 0, global_count);
+        }
+        else {
+            d->symbol = symbol_create(kind, d->type, d->name, 0, func_local_count);
+        }
     }
 
     expr_resolve(d->value);
@@ -129,7 +139,6 @@ void decl_resolve( struct decl *d ){
         scope_exit();
     }   
     else {
-
         scope_bind(d->name,d->symbol); 
     }
 

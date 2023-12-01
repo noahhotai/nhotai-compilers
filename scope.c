@@ -6,6 +6,7 @@ struct scope_stack_node * scope_stack_node_creator(){
 
 	struct scope_stack_node * ssn = calloc(1, sizeof(struct scope_stack_node));
     ssn->ht = hash_table_create(0, 0);
+    ssn->count = -1;
 	
 	return ssn;
 };

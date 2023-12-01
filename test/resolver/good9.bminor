@@ -5,12 +5,26 @@ main: function integer (x: integer, y: integer, z: integer);
 main: function integer (x: integer, y: integer, z: integer);
 test: function char ();
 x: integer = 3;
+jjj2:integer = 0;
+j: integer = 9;
+jj: integer = 3;
+jjj: integer = 3;
 
 main: function integer (x: integer, y: integer, z: integer) = {
+    print j;
+    print jj;
+    print jjj;
+
     x: integer = 3;
     t: integer = x + y + z;
     i: integer;
     for (i=0; i<x; i++) {
+        ppp: integer = 8;
+        ppp2: integer = 8;
+        {
+            print ppp;
+            print ppp2;
+        }
         x: integer = 3;
         y = z + x + y + i;
         y++;

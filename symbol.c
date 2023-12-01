@@ -12,3 +12,9 @@ struct symbol * symbol_create( symbol_t kind, struct type *type, char *name, int
     s->which = num;
     return s;
 }
+
+char* symbol_codegen(struct symbol * sym){
+    if (sym->kind == SYMBOL_GLOBAL){
+        return sym->name;
+    }
+}

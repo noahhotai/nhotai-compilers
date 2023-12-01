@@ -1,5 +1,5 @@
 Program parsed successfully.
-z resolves to local 2
+z resolves to local 1
 Program resolved successfully.
 type error: cannot assign type float (4.600000) to type integer (y).
 type error: cannot add a float (9.400000) by an integer (1+z).

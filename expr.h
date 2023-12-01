@@ -47,7 +47,7 @@ struct expr {
 	expr_t kind;
 	struct expr *left;
 	struct expr *right;
-
+	int reg;
 	/* used by various leaf exprs */
 	char * ident;
 	int int_literal;
@@ -68,6 +68,9 @@ struct type * expr_typecheck(struct expr * e);
 void expr_print( struct expr *e );
 void expr_resolve( struct expr *e );
 struct type * expr_typecheck_global( struct expr *e );
+void expr_codegen(struct expr *e);
+void func_call_args_reg_fixer(struct expr * e, int num);
+
 // struct type * expr_typecheck( struct expr *e );
 
 #endif
