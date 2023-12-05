@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "symbol.h"
 #include "scope.h"
+#include "codegen.h"
 
 typedef enum {
 	EXPR_ARRAY_BRACES,

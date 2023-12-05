@@ -51,12 +51,14 @@ void stmt_print(struct stmt *s, int indents ){
 			if (s->else_body){
 				indent(indents);
 				printf("else");
-				if (s->body->kind != STMT_BLOCK){
+				if (s->else_body->kind != STMT_BLOCK){
 					printf("\n");
-					stmt_print(s->body, indents + 1);
+					// printf("STMTBLOCk\n");
+					stmt_print(s->else_body, indents + 1);
 				}
 				else{
-					stmt_print(s->body, indents);
+					// printf("penis\n");
+					stmt_print(s->else_body, indents);
 				}
 			}
             break;
@@ -234,5 +236,133 @@ void stmt_typecheck(struct stmt *s, struct type *decl_subtype, int returned, cha
 		// 	printf("type error: non void function did not give appropriate return statement.\n");
 		// }
 	}
+	
+}
+
+// void print_integer(i){
+
+// }
+
+void stmt_codegen_print(struct expr * e){
+
+	if (!e) return;
+
+	if (e->kind == EXPR_LIST){
+		
+	}
+	else{
+		switch (expr_typecheck(e)->kind){
+			case TYPE_ARRAY:
+				// print_integer(i);
+				break;
+			case TYPE_INTEGER:
+				expr_codegen(e);
+				printf("MOVQ %s, rdi\n", "%%d");
+				printf("MOVQ %s, rsi\n", scratch_name(e->reg));
+				printf("CALL printf\n");
+				break;
+			case TYPE_CHAR:
+				expr_codegen(e);
+				printf("MOVQ %s, rdi\n", "%c");
+				printf("MOVB %s, rsi\n", scratch_name(e->reg));
+				printf("CALL printf\n");
+				break;
+			case TYPE_STRING:
+				expr_codegen(e);
+				printf("MOVQ %s, rdi\n", "%s");
+				printf("MOVB %s, rsi\n", scratch_name(e->reg));
+				printf("CALL printf\n");
+				break;
+			case TYPE_FLOAT:
+				expr_codegen(e);
+				printf("MOVQ %s, rdi\n", "%f");
+				printf("MOVB %s, rsi\n", scratch_name(e->reg));
+				printf("MOVB $1, rax\n", scratch_name(e->reg));
+				printf("CALL printf\n");
+				break;
+			case TYPE_BOOLEAN:
+				expr_codegen(e);
+				printf("MOVQ %s, rdi\n", "%d");
+				printf("MOVB %s, rsi\n", scratch_name(e->reg));
+				printf("CALL printf\n");
+				break;
+			default:
+				break;
+		}
+	}
+	stmt_print_func(e->right);
+
+}
+
+void stmt_codegen(struct stmt *s){
+
+	if (!s) return;	
+	int top_label;
+	int else_label;
+	int done_label;
+	switch (s->kind) {
+		case STMT_NULL:
+			break;
+		case STMT_DECL:
+			decl_codegen(s->decl, 0);
+            break;
+        case STMT_EXPR:
+			expr_print(s->expr);
+            break;
+        case STMT_IF_ELSE:
+			else_label = label_create();
+			done_label = label_create();
+			expr_codegen(s->expr);
+			printf("CMP $0, %s\n",scratch_name(s->expr->reg));
+			scratch_free(s->expr->reg);
+			printf("JE %s\n",label_name(else_label));
+			stmt_codegen(s->body);
+			printf("JMP %s\n",label_name(done_label));
+			printf("%s:\n",label_name(else_label));
+			stmt_codegen(s->else_body);
+			printf("%s:\n",label_name(done_label));
+			break;
+
+        case STMT_FOR:
+
+			expr_codegen(s->init_expr);
+
+			top_label = label_create();
+			done_label = label_create();
+
+			printf("%s:\n",label_name(top_label));
+			expr_codegen(s->expr);
+			printf("CMP $0, %s\n",scratch_name(s->expr->reg));
+			printf("JMP %s\n",label_name(done_label));
+			stmt_codegen(s->body);
+			expr_codegen(s->next_expr);
+			printf("JMP %s\n",label_name(top_label));
+			printf("%s:\n",label_name(done_label));
+            break;
+        case STMT_PRINT:
+			stmt_codegen_print(s->expr);
+            break;
+        case STMT_RETURN:
+			if (s->expr) {
+				expr_codegen(s->expr);
+				printf("MOV %s, %%rax\n",scratch_name(s->expr->reg));
+				// printf("JMP .%s_epilogue\n", function_name);
+				printf("RET\n");
+				scratch_free(s->expr->reg);
+			}
+			else{
+				// printf("JMP .%s_epilogue\n",function_name);
+			}
+            break;
+        case STMT_BLOCK:
+			stmt_codegen(s->body);
+            break;
+
+        default:
+            break;
+    }
+
+	
+	stmt_codegen(s->next);
 	
 }

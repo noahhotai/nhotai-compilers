@@ -53,10 +53,10 @@ void decl_print_error(struct decl *d){
     fprintf(stdout, "%s: ", d->name);
 
     type_print(d->type);
-    
 
-    
 }
+
+
 
 
 void decl_resolve( struct decl *d ){
@@ -249,3 +249,133 @@ void decl_typecheck(struct decl *d ){
     decl_typecheck(d->next);
 }
 
+
+void global_array_hander(struct expr * e){
+
+    expr_print(e);
+    // if (e->kind == EXPR_LIST){
+
+    // }
+    // else{
+
+    //     // while (e->right){
+    //     //     printf("%d, ");
+    //     //     e = e->right
+    //     // } 
+    //     // printf("")
+
+    // }
+
+}
+
+void global_decl_hander(struct decl * d){
+    switch (d->type->kind){
+        case TYPE_INTEGER:
+            printf(".quad %d", d->value->int_literal);
+            break;
+        case TYPE_CHAR:
+            printf(".quad '%c'", char_decode2(d->value->string_literal));
+            break;
+        case TYPE_ARRAY:
+            if (d->type->subtype->kind != TYPE_INTEGER){
+                printf("codegen error: array not implemented\n");
+                return;
+            }
+            // if (d->value){
+            global_array_hander(d->value);
+            break;
+        case TYPE_BOOLEAN:
+            printf(".quad %c", char_decode(d->value->string_literal));
+            break;
+        case TYPE_STRING:
+            // printf(".string: %s"), d->;
+            break;
+        case TYPE_FLOAT:
+            printf("codegen error: floating not supported\n");
+            break;
+        default:
+            break;
+        // case 
+    }
+
+}
+
+
+
+
+void func_preamble(){
+    //changing stack pointer and base pointer
+    printf("PUSHQ %%rbp");
+    printf("MOVQ %%rsp, %%rbp");
+
+    //pushing function arguments onto stack 
+    printf("MOVQ %%rdi, -8(%%rbp)");
+    printf("MOVQ %%rsi, -16(%%rbp)");
+    printf("MOVQ %%rdx, -24(%%rbp)");
+    printf("MOVQ %%rcx, -32(%%rbp)");
+    printf("MOVQ %%r8, -40(%%rbp)");
+    printf("MOVQ %%r9, -48(%%rbp)");
+
+}
+
+int custom_sizeof(struct expr * e, struct type * t){
+
+    switch (t->kind){
+
+        case TYPE_INTEGER:
+            return 8;
+            break;
+        case TYPE_CHAR:
+            return 1;
+            break;
+        case TYPE_ARRAY:
+            expr_codegen(e->symbol->type->array_size);
+            // printf("MOVQ "e->symbol->type->array_size->reg);
+
+            // return * custom_sizeof(t->subtype);
+            break;
+        case TYPE_BOOLEAN:
+            return 8;
+            break;
+        case TYPE_STRING:
+            // printf(".string: %s"), d->;
+            break;
+        case TYPE_FLOAT:
+            return 8;
+            break;
+        default:
+            break;
+        // case 
+    }
+
+
+}
+
+
+void decl_codegen(struct decl *d, bool post_function, int relative_stack){
+
+    if (!d) return;
+    
+    if (d->type->kind == TYPE_FUNCTION){
+        if (post_function == 0){
+            printf(".text\n");
+            post_function = 1;
+        }
+       
+        func_preamble();
+        stmt_codegen(d->code);
+    }
+    else if (d->symbol->kind == SYMBOL_GLOBAL){  
+        printf("%s: ", d->name);
+        global_decl_hander(d);
+    }
+    else{
+        int stack_decrease = custom_sizeof(d, d->type)
+        printf("SUBQ %d, %%rsp", );
+        relative_stack -= stack_decrease; 
+        expr_codegen(d->value);
+    }
+
+    decl_codegen(d->next, post_function);
+    
+}

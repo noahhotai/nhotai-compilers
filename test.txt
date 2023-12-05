@@ -1,20 +1,17 @@
-// Too many array subscripts
-y : integer = 7;
-z: integer = 0;
-main2: function integer () = {
-    print y;
-    print z;
-    x : integer = 9;
-    {
-        print x;
-        x:integer = 5;
-        print x;
-    }
-}
-
-
+a: array[7] integer = {1, 2, 3, 4, 5, 6 ,7};
 main: function integer (a: integer, b: integer) = {
-    print a;
-    print b;
+
+    print a[1];
+    print "here";
+    if ("here"){
+        print b;
+    }
+    else if (a < b){
+        print a;
+    }
+    else {
+        print b;
+    }
+    
 }
 

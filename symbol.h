@@ -18,5 +18,4 @@ struct symbol {
 };
 
 struct symbol * symbol_create( symbol_t kind, struct type *type, char *name, int has_code, int num);
-char* symbol_codegen(struct symbol * sym);
 #endif

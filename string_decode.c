@@ -1,7 +1,7 @@
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 int char_decode(char* c){
     if (strlen(c) == 3){

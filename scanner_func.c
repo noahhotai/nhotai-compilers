@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "token.h"
-#include "string_decode.c"
 
 
 #define MAX_CHAR_LENGTH 255

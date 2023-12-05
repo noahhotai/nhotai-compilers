@@ -6,7 +6,7 @@ CFLAGS=  -g -Wall -Wextra #-Werror #-std=gnu99
 
 
 
-bminor : bminor.o scanner.o parser.o expr.o stmt.o type.o param_list.o decl.o symbol.o hash_table.o scope.o
+bminor : bminor.o scanner.o parser.o expr.o stmt.o type.o param_list.o decl.o symbol.o hash_table.o scope.o codegen.o
 	$(LD) -o $@ $^
 
 scanner.o: scanner.c 
@@ -20,6 +20,10 @@ expr.o: expr.c
 
 scope.o: scope.c 
 	$(CC) $(CFLAGS) -c $< -o $@
+
+codegen.o: codegen.c 
+	$(CC) $(CFLAGS) -c $< -o $@
+
 
 stmt.o: stmt.c 
 	$(CC) $(CFLAGS) -c $< -o $@

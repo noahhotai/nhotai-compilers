@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "scanner_func.c"
 #include "string_encode.c"
+#include "string_decode.c"
 #include "decl.h"
 #include "hash_table.h"
 #include "scope.h"
@@ -16,7 +17,7 @@ int typecheck_error;
 int func_local_count;
 int global_count;
 
-int global_label_counter;
+
 // bool reg_scratch_list[7] = {1};
 // char* reg_name_list[7] = {"%%rbx", "%%r10", "%%r11", "%%r12", "%%r13", "%%r14", "%%r15"};
 
@@ -154,8 +155,9 @@ int main(int argc, char* argv[]){
             return_val = 1;
         }
         if (return_val) return 1;
-
-        decl_codegen(parser_result);
+        
+        printf(".data\n");
+        //decl_codegen(parser_result);
     }
     else{
         return 1;

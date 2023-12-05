@@ -4,6 +4,8 @@
 #include "type.h"
 
 
+char* arg_regs[6] = {"%%rdi", "%%rsi", "%%rdx", "%%rcx", "%%r8", "%%r9"};
+
 struct expr * expr_create( expr_t kind, struct expr *left, struct expr *right ){
     struct expr *d = calloc(1, sizeof(struct expr));
     d->kind = kind;
@@ -46,6 +48,22 @@ struct expr * expr_create_string_literal( char *str ){
     struct expr* d = expr_create(EXPR_STRING, 0, 0);
     d->string_literal = strdup(str);
     return d;
+}
+void func_call_args_reg_fixer(struct expr * e, int num){
+
+    if (!e) return;
+    if (e->kind == EXPR_LIST){
+        func_call_args_reg_fixer(e->right, num);
+    }
+    else{
+        if (num == 6){
+            printf("Too many arguments given.\n");
+            return;
+        }
+        char* temp = arg_regs[num];
+        printf("MOVQ %s, %s", scratch_name(e->reg), temp);
+        func_call_args_reg_fixer(e->right, num + 1);
+    }
 }
 
 // expr_list_check(e->left){
@@ -685,6 +703,7 @@ struct type * expr_typecheck_global( struct expr *e ){
     struct type * lt = expr_typecheck_global(e->left);
     extern int typecheck_error;
     struct type *result;
+
     switch (e->kind) {
         case EXPR_INT:
             result = type_create(TYPE_INTEGER,0,0, 0);
@@ -737,9 +756,11 @@ struct type * expr_typecheck_global( struct expr *e ){
 
 void expr_codegen(struct expr *e){
     if(!e) return;
-    
+    int true_label;
+    int done_label;
     switch(e->kind) {
 // Leaf node: allocate register and load value.
+    // m D(RA, RB, C) w
         case EXPR_IDENT:
             e->reg = scratch_alloc();
             printf("MOVQ %s, %s\n",
@@ -757,18 +778,18 @@ void expr_codegen(struct expr *e){
             scratch_free(e->left->reg);
             break;
         case EXPR_ASSIGN:
-            expr_codegen(e->left);
+            expr_codegen(e->right);
             printf("MOVQ %s, %s\n",
-            scratch_name(e->left->reg),
-            symbol_codegen(e->right->symbol));
-            e->reg = e->left->reg;
+            scratch_name(e->right->reg),
+            symbol_codegen(e->left->symbol));
+            e->reg = e->right->reg;
             break;
         case EXPR_SUB:
             expr_codegen(e->left);
             expr_codegen(e->right);
             printf("SUBQ %s, %s\n",
-            scratch_name(e->left->reg),
-            scratch_name(e->right->reg));
+            scratch_name(e->right->reg),
+            scratch_name(e->left->reg));
             e->reg = e->right->reg;
             scratch_free(e->left->reg);
             break;
@@ -778,7 +799,7 @@ void expr_codegen(struct expr *e){
 
             // calculating multiplication
             printf("MOVQ %s, %%rax", scratch_name(e->right->reg)); 
-            printf("IMULQ %s", scratch_name(e->left-reg));     
+            printf("IMULQ %s", scratch_name(e->left->reg));     
 
             // free right side register
             scratch_free(e->right->reg);
@@ -843,39 +864,140 @@ void expr_codegen(struct expr *e){
             e->reg = e->left->reg;
             break;
         case EXPR_LTE:
-            expr_print(e->left);
-            printf("<=");
-            expr_print(e->right);
+
+            expr_codegen(e->left);
+            expr_codegen(e->right);
+            printf("CMPQ %s, %s\n", scratch_name(e->left->reg), scratch_name(e->left->reg));
+
+            true_label = label_create();
+            done_label = label_create();
+            printf("JLE %s\n", label_name(true_label));
+
+            printf("MOVQ $0, %s\n", scratch_name(e->left->reg));
+            printf("JMP %s\n", label_name(done_label));
+
+            printf("%s:\n", label_name(true_label));
+
+            printf("MOVQ $1, %s\n", scratch_name(e->left->reg));
+            printf("%s:\n", label_name(done_label));
+
+            scratch_free(e->right->reg);
+            e->reg = e->left->reg;
             break;
         case EXPR_GTE:
-            expr_print(e->left);
-            printf(">=");
-            expr_print(e->right);
+            expr_codegen(e->left);
+            expr_codegen(e->right);
+            printf("CMPQ %s, %s\n", scratch_name(e->left->reg), scratch_name(e->left->reg));
+
+            true_label = label_create();
+            done_label = label_create();
+            printf("JGE %s\n", label_name(true_label));
+
+            printf("MOVQ $0, %s\n", scratch_name(e->left->reg));
+            printf("JMP %s\n", label_name(done_label));
+
+            printf("%s:\n", label_name(true_label));
+
+            printf("MOVQ $1, %s\n", scratch_name(e->left->reg));
+            printf("%s:\n", label_name(done_label));
+
+            scratch_free(e->right->reg);
+            e->reg = e->left->reg;
             break;
         case EXPR_LT:
-            expr_print(e->left);
-            printf("<");
-            expr_print(e->right);
+            expr_codegen(e->left);
+            expr_codegen(e->right);
+            printf("CMPQ %s, %s\n", scratch_name(e->left->reg), scratch_name(e->left->reg));
+
+            true_label = label_create();
+            done_label = label_create();
+            printf("JL %s\n", label_name(true_label));
+
+            printf("MOVQ $0, %s\n", scratch_name(e->left->reg));
+            printf("JMP %s\n", label_name(done_label));
+
+            printf("%s:\n", label_name(true_label));
+
+            printf("MOVQ $1, %s\n", scratch_name(e->left->reg));
+            printf("%s:\n", label_name(done_label));
+
+            scratch_free(e->right->reg);
+            e->reg = e->left->reg;
             break;
         case EXPR_GT:
-            expr_print(e->left);
-            printf(">");
-            expr_print(e->right);
+            expr_codegen(e->left);
+            expr_codegen(e->right);
+            printf("CMPQ %s, %s\n", scratch_name(e->left->reg), scratch_name(e->left->reg));
+
+            true_label = label_create();
+            done_label = label_create();
+            printf("JG %s\n", label_name(true_label));
+
+            printf("MOVQ $0, %s\n", scratch_name(e->left->reg));
+            printf("JMP %s\n", label_name(done_label));
+
+            printf("%s:\n", label_name(true_label));
+
+            printf("MOVQ $1, %s\n", scratch_name(e->left->reg));
+            printf("%s:\n", label_name(done_label));
+
+            scratch_free(e->right->reg);
+            e->reg = e->left->reg;
             break;
         case EXPR_EQ:
-            expr_print(e->left);
-            printf("==");
-            expr_print(e->right);
+            expr_codegen(e->left);
+            expr_codegen(e->right);
+            printf("CMPQ %s, %s\n", scratch_name(e->left->reg), scratch_name(e->left->reg));
+
+            true_label = label_create();
+            done_label = label_create();
+            printf("JE %s\n", label_name(true_label));
+
+            printf("MOVQ $0, %s\n", scratch_name(e->left->reg));
+            printf("JMP %s\n", label_name(done_label));
+
+            printf("%s:\n", label_name(true_label));
+
+            printf("MOVQ $1, %s\n", scratch_name(e->left->reg));
+            printf("%s:\n", label_name(done_label));
+
+            scratch_free(e->right->reg);
+            e->reg = e->left->reg;
             break;
         case EXPR_NOT:
-            printf("!");
-            expr_print(e->left);
-            expr_print(e->right);
+            expr_codegen(e->left);
+
+            true_label = label_create();
+            done_label = label_create();
+
+            printf("CMPQ $1, %s", scratch_name(e->left->reg));
+            printf("JE %s\n", label_name(true_label));
+            printf("MOVQ $1, %s", scratch_name(e->left->reg));
+            printf("JMP %s\n", label_name(done_label));
+            printf("%s:\n", label_name(true_label));
+            printf("MOVQ $0, %s", scratch_name(e->left->reg));
+            printf("%s:\n", label_name(done_label));
+            e->reg = e->left->reg;
             break;
         case EXPR_NOT_EQ:
-            expr_print(e->left);
-            printf("!=");
-            expr_print(e->right);
+            expr_codegen(e->left);
+            expr_codegen(e->right);
+            printf("CMPQ %s, %s\n", scratch_name(e->left->reg), scratch_name(e->left->reg));
+
+            true_label = label_create();
+            done_label = label_create();
+            printf("JNE %s\n", label_name(true_label));
+
+            printf("MOVQ $0, %s\n", scratch_name(e->left->reg));
+            printf("JMP %s\n", label_name(done_label));
+
+            printf("%s:\n", label_name(true_label));
+
+            printf("MOVQ $1, %s\n", scratch_name(e->left->reg));
+            printf("%s:\n", label_name(done_label));
+
+            scratch_free(e->right->reg);
+            e->reg = e->left->reg;
             break;
         case EXPR_PAREN:
             printf("(");
@@ -887,7 +1009,6 @@ void expr_codegen(struct expr *e){
             expr_codegen(e->left);
             expr_codegen(e->right);
             printf("ANDQ %s, %s", scratch_name(e->left->reg), scratch_name(e->right->reg));
-
 
             // free right side register
             scratch_free(e->left->reg);
@@ -909,39 +1030,38 @@ void expr_codegen(struct expr *e){
             printf("%f", e->float_literal);
             break;
         case EXPR_BOOL:
-        
-            if (e->bool_literal){
-                printf("true");
-            }
-            else{
-                printf("false");
-            }
+            e->reg = scratch_alloc();
+            //e->
+            printf("MOVB %d, %s", e->bool_literal, scratch_name(e->reg));
             break;
         case EXPR_CHAR:
-            printf("%s", e->string_literal);
+            e->reg = scratch_alloc();
+            int temp = char_decode(e->string_literal);
+            printf("MOVB %d, %s", temp, scratch_name(e->reg));
             break;
         case EXPR_STRING:
             printf("%s", e->string_literal);
             break;
         case EXPR_ARRAY_ACCESS:
-            expr_print(e->left);
-            expr_print(e->right);
+            symbol_codegen(e->left);
+            expr_codegen(e->right);
+            printf("MOVQ 0(%s, %s, 8),  \n", symbol_codegen(e->symbol), scratch_name(e->right->reg), scratch_name(e->reg));
+            e->reg = e->right->reg;
             break;
         case EXPR_FUNC_CALL:
             expr_codegen(e->right);
-            func_call_args_reg_fixer(e->right);
-
+            func_call_args_reg_fixer(e->right, 0);
             // MOVQ $10, %rbx
             // MOVQ b, %r10
             // MOVQ c, %r11
             // ADDQ %r10, %r11
             // MOVQ %r11, %rsi
             // MOVQ %rbx, %rdi
-            printf("PUSHQ %%r10");
-            printf("PUSHQ %%r11");
-            // CALL f
-            printf("POPQ %%r10");
-            printf("POPQ %%r11");
+            printf("PUSHQ %%r10\n");
+            printf("PUSHQ %%r11\n");
+            printf("CALL %s\n", e->left->string_literal);
+            printf("POPQ %%r10\n");
+            printf("POPQ %%r11\n");
 
             
             // MOVQ %rax, %rbx
@@ -951,10 +1071,8 @@ void expr_codegen(struct expr *e){
             printf("MOVQ (%%rax), %s", scratch_name(e->reg));
             break;
         case EXPR_NESTED_ARRAY_ACCESS:
-            printf("[");
-            expr_print(e->left);
-            printf("]");
-            expr_print(e->right);
+            expr_codegen(e->left);
+            e->reg = e->left->reg;
             break;
         case EXPR_LIST:
             expr_print(e->left);
@@ -964,7 +1082,8 @@ void expr_codegen(struct expr *e){
             }
             break;
         case EXPR_NESTED_BRACES:
-            printf("{");
+            expr_codegen(e->left);
+            expr_codegen(e->right);
             expr_print(e->left);
             printf("}");
             if (e->right){
@@ -982,7 +1101,7 @@ void expr_codegen(struct expr *e){
             e->reg = e->left->reg;
             break;
         case EXPR_DEC:
-        expr_codegen(e->left);
+            expr_codegen(e->left);
             printf("DECQ %s\n", scratch_name(e->left->reg));
             e->reg = e->left->reg;
             break;
@@ -990,14 +1109,9 @@ void expr_codegen(struct expr *e){
             printf("{");
             expr_print(e->left);
             printf("}");
+            break;
         default:
             break;
     }
 }
 
-void func_call_args_reg_fixer(struct expr * e, int num){
-    if (!e) return;
-    
-    printf("");
-
-}

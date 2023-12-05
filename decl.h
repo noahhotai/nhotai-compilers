@@ -8,9 +8,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "scope.h"
-#include "stmt.h"
 #include "symbol.h"
-
+#include "codegen.h"
 
 struct scope_stack * the_stack;
 
@@ -28,6 +27,8 @@ void decl_print(struct decl *d, int indent );
 void decl_resolve( struct decl *d );
 void decl_typecheck( struct decl *d );
 void decl_print_error(struct decl *d);
+void decl_codegen(struct decl *d, bool post_function);
+void global_decl_hander(struct decl *d);
 
 
 #endif
