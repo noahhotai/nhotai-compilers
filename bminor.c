@@ -16,7 +16,7 @@ int resolve_error;
 int typecheck_error;
 int func_local_count;
 int global_count;
-
+FILE* file;
 
 // bool reg_scratch_list[7] = {1};
 // char* reg_name_list[7] = {"%%rbx", "%%r10", "%%r11", "%%r12", "%%r13", "%%r14", "%%r15"};
@@ -128,6 +128,7 @@ int main(int argc, char* argv[]){
         if (parser_caller(argv[2])){
             return 1;
         }
+
         return resolver_caller();
     }
     else if (!strcmp(argv[1], "--typecheck")) {
@@ -155,9 +156,10 @@ int main(int argc, char* argv[]){
             return_val = 1;
         }
         if (return_val) return 1;
-        
-        printf(".data\n");
-        //decl_codegen(parser_result);
+        file = fopen(argv[3], "w");
+        fprintf(file, ".file \"%s\"\n", argv[3]);
+        decl_codegen(parser_result);
+        fclose(file);
     }
     else{
         return 1;

@@ -1,10 +1,10 @@
 #include "codegen.h"
 
 
-bool reg_scratch_list[7] = {1};
+bool reg_scratch_list[7] = {1, 1, 1, 1, 1, 1, 1};
 const char* reg_name_list[7] = {"%%rbx", "%%r10", "%%r11", "%%r12", "%%r13", "%%r14", "%%r15"};
 int global_label_counter = 0;
-
+extern FILE* file;
 int scratch_alloc(){
     int i;
     for(i = 0; i < 7; i++){
@@ -13,7 +13,7 @@ int scratch_alloc(){
             return i;
         }
     }
-    printf("no more free registers\n");
+    fprintf(file, "no more free registers\n");
     return i;
 }
 void scratch_free( int r ){
@@ -29,6 +29,7 @@ int label_create(){
 }
 
 const char *label_name(int label) {
+
     char temp[BUFSIZ] = {0};
     sprintf(temp, ".L%d:", label);
     return strdup(temp);
@@ -41,33 +42,33 @@ const char * symbol_codegen(struct symbol * sym){
     }
     else if (sym->kind == SYMBOL_PARAM){
         char temp[BUFSIZ] = {0};
-        sprintf(temp, "-%d(%%rbp)", 8+(sym->which * 8));
+        sprintf(temp, "-%d(%%rbp)", (sym->which * 8));
         return strdup(temp);
     }
-    else if (sym->kind == SYMBOL_LOCAL){
+    else{ // (sym->kind == SYMBOL_LOCAL){
         // if ()
         char temp[BUFSIZ] = {0};
-        sprintf(temp, "-%d(%%rbp)", 8+(syms->which * 8));
+        sprintf(temp, "-%d(%%rbp)", 48+(sym->which * 8));
         return strdup(temp);
     }
 }
 
 
 void callee_preamble(){
-    printf("pushq %%rbx\n");
-    printf("pushq %%r12\n");
-    printf("pushq %%r13\n");
-    printf("pushq %%r14\n");
-    printf("pushq %%r15\n");
+    fprintf(file, "pushq %%rbx\n");
+    fprintf(file, "pushq %%r12\n");
+    fprintf(file, "pushq %%r13\n");
+    fprintf(file, "pushq %%r14\n");
+    fprintf(file, "pushq %%r15\n");
 }
 
 
 void callee_postamble(){
-    printf("popq %%rbx\n");
-    printf("popq %%r12\n");
-    printf("popq %%r13\n");
-    printf("popq %%r14\n");
-    printf("popq %%r15\n");
+    fprintf(file, "popq %%rbx\n");
+    fprintf(file, "popq %%r12\n");
+    fprintf(file, "popq %%r13\n");
+    fprintf(file, "popq %%r14\n");
+    fprintf(file, "popq %%r15\n");
 }
 // r 0 1 2 3 4 5 6
 // name %rbx %r10 %r11 %r12 %r13 %r14 %r15
@@ -105,5 +106,22 @@ int char_decode2(char* c){
     // in case of hex code
     char hex_values[3] = {*(c+4), *(c+5), '\0'};
     return (char) strtol(hex_values, NULL, 16);
+}
 
+void string_data_handler(char* string_literal, char* function_name){
+    fprintf(file, ".data\n");
+	fprintf(file, ".%s\n", create_string_label());
+	fprintf(file, ".string %s\n", string_literal); 
+	fprintf(file, ".text\n");
+	fprintf(file, ".global %s\n", function_name);
+	fprintf(file, "%s:\n", function_name);
+}
+
+int string_label_count = 0;
+char* create_string_label(){
+    
+    char temp[8];
+    sprintf(temp, "L%d", string_label_count);
+    string_label_count+= 1;
+    return strdup(temp);
 }

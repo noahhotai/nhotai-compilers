@@ -1,6 +1,8 @@
 #include "decl.h"
 
 
+extern FILE* file;
+
 struct decl * decl_create( char *name, struct type *type, struct expr* value, struct stmt *code, struct decl *next ){
     struct decl * d = calloc(1, sizeof(struct decl));
     d->name = name; 
@@ -251,131 +253,112 @@ void decl_typecheck(struct decl *d ){
 
 
 void global_array_hander(struct expr * e){
-
-    expr_print(e);
-    // if (e->kind == EXPR_LIST){
-
-    // }
-    // else{
-
-    //     // while (e->right){
-    //     //     printf("%d, ");
-    //     //     e = e->right
-    //     // } 
-    //     // printf("")
-
-    // }
+    if (!e) return;
+    if ((e->kind == EXPR_ARRAY_BRACES) || (e->kind == EXPR_LIST)){
+        e = e->right;
+    }
+    if (e->right){
+        fprintf(file, "%d, ", e->int_literal);
+        e = e->right;
+    }
+    fprintf(file, "%d\n", e->int_literal);
 
 }
 
 void global_decl_hander(struct decl * d){
     switch (d->type->kind){
         case TYPE_INTEGER:
-            printf(".quad %d", d->value->int_literal);
+            fprintf(file, ".quad %d\n", d->value->int_literal);
             break;
         case TYPE_CHAR:
-            printf(".quad '%c'", char_decode2(d->value->string_literal));
+            fprintf(file, ".quad '%c'\n", char_decode2(d->value->string_literal));
             break;
         case TYPE_ARRAY:
             if (d->type->subtype->kind != TYPE_INTEGER){
-                printf("codegen error: array not implemented\n");
+                fprintf(file, "codegen error: array not implemented\n");
                 return;
             }
-            // if (d->value){
-            global_array_hander(d->value);
+            global_array_hander(d->value->right);
             break;
         case TYPE_BOOLEAN:
-            printf(".quad %c", char_decode(d->value->string_literal));
+            fprintf(file, ".quad %d\n", d->value->bool_literal);
             break;
         case TYPE_STRING:
-            // printf(".string: %s"), d->;
+            fprintf(file, ".string: %s", d->value->string_literal);
             break;
         case TYPE_FLOAT:
-            printf("codegen error: floating not supported\n");
+            fprintf(file, "codegen error: floating not supported\n");
             break;
         default:
             break;
-        // case 
+
     }
 
 }
-
 
 
 
 void func_preamble(){
     //changing stack pointer and base pointer
-    printf("PUSHQ %%rbp");
-    printf("MOVQ %%rsp, %%rbp");
+    fprintf(file, "PUSHQ %%rbp\n");
+    fprintf(file, "MOVQ %%rsp, %%rbp\n");
 
     //pushing function arguments onto stack 
-    printf("MOVQ %%rdi, -8(%%rbp)");
-    printf("MOVQ %%rsi, -16(%%rbp)");
-    printf("MOVQ %%rdx, -24(%%rbp)");
-    printf("MOVQ %%rcx, -32(%%rbp)");
-    printf("MOVQ %%r8, -40(%%rbp)");
-    printf("MOVQ %%r9, -48(%%rbp)");
-
-}
-
-int custom_sizeof(struct expr * e, struct type * t){
-
-    switch (t->kind){
-
-        case TYPE_INTEGER:
-            return 8;
-            break;
-        case TYPE_CHAR:
-            return 1;
-            break;
-        case TYPE_ARRAY:
-            expr_codegen(e->symbol->type->array_size);
-            // printf("MOVQ "e->symbol->type->array_size->reg);
-
-            // return * custom_sizeof(t->subtype);
-            break;
-        case TYPE_BOOLEAN:
-            return 8;
-            break;
-        case TYPE_STRING:
-            // printf(".string: %s"), d->;
-            break;
-        case TYPE_FLOAT:
-            return 8;
-            break;
-        default:
-            break;
-        // case 
-    }
-
+    fprintf(file, "PUSHQ %%rdi\n");
+    fprintf(file, "PUSHQ %%rsi\n");
+    fprintf(file, "PUSHQ %%rdx\n");
+    fprintf(file, "PUSHQ %%rcx\n");
+    fprintf(file, "PUSHQ %%r8\n");
+    fprintf(file, "PUSHQ %%r9\n");
 
 }
 
 
-void decl_codegen(struct decl *d, bool post_function, int relative_stack){
+void func_postamble(){
+    //changing stack pointer and base pointer
+
+    //pushing function arguments onto stack 
+    fprintf(file, "POPQ %%r9\n");
+    fprintf(file, "POPQ %%r8\n");
+    fprintf(file, "POPQ %%rcx\n");
+    fprintf(file, "POPQ %%rdx\n");
+    fprintf(file, "POPQ %%rsi\n");
+    fprintf(file, "POPQ %%rdi\n");
+
+    fprintf(file, "POPQ %%rbp\n");
+    fprintf(file, "RET\n");
+
+}
+
+
+
+void decl_codegen(struct decl *d){
 
     if (!d) return;
     
     if (d->type->kind == TYPE_FUNCTION){
-        if (post_function == 0){
-            printf(".text\n");
-            post_function = 1;
-        }
-       
+        fprintf(file, ".text\n");
+        fprintf(file, ".global %s\n", d->name);
+        fprintf(file, "%s:\n", d->name);
         func_preamble();
-        stmt_codegen(d->code);
+        stmt_codegen(d->code, d->name);
+        func_postamble();
     }
     else if (d->symbol->kind == SYMBOL_GLOBAL){  
-        printf("%s: ", d->name);
+        fprintf(file, ".data\n");
+        fprintf(file, "%s: \n", d->name);
         global_decl_hander(d);
     }
     else{
-        int stack_decrease = custom_sizeof(d, d->type)
-        printf("SUBQ %d, %%rsp", );
-        relative_stack -= stack_decrease; 
-        expr_codegen(d->value);
+        if (d->type->kind != TYPE_ARRAY){
+            expr_codegen(d->value, d->name);
+            fprintf(file, "PUSHQ %s\n", scratch_name(d->value->reg));
+        }
+        else{
+            fprintf(file, "cannot implement array locally\n");
+        }
     }
 
-    decl_codegen(d->next, post_function);
+    decl_codegen(d->next);
     
 }

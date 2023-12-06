@@ -32,8 +32,8 @@ struct stmt * stmt_create( stmt_t kind,  struct decl* decl, struct expr *init_ex
 void stmt_print(struct stmt *s, int indent );
 void stmt_resolve(struct stmt * s);
 void stmt_typecheck(struct stmt *s, struct type *decl_type, int returned, char* func_name);
-void stmt_codegen(struct stmt *s);
-void stmt_print_func(struct expr * e);
+void stmt_codegen(struct stmt *s, char* function_name);
+void stmt_codegen_print(struct expr * e, char * function_name);
 
 
 

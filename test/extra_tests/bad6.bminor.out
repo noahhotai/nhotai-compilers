@@ -1,5 +1,0 @@
-Program parsed successfully.
-a resolves to local 2
-foo resolves to global foo
-Program resolved successfully.
-type error: cannot return a integer4 in a function (foo) that returns stringProgram failed to typecheck.

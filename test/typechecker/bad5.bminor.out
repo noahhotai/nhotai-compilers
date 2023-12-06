@@ -1,3 +1,0 @@
-Program parsed successfully.
-Program resolved successfully.
-type error: cannot return a string"bad\n" in a function (main) that returns integerProgram failed to typecheck.

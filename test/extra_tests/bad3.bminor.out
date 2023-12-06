@@ -1,3 +1,0 @@
-Program parsed successfully.
-Program resolved successfully.
-if condition must be booleantype error: cannot return a string"this should be an error" in a function (main) that returns integerProgram failed to typecheck.

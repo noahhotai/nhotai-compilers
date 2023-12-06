@@ -1,6 +1,0 @@
-Program parsed successfully.
-main: function char () = {
-    x: integer;
-    x=1;
-}
-

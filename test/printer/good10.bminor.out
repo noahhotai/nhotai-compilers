@@ -1,6 +1,0 @@
-Program parsed successfully.
-GetArea: function integer (width : integer, height : integer) = {
-    if (1)
-        return width*height;
-}
-

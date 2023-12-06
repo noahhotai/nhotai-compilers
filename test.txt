@@ -1,17 +1,7 @@
-a: array[7] integer = {1, 2, 3, 4, 5, 6 ,7};
-main: function integer (a: integer, b: integer) = {
-
-    print a[1];
-    print "here";
-    if ("here"){
-        print b;
-    }
-    else if (a < b){
-        print a;
-    }
-    else {
-        print b;
-    }
+a: array[7] char = {'c', 'd'};
+main: function integer (i: integer, b: integer) = {
     
+    print a[i];
+    print i;
 }
 

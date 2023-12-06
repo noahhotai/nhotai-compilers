@@ -69,7 +69,7 @@ struct type * expr_typecheck(struct expr * e);
 void expr_print( struct expr *e );
 void expr_resolve( struct expr *e );
 struct type * expr_typecheck_global( struct expr *e );
-void expr_codegen(struct expr *e);
+void expr_codegen(struct expr *e, char* function_name);
 void func_call_args_reg_fixer(struct expr * e, int num);
 
 // struct type * expr_typecheck( struct expr *e );

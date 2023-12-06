@@ -1,7 +1,0 @@
-Program parsed successfully.
-c resolves to local 1
-b resolves to local 2
-Program resolved successfully.
-type error: array size initializer must be of type intger (a: array [b] integer)
-type error: array size initializer must be of type intger (d: array [2.100000+3.500000*2.600000] integer)
-Program failed to typecheck.

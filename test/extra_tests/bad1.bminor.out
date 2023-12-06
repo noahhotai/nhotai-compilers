@@ -1,9 +1,0 @@
-Program parsed successfully.
-z resolves to local 2
-Program resolved successfully.
-type error: cannot assign type float (4.600000) to type integer (y).
-type error: cannot add a float (1.000000) by an integer (z).
-type error: cannot add a float (3.400000) by an integer (1.000000+z).
-type error: cannot add a float (2.600000) by an integer (3.400000+1.000000+z).
-type error: cannot assign type integer (2.600000+3.400000+1.000000+z) to type float (x).
-Program failed to typecheck.

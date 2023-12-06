@@ -1,8 +1,0 @@
-Program parsed successfully.
-testfunc resolves to global testfunc
-x resolves to param 1
-y resolves to param 2
-z resolves to param 3
-Program resolved successfully.
-paramater error: wrong of arguments given to the function testfunc.
-Program type checked successfully.

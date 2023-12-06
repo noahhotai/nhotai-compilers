@@ -27,8 +27,10 @@ void decl_print(struct decl *d, int indent );
 void decl_resolve( struct decl *d );
 void decl_typecheck( struct decl *d );
 void decl_print_error(struct decl *d);
-void decl_codegen(struct decl *d, bool post_function);
+void decl_codegen(struct decl *d);
 void global_decl_hander(struct decl *d);
+void func_postamble();
+void func_preamble();
 
 
 #endif
