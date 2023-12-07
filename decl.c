@@ -254,14 +254,15 @@ void decl_typecheck(struct decl *d ){
 
 void global_array_hander(struct expr * e){
     if (!e) return;
-    if ((e->kind == EXPR_ARRAY_BRACES) || (e->kind == EXPR_LIST)){
+    fprintf(file, ".quad ");
+    if ((e->kind == EXPR_ARRAY_BRACES)){
+        e = e->left;
+    }
+    while (e->right){
+        fprintf(file, "%d, ", e->left->int_literal);
         e = e->right;
     }
-    if (e->right){
-        fprintf(file, "%d, ", e->int_literal);
-        e = e->right;
-    }
-    fprintf(file, "%d\n", e->int_literal);
+    fprintf(file, "%d\n", e->left->int_literal);
 
 }
 
@@ -288,7 +289,7 @@ void global_decl_hander(struct decl * d){
                 fprintf(file, "codegen error: array subtype must be integer\n");
                 return;
             }
-            global_array_hander(d->value->right);
+            global_array_hander(d->value);
             break;
         case TYPE_BOOLEAN:
             if (d->value){
@@ -360,10 +361,6 @@ void decl_codegen(struct decl *d){
         stmt_codegen(d->code, d->name);
 
         fprintf(file, "ADDQ $%d, %%rsp\n", 8 *global_func_counter_codegen);
-        // int i;
-        // for (i = 0; i < 0; global_func_counter_codegen){
-        //     fprintf(file, "POPQ $%d, %%rsp\n", 8 *global_func_counter_codegen);
-        // }
 
         func_postamble();
     }

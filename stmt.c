@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 extern FILE* file;
-
+extern int global_func_counter_codegen;
 struct stmt * stmt_create( stmt_t kind, struct decl *decl, struct expr *init_expr, struct expr *expr, struct expr *next_expr, struct stmt *body, struct stmt *else_body, struct stmt *next ){
 
 	struct stmt *d = calloc(1, sizeof(struct stmt));
@@ -245,7 +245,6 @@ void stmt_typecheck(struct stmt *s, struct type *decl_subtype, int returned, cha
 // }
 
 void stmt_codegen_print(struct expr * e, char * function_name){
-
 	if (!e) return;
 	if (e->kind == EXPR_LIST){
 		stmt_codegen_print(e->left, function_name);
@@ -264,7 +263,7 @@ void stmt_codegen_print(struct expr * e, char * function_name){
 			case TYPE_CHAR:
 				expr_codegen(e, function_name);
 				fprintf(file, "MOVQ %s, %%rdi\n", scratch_name(e->reg));
-				fprintf(file, "CALL print_char\n");
+				fprintf(file, "CALL print_character\n");
 				scratch_free(e->reg);
 				break;
 			case TYPE_STRING:
@@ -308,15 +307,14 @@ void stmt_codegen(struct stmt *s, char* function_name){
 			else_label = label_create();
 			done_label = label_create();
 			expr_codegen(s->expr, function_name);
-			scratch_free(s->expr->reg);
 			fprintf(file, "CMP $0, %s\n",scratch_name(s->expr->reg));
-			scratch_free(s->expr->reg);
 			fprintf(file, "JE %s\n",label_name(else_label));
 			stmt_codegen(s->body, function_name);
 			fprintf(file, "JMP %s\n",label_name(done_label));
 			fprintf(file, "%s:\n",label_name(else_label));
 			stmt_codegen(s->else_body, function_name);
 			fprintf(file, "%s:\n",label_name(done_label));
+			scratch_free(s->expr->reg);
 			break;
 
         case STMT_FOR:
@@ -345,11 +343,16 @@ void stmt_codegen(struct stmt *s, char* function_name){
 				expr_codegen(s->expr, function_name);
 				fprintf(file, "MOV %s, %%rax\n",scratch_name(s->expr->reg));
 				// fprintf(file, "JMP .%s_epilogue\n", function_name);
+				fprintf(file, "ADDQ $%d, %%rsp\n", 8 *global_func_counter_codegen);
+        		func_postamble();
 				fprintf(file, "RET\n");
 				scratch_free(s->expr->reg);
 			}
 			else{
-				// fprintf(file, "JMP .%s_epilogue\n",function_name);
+				fprintf(file, "ADDQ $%d, %%rsp\n", 8 *global_func_counter_codegen);
+        		func_postamble();
+				fprintf(file, "RET\n");
+
 			}
             break;
         case STMT_BLOCK:

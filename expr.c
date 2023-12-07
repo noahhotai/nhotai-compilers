@@ -526,15 +526,7 @@ struct type * expr_typecheck( struct expr *e ){
             result = type_create(TYPE_BOOLEAN, 0, 0, 0);
             break;
         case EXPR_ASSIGN:
-            // printf("expr-assign");
-            if (rt->kind == TYPE_ARRAY){
-                typecheck_error = 1;
-                printf("type error: cannot assign array type ");
-                expr_print(e->right);
-                printf(".\n");
-                // array_content_check(lt, e->right);
-            }
-            else if (!type_check(lt, rt)){
+            if (!type_check(lt, rt)){
                 typecheck_error = 1;
                 printf("type error: cannot assign type ");
                 type_print(lt);
@@ -619,11 +611,9 @@ struct type * expr_typecheck( struct expr *e ){
             else{
                 if (e->left->symbol){
                     result = type_copy(lt->subtype);
-                    func_arguments_type_check(e->right, lt->params, e->left->ident);
-                        if (!e->left->symbol->has_code){
-                            typecheck_error = 1;
-                            printf("type error: function (%s) has not been defined\n", e->left->ident);
-                        }
+                    if (!func_arguments_type_check(e->right, lt->params, e->left->ident)){
+                        typecheck_error = 1;
+                    }
                 }
                 else{
                     typecheck_error = 1;
@@ -778,11 +768,33 @@ void expr_codegen(struct expr *e, char* function_name){
             scratch_free(e->left->reg);
             break;
         case EXPR_ASSIGN:
-            expr_codegen(e->right, function_name);
-            fprintf(file, "MOVQ %s, %s\n",
-            scratch_name(e->right->reg),
-            symbol_codegen(e->left->symbol));
-            e->reg = e->right->reg;
+            if (e->left->kind != EXPR_ARRAY_ACCESS){
+                expr_codegen(e->right, function_name);
+                fprintf(file, "MOVQ %s, %s\n",
+                scratch_name(e->right->reg),
+                symbol_codegen(e->left->symbol));
+                e->reg = e->right->reg;
+            }
+            else{
+                
+                expr_codegen(e->right, function_name);
+
+                e->left->reg = scratch_alloc();
+                fprintf(file, "LEAQ %s, %s\n", symbol_codegen(e->left->left->symbol), scratch_name(e->left->reg));
+
+                expr_codegen(e->left->right, function_name);
+                fprintf(file, "MOVQ $8, %%rax\n");
+                fprintf(file, "IMULQ %s\n", scratch_name(e->left->right->reg));
+                fprintf(file, "MOVQ %%rax, %s\n", scratch_name(e->left->right->reg));
+
+                fprintf(file, "ADDQ %s, %s\n", scratch_name(e->left->right->reg), scratch_name(e->left->reg));
+                scratch_free(e->left->right->reg);
+
+                fprintf(file, "MOVQ %s, (%s)\n", scratch_name(e->right->reg),scratch_name(e->left->reg));
+
+                e->reg = e->right->reg;
+            }
+
             break;
         case EXPR_SUB:
             expr_codegen(e->left, function_name);
@@ -790,22 +802,22 @@ void expr_codegen(struct expr *e, char* function_name){
             fprintf(file, "SUBQ %s, %s\n",
             scratch_name(e->right->reg),
             scratch_name(e->left->reg));
-            e->reg = e->right->reg;
-            scratch_free(e->left->reg);
+            e->reg = e->left->reg;
+            scratch_free(e->right->reg);
             break;
         case EXPR_MUL:
             expr_codegen(e->left, function_name);
             expr_codegen(e->right, function_name);
 
             // calculating multiplication
-            fprintf(file, "MOVQ %s, %%rax", scratch_name(e->right->reg)); 
-            fprintf(file, "IMULQ %s", scratch_name(e->left->reg));     
+            fprintf(file, "MOVQ %s, %%rax\n", scratch_name(e->right->reg)); 
+            fprintf(file, "IMULQ %s\n", scratch_name(e->left->reg));     
 
             // free right side register
             scratch_free(e->right->reg);
             
             //moving answer to left register
-            fprintf(file, "MOVQ %%rax, %s,", scratch_name(e->left->reg)); 
+            fprintf(file, "MOVQ %%rax, %s\n", scratch_name(e->left->reg)); 
 
             // setting current register to left
             e->reg = e->left->reg;
@@ -815,14 +827,15 @@ void expr_codegen(struct expr *e, char* function_name){
             expr_codegen(e->right, function_name);
 
             // calculating multiplication
-            fprintf(file, "MOVQ %s, %%rax", scratch_name(e->left->reg)); 
-            fprintf(file, "IDIVQ %s", scratch_name(e->left->reg));     
+            fprintf(file, "MOVQ %s, %%rax\n", scratch_name(e->left->reg)); 
+            fprintf(file, "CQO\n");
+            fprintf(file, "IDIVQ %s\n", scratch_name(e->right->reg));     
 
             // free right side register
             scratch_free(e->right->reg);
             
             //moving answer to left register
-            fprintf(file, "MOVQ %%rdx, %s,", scratch_name(e->left->reg)); 
+            fprintf(file, "MOVQ %%rdx, %s\n", scratch_name(e->left->reg)); 
 
             // setting current register to left
             e->reg = e->left->reg; 
@@ -834,7 +847,7 @@ void expr_codegen(struct expr *e, char* function_name){
             // calculating multiplication
             fprintf(file, "MOVQ %s, %%rax\n", scratch_name(e->left->reg)); 
             fprintf(file, "CQO\n");
-            fprintf(file, "IDIVQ %s\n", scratch_name(e->left->reg));     
+            fprintf(file, "IDIVQ %s\n", scratch_name(e->right->reg));     
 
             // free right side register
             scratch_free(e->right->reg);
@@ -1016,7 +1029,7 @@ void expr_codegen(struct expr *e, char* function_name){
 
             // free right side register
             scratch_free(e->left->reg);
-            e->reg = e->left->reg;
+            e->reg = e->right->reg;
             break;
         case EXPR_OR:
             expr_codegen(e->left, function_name);
@@ -1024,7 +1037,7 @@ void expr_codegen(struct expr *e, char* function_name){
             fprintf(file, "ORQ %s, %s\n", scratch_name(e->left->reg), scratch_name(e->right->reg));
             // free right side register
             scratch_free(e->left->reg);
-            e->reg = e->left->reg;
+            e->reg = e->right->reg;
             break;
         case EXPR_INT:
             e->reg = scratch_alloc();
@@ -1048,7 +1061,15 @@ void expr_codegen(struct expr *e, char* function_name){
         case EXPR_ARRAY_ACCESS:
             expr_codegen(e->right, function_name);
             e->reg = scratch_alloc();
-            fprintf(file, "MOVQ 0(%s, %s, 8), %s\n", symbol_codegen(e->left->symbol), scratch_name(e->right->reg), scratch_name(e->reg));
+            fprintf(file, "LEAQ %s, %s\n", symbol_codegen(e->left->symbol), scratch_name(e->reg));
+
+            fprintf(file, "MOVQ $8, %%rax\n");
+            fprintf(file, "IMULQ %s\n", scratch_name(e->right->reg));
+            fprintf(file, "MOVQ %%rax, %s\n", scratch_name(e->right->reg));
+
+            fprintf(file, "ADDQ %s, %s\n", scratch_name(e->right->reg), scratch_name(e->reg));
+            
+            fprintf(file, "MOVQ (%s), %s\n", scratch_name(e->reg), scratch_name(e->reg));
             scratch_free(e->right->reg);
             break;
         case EXPR_FUNC_CALL:
@@ -1080,12 +1101,12 @@ void expr_codegen(struct expr *e, char* function_name){
         case EXPR_INC:
             expr_codegen(e->left, function_name);
             e->reg = e->left->reg;
-            fprintf(file, "INCQ %s\n", scratch_name(e->left->reg));
+            fprintf(file, "INCQ %s\n", symbol_codegen(e->left->symbol));
             break;
-        case EXPR_DEC:
+        case EXPR_DEC:    
             expr_codegen(e->left, function_name);
-            fprintf(file, "DECQ %s\n", scratch_name(e->left->reg));
             e->reg = e->left->reg;
+            fprintf(file, "DECQ %s\n", symbol_codegen(e->left->symbol));
             break;
         case EXPR_ARRAY_BRACES:
 

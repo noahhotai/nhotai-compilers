@@ -1,14 +1,12 @@
+x:array [5] integer = {1,2,3,4,5};
+y:array [5] array [5] integer;
 
-
-the_array: array [3] integer  = {1, 2, 3};
-
-
-
-main: function integer () = {
-    i:integer = 2;
-    j:integer = 3;
-
-    print i^j;
-
+main:function void () =
+{
+	y[1] = x;
+	count:integer;
+	for(count = 0; count < 5; count++)
+	{
+		y[count] = x;
+	} 	
 }
-

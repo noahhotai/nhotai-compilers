@@ -155,28 +155,35 @@ bool atomic_type(struct type* t){
 }
 
 bool func_arguments_type_check(struct expr* arg_list_expr, struct param_list* func_param_list, char* func_name){
-    struct expr* curr_expr = arg_list_expr;
+    struct expr* curr_expr_list = arg_list_expr;
+    struct expr* curr_expr = arg_list_expr->left;
     struct param_list*  curr_param = func_param_list;
-    struct type* expr_type = expr_typecheck(arg_list_expr);
-    while (curr_expr){
-        expr_type = expr_typecheck(curr_expr);
-        if (!type_check(expr_type, curr_param->type)){
+
+
+    while (curr_expr && curr_param){
+        if (!type_check(expr_typecheck(curr_expr), curr_param->type)){
             printf("type error: argument of type ");
-            type_print(expr_type);
+            type_print(expr_typecheck(curr_expr));
             printf(" does not match parameter %s of type ", curr_param->name);
             type_print(curr_param->type);
-            printf("of function %s.\n", func_name);
+            printf(" of function %s.\n", func_name);
             return false;
         }
-        curr_expr = curr_expr->right;
+        curr_expr_list = curr_expr_list->right;
+        if (curr_expr_list){
+            curr_expr = curr_expr_list->left;
+        }
+        else{
+            curr_expr = 0;
+        }
         curr_param = curr_param->next;
     }
-    if ((!curr_expr) && (curr_param)){
-        return true;
+    if ((curr_expr) || (curr_param)){
+        printf("paramater error: wrong number of arguments given to the function %s.\n", func_name);
+        return false;
     }
     else{
-        printf("paramater error: wrong of arguments given to the function %s.\n", func_name);
-        return false;
+        return true;
     }
 }
 
