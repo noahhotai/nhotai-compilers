@@ -2,6 +2,7 @@
 #define CODEGEN_H
 #include <stdlib.h>
 #include "symbol.h"
+#include <string.h>
 
 int char_decode2(char* c);
 int scratch_alloc();
@@ -10,7 +11,7 @@ const char * scratch_name( int r );
 const char * label_name( int label );
 const char * symbol_codegen( struct symbol * sym);
 int label_create();
-void string_data_handler(char* string_literal, char* function_name);
+void string_data_handler(struct expr* e, char* function_name);
 char *create_string_label();
 void callee_preamble();
 void callee_postamble();

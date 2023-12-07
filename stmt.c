@@ -247,40 +247,41 @@ void stmt_typecheck(struct stmt *s, struct type *decl_subtype, int returned, cha
 void stmt_codegen_print(struct expr * e, char * function_name){
 
 	if (!e) return;
-
+	if (e->kind == EXPR_LIST){
+		stmt_codegen_print(e->left, function_name);
+		stmt_codegen_print(e->right, function_name);
+	}
+	else{
 		switch (expr_typecheck(e)->kind){
 			case TYPE_ARRAY:
 				break;
 			case TYPE_INTEGER:
 				expr_codegen(e, function_name);
-				fprintf(file, "MOVQ %s, rdi\n", scratch_name(e->reg));
+				fprintf(file, "MOVQ %s, %%rdi\n", scratch_name(e->reg));
 				fprintf(file, "CALL print_integer\n");
 				break;
 			case TYPE_CHAR:
 				expr_codegen(e, function_name);
-				fprintf(file, "MOVQ %s, rdi\n", scratch_name(e->reg));
+				fprintf(file, "MOVQ %s, %%rdi\n", scratch_name(e->reg));
 				fprintf(file, "CALL print_char\n");
 				break;
 			case TYPE_STRING:
-				// expr_codegen(e);
-				string_data_handler(e->string_literal, function_name);
-				fprintf(file, "MOVQ %s, rdi\n", scratch_name(e->reg));
+				expr_codegen(e, function_name);
+				fprintf(file, "MOVQ %s, %%rdi\n", scratch_name(e->reg));
 				fprintf(file, "CALL print_string\n");
 				break;
 			case TYPE_FLOAT:
 				fprintf(file, "cannot handle float operations\n");
-				// expr_codegen(e);
-				// printf("MOVQ %s, rdi\n", scratch_name(e->reg));
-				// printf("CALL print_integer\n");
 				break;
 			case TYPE_BOOLEAN:
 				expr_codegen(e, function_name);
-				fprintf(file, "MOVQ %s, rdi\n", scratch_name(e->reg));
+				fprintf(file, "MOVQ %s, %%rdi\n", scratch_name(e->reg));
 				fprintf(file, "CALL print_boolean\n");
 				break;
 			default:
 				break;
 		}
+	}
 	stmt_codegen_print(e->right, function_name);
 }
 
@@ -309,9 +310,9 @@ void stmt_codegen(struct stmt *s, char* function_name){
 			fprintf(file, "JE %s\n",label_name(else_label));
 			stmt_codegen(s->body, function_name);
 			fprintf(file, "JMP %s\n",label_name(done_label));
-			fprintf(file, "%s\n",label_name(else_label));
+			fprintf(file, "%s:\n",label_name(else_label));
 			stmt_codegen(s->else_body, function_name);
-			fprintf(file, "%s\n",label_name(done_label));
+			fprintf(file, "%s:\n",label_name(done_label));
 			break;
 
         case STMT_FOR:
@@ -323,14 +324,14 @@ void stmt_codegen(struct stmt *s, char* function_name){
 			fprintf(file, "%s:\n",label_name(top_label));
 			expr_codegen(s->expr, function_name);
 			fprintf(file, "CMP $0, %s\n",scratch_name(s->expr->reg));
-			fprintf(file, "JMP %s\n",label_name(done_label));
+			fprintf(file, "JMP %s:\n",label_name(done_label));
 			stmt_codegen(s->body, function_name);
 			expr_codegen(s->next_expr, function_name);
-			fprintf(file, "JMP %s\n",label_name(top_label));
-			fprintf(file, "%s\n",label_name(done_label));
+			fprintf(file, "JMP %s:\n",label_name(top_label));
+			fprintf(file, "%s:\n",label_name(done_label));
             break;
         case STMT_PRINT:
-			stmt_codegen_print(s->expr,function_name);
+			stmt_codegen_print(s->expr, function_name);
             break;
         case STMT_RETURN:
 			if (s->expr) {

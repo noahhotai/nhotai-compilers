@@ -1,7 +1,12 @@
-a: array[7] char = {'c', 'd'};
-main: function integer (i: integer, b: integer) = {
-    
-    print a[i];
-    print i;
+denis: string = "9";
+
+printer: function void (x: integer, y:integer) = {
+    print y;
+}
+
+main: function integer () = {
+    i: integer = 10;
+    z: integer = 11;
+    printer(i, z);
 }
 

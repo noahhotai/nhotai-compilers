@@ -593,6 +593,7 @@ struct type * expr_typecheck( struct expr *e ){
             result = type_create(TYPE_CHAR, 0,0, 0);
             break;
         case EXPR_STRING:
+            // printf("EXPR_STRING");
             result = type_create(TYPE_STRING,0,0, 0);
             break;
         case EXPR_IDENT:
@@ -747,7 +748,7 @@ struct type * expr_typecheck_global( struct expr *e ){
         default:
             typecheck_error = 1;
             printf("type error: only atomic types allowed to be declared globally\n");
-            result = type_create(TYPE_INTEGER, 0, 0, 0);
+            result = type_create(TYPE_CHAR, 0, 0, 0);
     }
 
     return result;
@@ -1043,9 +1044,7 @@ void expr_codegen(struct expr *e, char* function_name){
             fprintf(file, "MOVQ $%d, %s\n", temp, scratch_name(e->reg));
             break;
         case EXPR_STRING:
-            string_data_handler(e->string_literal, function_name);
-            e->reg = scratch_alloc();
-            fprintf(file, "MOVQ %s, %s\n", symbol_codegen(e->symbol), scratch_name(e->reg));
+            string_data_handler(e, function_name);
             break;
         case EXPR_ARRAY_ACCESS:
             expr_codegen(e->right, function_name);
@@ -1065,7 +1064,7 @@ void expr_codegen(struct expr *e, char* function_name){
             fprintf(file, "POPQ %%r10\n");
             fprintf(file, "POPQ %%r11\n");
             e->reg = scratch_alloc();
-            fprintf(file, "MOVQ %%rax, %s", scratch_name(e->reg));
+            fprintf(file, "MOVQ %%rax, %s\n", scratch_name(e->reg));
             break;
         case EXPR_NESTED_ARRAY_ACCESS:
             expr_codegen(e->left, function_name);

@@ -268,23 +268,38 @@ void global_array_hander(struct expr * e){
 void global_decl_hander(struct decl * d){
     switch (d->type->kind){
         case TYPE_INTEGER:
-            fprintf(file, ".quad %d\n", d->value->int_literal);
+            if (d->value){
+                fprintf(file, ".quad %d\n", d->value->int_literal);
+            }
+            else{
+                fprintf(file, ".quad 0\n");
+            }
             break;
         case TYPE_CHAR:
-            fprintf(file, ".quad '%c'\n", char_decode2(d->value->string_literal));
+            if (d->value){
+                fprintf(file, ".quad '%c'\n", char_decode2(d->value->string_literal));
+            }
+            else{
+                fprintf(file, ".quad 0\n");
+            }
             break;
         case TYPE_ARRAY:
             if (d->type->subtype->kind != TYPE_INTEGER){
-                fprintf(file, "codegen error: array not implemented\n");
+                fprintf(file, "codegen error: array subtype must be integer\n");
                 return;
             }
             global_array_hander(d->value->right);
             break;
         case TYPE_BOOLEAN:
-            fprintf(file, ".quad %d\n", d->value->bool_literal);
+            if (d->value){
+                fprintf(file, ".quad %d\n", d->value->bool_literal);
+            }
+            else{
+                fprintf(file, ".quad 0\n");
+            }
             break;
         case TYPE_STRING:
-            fprintf(file, ".string: %s", d->value->string_literal);
+            fprintf(file, ".string %s\n", d->value->string_literal);
             break;
         case TYPE_FLOAT:
             fprintf(file, "codegen error: floating not supported\n");
@@ -331,17 +346,21 @@ void func_postamble(){
 }
 
 
-
+int global_func_counter_codegen = 0;
 void decl_codegen(struct decl *d){
 
     if (!d) return;
     
     if (d->type->kind == TYPE_FUNCTION){
+        global_func_counter_codegen = 0;
         fprintf(file, ".text\n");
         fprintf(file, ".global %s\n", d->name);
         fprintf(file, "%s:\n", d->name);
         func_preamble();
         stmt_codegen(d->code, d->name);
+
+        fprintf(file, "SUBQ $%d, %%rsp\n", 8 *global_func_counter_codegen);
+        
         func_postamble();
     }
     else if (d->symbol->kind == SYMBOL_GLOBAL){  
@@ -351,8 +370,14 @@ void decl_codegen(struct decl *d){
     }
     else{
         if (d->type->kind != TYPE_ARRAY){
-            expr_codegen(d->value, d->name);
-            fprintf(file, "PUSHQ %s\n", scratch_name(d->value->reg));
+            global_func_counter_codegen += 1;
+            if (d->value){
+                expr_codegen(d->value, d->name);
+                fprintf(file, "PUSHQ %s\n", scratch_name(d->value->reg));
+            }
+            else{
+                fprintf(file, "SUBQ $8, %%rsp\n");
+            }
         }
         else{
             fprintf(file, "cannot implement array locally\n");
