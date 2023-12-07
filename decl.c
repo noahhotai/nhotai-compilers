@@ -359,8 +359,12 @@ void decl_codegen(struct decl *d){
         func_preamble();
         stmt_codegen(d->code, d->name);
 
-        fprintf(file, "SUBQ $%d, %%rsp\n", 8 *global_func_counter_codegen);
-        
+        fprintf(file, "ADDQ $%d, %%rsp\n", 8 *global_func_counter_codegen);
+        // int i;
+        // for (i = 0; i < 0; global_func_counter_codegen){
+        //     fprintf(file, "POPQ $%d, %%rsp\n", 8 *global_func_counter_codegen);
+        // }
+
         func_postamble();
     }
     else if (d->symbol->kind == SYMBOL_GLOBAL){  
@@ -374,6 +378,7 @@ void decl_codegen(struct decl *d){
             if (d->value){
                 expr_codegen(d->value, d->name);
                 fprintf(file, "PUSHQ %s\n", scratch_name(d->value->reg));
+                scratch_free(d->value->reg);
             }
             else{
                 fprintf(file, "SUBQ $8, %%rsp\n");

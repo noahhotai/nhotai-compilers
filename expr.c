@@ -5,7 +5,7 @@
 #include "codegen.h"
 
 extern FILE* file;
-char* arg_regs[6] = {"%%rdi", "%%rsi", "%%rdx", "%%rcx", "%%r8", "%%r9"};
+char* arg_regs[6] = {"%rdi", "%rsi", "%rdx", "%rcx", "%r8", "%r9"};
 
 struct expr * expr_create( expr_t kind, struct expr *left, struct expr *right ){
     struct expr *d = calloc(1, sizeof(struct expr));
@@ -54,22 +54,20 @@ void func_call_args_reg_fixer(struct expr * e, int num){
 
     if (!e) return;
     if (e->kind == EXPR_LIST){
-        func_call_args_reg_fixer(e->right, num);
+        func_call_args_reg_fixer(e->left, num);
+        func_call_args_reg_fixer(e->right, num + 1);
     }
     else{
         if (num == 6){
             fprintf(file, "Too many arguments given.\n");
             return;
         }
-        char* temp = arg_regs[num];
-        fprintf(file, "MOVQ %s, %s", scratch_name(e->reg), temp);
+        expr_codegen(e, 0);
+        fprintf(file, "MOVQ %s, %s\n", scratch_name(e->reg), arg_regs[num]);
         func_call_args_reg_fixer(e->right, num + 1);
     }
 }
 
-// expr_list_check(e->left){
-
-// }
 
 void expr_print(struct expr *e ){
 
@@ -852,6 +850,7 @@ void expr_codegen(struct expr *e, char* function_name){
             expr_codegen(e->right, function_name);
             fprintf(file, "MOVQ %s, %%rdi\n", scratch_name(e->left->reg)); 
             fprintf(file, "MOVQ %s, %%rsi\n", scratch_name(e->right->reg)); 
+            fprintf(file, "CALL integer_power\n");
             fprintf(file, "MOVQ %%rax, %s\n", scratch_name(e->left->reg)); 
             scratch_free(e->right->reg);
             e->reg = e->left->reg;
@@ -873,7 +872,7 @@ void expr_codegen(struct expr *e, char* function_name){
 
             expr_codegen(e->left, function_name);
             expr_codegen(e->right, function_name);
-            fprintf(file, "CMPQ %s, %s\n", scratch_name(e->left->reg), scratch_name(e->left->reg));
+            fprintf(file, "CMPQ %s, %s\n", scratch_name(e->right->reg), scratch_name(e->left->reg));
 
             true_label = label_create();
             done_label = label_create();
@@ -885,7 +884,7 @@ void expr_codegen(struct expr *e, char* function_name){
             fprintf(file, "%s:\n", label_name(true_label));
 
             fprintf(file, "MOVQ $1, %s\n", scratch_name(e->left->reg));
-            fprintf(file, "%s\n", label_name(done_label));
+            fprintf(file, "%s:\n", label_name(done_label));
 
             scratch_free(e->right->reg);
             e->reg = e->left->reg;
@@ -893,7 +892,7 @@ void expr_codegen(struct expr *e, char* function_name){
         case EXPR_GTE:
             expr_codegen(e->left, function_name);
             expr_codegen(e->right, function_name);
-            fprintf(file, "CMPQ %s, %s\n", scratch_name(e->left->reg), scratch_name(e->left->reg));
+            fprintf(file, "CMPQ %s, %s\n", scratch_name(e->right->reg), scratch_name(e->left->reg));
 
             true_label = label_create();
             done_label = label_create();
@@ -913,7 +912,7 @@ void expr_codegen(struct expr *e, char* function_name){
         case EXPR_LT:
             expr_codegen(e->left, function_name);
             expr_codegen(e->right, function_name);
-            fprintf(file, "CMPQ %s, %s\n", scratch_name(e->left->reg), scratch_name(e->left->reg));
+            fprintf(file, "CMPQ %s, %s\n", scratch_name(e->right->reg), scratch_name(e->left->reg));
 
             true_label = label_create();
             done_label = label_create();
@@ -933,7 +932,7 @@ void expr_codegen(struct expr *e, char* function_name){
         case EXPR_GT:
             expr_codegen(e->left, function_name);
             expr_codegen(e->right, function_name);
-            fprintf(file, "CMPQ %s, %s\n", scratch_name(e->left->reg), scratch_name(e->left->reg));
+            fprintf(file, "CMPQ %s, %s\n", scratch_name(e->right->reg), scratch_name(e->left->reg));
 
             true_label = label_create();
             done_label = label_create();
@@ -953,7 +952,7 @@ void expr_codegen(struct expr *e, char* function_name){
         case EXPR_EQ:
             expr_codegen(e->left, function_name);
             expr_codegen(e->right, function_name);
-            fprintf(file, "CMPQ %s, %s\n", scratch_name(e->left->reg), scratch_name(e->left->reg));
+            fprintf(file, "CMPQ %s, %s\n", scratch_name(e->right->reg), scratch_name(e->left->reg));
 
             true_label = label_create();
             done_label = label_create();
@@ -976,19 +975,19 @@ void expr_codegen(struct expr *e, char* function_name){
             true_label = label_create();
             done_label = label_create();
 
-            fprintf(file, "CMPQ $1, %s", scratch_name(e->left->reg));
+            fprintf(file, "CMPQ $1, %s\n", scratch_name(e->left->reg));
             fprintf(file, "JE %s\n", label_name(true_label));
-            fprintf(file, "MOVQ $1, %s", scratch_name(e->left->reg));
+            fprintf(file, "MOVQ $1, %s\n", scratch_name(e->left->reg));
             fprintf(file, "JMP %s\n", label_name(done_label));
             fprintf(file, "%s:\n", label_name(true_label));
-            fprintf(file, "MOVQ $0, %s", scratch_name(e->left->reg));
+            fprintf(file, "MOVQ $0, %s\n", scratch_name(e->left->reg));
             fprintf(file, "%s:\n", label_name(done_label));
             e->reg = e->left->reg;
             break;
         case EXPR_NOT_EQ:
             expr_codegen(e->left, function_name);
             expr_codegen(e->right, function_name);
-            fprintf(file, "CMPQ %s, %s\n", scratch_name(e->left->reg), scratch_name(e->left->reg));
+            fprintf(file, "CMPQ %s, %s\n", scratch_name(e->left->reg), scratch_name(e->right->reg));
 
             true_label = label_create();
             done_label = label_create();
@@ -1049,7 +1048,7 @@ void expr_codegen(struct expr *e, char* function_name){
         case EXPR_ARRAY_ACCESS:
             expr_codegen(e->right, function_name);
             e->reg = scratch_alloc();
-            fprintf(file, "MOVQ 0(%s, %s, 8), %s\n", symbol_codegen(e->symbol), scratch_name(e->right->reg), scratch_name(e->reg));
+            fprintf(file, "MOVQ 0(%s, %s, 8), %s\n", symbol_codegen(e->left->symbol), scratch_name(e->right->reg), scratch_name(e->reg));
             scratch_free(e->right->reg);
             break;
         case EXPR_FUNC_CALL:
@@ -1059,7 +1058,7 @@ void expr_codegen(struct expr *e, char* function_name){
             fprintf(file, "PUSHQ %%r10\n");
             fprintf(file, "PUSHQ %%r11\n");
             callee_preamble();
-            fprintf(file, "CALL %s\n", e->left->string_literal);
+            fprintf(file, "CALL %s\n", e->left->ident);
             callee_postamble();
             fprintf(file, "POPQ %%r10\n");
             fprintf(file, "POPQ %%r11\n");
@@ -1071,7 +1070,6 @@ void expr_codegen(struct expr *e, char* function_name){
             e->reg = e->left->reg;
             break;
         case EXPR_LIST:
-
             break;
         case EXPR_NESTED_BRACES:
             break;
@@ -1081,8 +1079,8 @@ void expr_codegen(struct expr *e, char* function_name){
             break;
         case EXPR_INC:
             expr_codegen(e->left, function_name);
-            fprintf(file, "INCQ %s\n", scratch_name(e->left->reg));
             e->reg = e->left->reg;
+            fprintf(file, "INCQ %s\n", scratch_name(e->left->reg));
             break;
         case EXPR_DEC:
             expr_codegen(e->left, function_name);

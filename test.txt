@@ -1,12 +1,14 @@
-denis: string = "9";
 
-printer: function void (x: integer, y:integer) = {
-    print y;
-}
+
+the_array: array [3] integer  = {1, 2, 3};
+
+
 
 main: function integer () = {
-    i: integer = 10;
-    z: integer = 11;
-    printer(i, z);
+    i:integer = 2;
+    j:integer = 3;
+
+    print i^j;
+
 }
 

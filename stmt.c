@@ -259,16 +259,19 @@ void stmt_codegen_print(struct expr * e, char * function_name){
 				expr_codegen(e, function_name);
 				fprintf(file, "MOVQ %s, %%rdi\n", scratch_name(e->reg));
 				fprintf(file, "CALL print_integer\n");
+				scratch_free(e->reg);
 				break;
 			case TYPE_CHAR:
 				expr_codegen(e, function_name);
 				fprintf(file, "MOVQ %s, %%rdi\n", scratch_name(e->reg));
 				fprintf(file, "CALL print_char\n");
+				scratch_free(e->reg);
 				break;
 			case TYPE_STRING:
 				expr_codegen(e, function_name);
 				fprintf(file, "MOVQ %s, %%rdi\n", scratch_name(e->reg));
 				fprintf(file, "CALL print_string\n");
+				scratch_free(e->reg);
 				break;
 			case TYPE_FLOAT:
 				fprintf(file, "cannot handle float operations\n");
@@ -277,12 +280,12 @@ void stmt_codegen_print(struct expr * e, char * function_name){
 				expr_codegen(e, function_name);
 				fprintf(file, "MOVQ %s, %%rdi\n", scratch_name(e->reg));
 				fprintf(file, "CALL print_boolean\n");
+				scratch_free(e->reg);
 				break;
 			default:
 				break;
 		}
 	}
-	stmt_codegen_print(e->right, function_name);
 }
 
 void stmt_codegen(struct stmt *s, char* function_name){
@@ -305,6 +308,7 @@ void stmt_codegen(struct stmt *s, char* function_name){
 			else_label = label_create();
 			done_label = label_create();
 			expr_codegen(s->expr, function_name);
+			scratch_free(s->expr->reg);
 			fprintf(file, "CMP $0, %s\n",scratch_name(s->expr->reg));
 			scratch_free(s->expr->reg);
 			fprintf(file, "JE %s\n",label_name(else_label));
@@ -316,18 +320,21 @@ void stmt_codegen(struct stmt *s, char* function_name){
 			break;
 
         case STMT_FOR:
-			expr_codegen(s->init_expr, function_name);
 
+			expr_codegen(s->init_expr, function_name);
+			scratch_free(s->init_expr->reg);
 			top_label = label_create();
 			done_label = label_create();
 
 			fprintf(file, "%s:\n",label_name(top_label));
 			expr_codegen(s->expr, function_name);
+			scratch_free(s->expr->reg);
 			fprintf(file, "CMP $0, %s\n",scratch_name(s->expr->reg));
-			fprintf(file, "JMP %s:\n",label_name(done_label));
+			fprintf(file, "JE %s\n",label_name(done_label));
 			stmt_codegen(s->body, function_name);
 			expr_codegen(s->next_expr, function_name);
-			fprintf(file, "JMP %s:\n",label_name(top_label));
+			scratch_free(s->next_expr->reg);
+			fprintf(file, "JMP %s\n",label_name(top_label));
 			fprintf(file, "%s:\n",label_name(done_label));
             break;
         case STMT_PRINT:
