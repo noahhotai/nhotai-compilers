@@ -866,11 +866,11 @@ void expr_codegen(struct expr *e, char* function_name){
             expr_codegen(e->left, function_name);
 
             // calculating multiplication
-            fprintf(file, "MOVQ $-1, %%rax"); 
-            fprintf(file, "IMULQ %s", scratch_name(e->left->reg));     
-            
+            fprintf(file, "MOVQ $-1, %%rax\n"); 
+            fprintf(file, "IMULQ %s\n", scratch_name(e->left->reg));     
+        
             //moving answer to left register
-            fprintf(file, "MOVQ %%rax, %s,", scratch_name(e->left->reg)); 
+            fprintf(file, "MOVQ %%rax, %s\n", scratch_name(e->left->reg)); 
 
             // setting current register to left
             e->reg = e->left->reg;

@@ -311,19 +311,31 @@ void stmt_codegen(struct stmt *s, char* function_name){
 
         case STMT_FOR:
 
-			expr_codegen(s->init_expr, function_name);
-			scratch_free(s->init_expr->reg);
+			
+			if (s->init_expr){
+				expr_codegen(s->init_expr, function_name);
+				scratch_free(s->init_expr->reg);
+			}
 			top_label = label_create();
 			done_label = label_create();
 
 			fprintf(file, "%s:\n",label_name(top_label));
-			expr_codegen(s->expr, function_name);
-			scratch_free(s->expr->reg);
-			fprintf(file, "CMP $0, %s\n",scratch_name(s->expr->reg));
+			
+			if (s->expr){
+				expr_codegen(s->expr, function_name);
+				fprintf(file, "CMP $0, %s\n",scratch_name(s->expr->reg));
+				scratch_free(s->expr->reg);
+			}
+			
+			
 			fprintf(file, "JE %s\n",label_name(done_label));
 			stmt_codegen(s->body, function_name);
-			expr_codegen(s->next_expr, function_name);
-			scratch_free(s->next_expr->reg);
+
+			if (s->next_expr){
+				expr_codegen(s->next_expr, function_name);
+				scratch_free(s->next_expr->reg);
+			}
+			
 			fprintf(file, "JMP %s\n",label_name(top_label));
 			fprintf(file, "%s:\n",label_name(done_label));
             break;

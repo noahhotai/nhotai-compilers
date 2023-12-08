@@ -1,7 +1,4 @@
 .file "myprogram.s"
-.data
-the_array: 
-.quad 1, 2, 3
 .text
 .global main
 main:
@@ -13,19 +10,15 @@ PUSHQ %rdx
 PUSHQ %rcx
 PUSHQ %r8
 PUSHQ %r9
-MOVQ $2, %rbx
-PUSHQ %rbx
-MOVQ $3, %rbx
+MOVQ $1, %rbx
+MOVQ $-1, %rax
+IMULQ %rbx
+MOVQ %rax, %rbx
 PUSHQ %rbx
 MOVQ -56(%rbp), %rbx
-MOVQ -64(%rbp), %r10
-MOVQ %rbx, %rdi
-MOVQ %r10, %rsi
-CALL integer_power
-MOVQ %rax, %rbx
 MOVQ %rbx, %rdi
 CALL print_integer
-ADDQ $16, %rsp
+ADDQ $8, %rsp
 POPQ %r9
 POPQ %r8
 POPQ %rcx
