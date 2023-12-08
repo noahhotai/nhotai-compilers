@@ -1,0 +1,15 @@
+IDENTIFIER     sdkhfklsdjf
+SEMICOLON      ;
+IDENTIFIER     five
+ASSIGN         =
+INT LITERAL    0
+SEMICOLON      ;
+LESS_THAN_OR_EQUAL            <=
+LESS THAN      <
+IEQUALITY     !=
+ASSIGN         =
+IDENTIFIER     chelsea345dsf
+SEMICOLON      ;
+INT LITERAL    0
+ASSIGN         =
+FLOAT LITERAL  1.000000

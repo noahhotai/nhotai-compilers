@@ -8,7 +8,9 @@ printer: function integer (z:integer) = {
 main: function integer () = {
 
     i:integer = 1;
-    // testing function call
     printer(i);
 
 }
+
+
+

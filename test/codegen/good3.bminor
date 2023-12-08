@@ -1,6 +1,14 @@
-denis: string = "9";
-// print global string
+
+
+the_array: array [3] integer  = {1, 2, 3};
+
 main: function integer () = {
-    print denis;
+    i:integer = 0;
+
+
+    for (i = 0; i < 3; i = i + 1){
+        print i;
+    }
+
 }
 

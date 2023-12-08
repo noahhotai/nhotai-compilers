@@ -1,0 +1,5 @@
+Program parsed successfully.
+Program resolved successfully.
+type error: only atomic types allowed to be declared globally
+type error: cannot assign type char (3+2) to type integer (i).
+Program failed to typecheck.

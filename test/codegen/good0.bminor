@@ -1,7 +1,6 @@
 denis: string = "9";
 
 main: function integer () = {
-    //testing decl assign
     i: integer = 10;
     z: integer = i;
     print z;

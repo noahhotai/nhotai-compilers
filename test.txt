@@ -1,11 +1,12 @@
-denis: string = "9";
 
+
+the_array: array [3] integer  = {1, 2, 3};
+// exponent
 main: function integer () = {
-    //testing decl assign
-    i: integer = 10;
-    z: integer = i;
-    print z;
+    i:integer = 2;
+    j:integer = 3;
+
+    print i^j;
+
 }
-
-
 

@@ -1,41 +1,5 @@
 .file "test/codegen/good17.bminor.s"
 .text
-.global hello_world
-hello_world:
-PUSHQ %rbp
-MOVQ %rsp, %rbp
-PUSHQ %rdi
-PUSHQ %rsi
-PUSHQ %rdx
-PUSHQ %rcx
-PUSHQ %r8
-PUSHQ %r9
-.data
-.L1:
-.string "hello world\n"
-.text
-MOVQ $.L1, %rbx
-MOV %rbx, %rax
-ADDQ $0, %rsp
-POPQ %r9
-POPQ %r8
-POPQ %rcx
-POPQ %rdx
-POPQ %rsi
-POPQ %rdi
-POPQ %rbp
-RET
-RET
-ADDQ $0, %rsp
-POPQ %r9
-POPQ %r8
-POPQ %rcx
-POPQ %rdx
-POPQ %rsi
-POPQ %rdi
-POPQ %rbp
-RET
-.text
 .global main
 main:
 PUSHQ %rbp
@@ -46,23 +10,29 @@ PUSHQ %rdx
 PUSHQ %rcx
 PUSHQ %r8
 PUSHQ %r9
-PUSHQ %r10
-PUSHQ %r11
+MOVQ $0, %rbx
 PUSHQ %rbx
-PUSHQ %r12
-PUSHQ %r13
-PUSHQ %r14
-PUSHQ %r15
-CALL hello_world
-POPQ %rbx
-POPQ %r12
-POPQ %r13
-POPQ %r14
-POPQ %r15
-POPQ %r10
-POPQ %r11
-MOVQ %rax, %rbx
-PUSHQ %rbx
+MOVQ $0, %rbx
+MOVQ %rbx, -56(%rbp)
+.L1:
+MOVQ -56(%rbp), %rbx
+MOVQ $10, %r10
+CMPQ %r10, %rbx
+JL .L3
+MOVQ $0, %rbx
+JMP .L4
+.L3:
+MOVQ $1, %rbx
+.L4:
+CMP $0, %rbx
+JE .L2
+MOVQ -56(%rbp), %rbx
+MOVQ %rbx, %rdi
+CALL print_integer
+MOVQ -56(%rbp), %rbx
+INCQ -56(%rbp)
+JMP .L1
+.L2:
 ADDQ $8, %rsp
 POPQ %r9
 POPQ %r8

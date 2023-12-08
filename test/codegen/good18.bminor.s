@@ -18,7 +18,7 @@ MOVQ $0, %rbx
 MOVQ %rbx, -56(%rbp)
 .L1:
 MOVQ -56(%rbp), %rbx
-MOVQ $9, %r10
+MOVQ $10, %r10
 CMPQ %r10, %rbx
 JL .L3
 MOVQ $0, %rbx
@@ -32,7 +32,7 @@ MOVQ $0, %rbx
 MOVQ %rbx, -64(%rbp)
 .L5:
 MOVQ -64(%rbp), %rbx
-MOVQ $9, %r10
+MOVQ $10, %r10
 CMPQ %r10, %rbx
 JL .L7
 MOVQ $0, %rbx
@@ -42,10 +42,10 @@ MOVQ $1, %rbx
 .L8:
 CMP $0, %rbx
 JE .L6
-MOVQ -56(%rbp), %rbx
-MOVQ $2, %r10
+MOVQ -64(%rbp), %rbx
+MOVQ $5, %r10
 CMPQ %r10, %rbx
-JE .L11
+JL .L11
 MOVQ $0, %rbx
 JMP .L12
 .L11:
@@ -53,20 +53,9 @@ MOVQ $1, %rbx
 .L12:
 CMP $0, %rbx
 JE .L9
-MOVQ -56(%rbp), %r10
-MOVQ -64(%rbp), %r11
-MOVQ %r11, %rax
-IMULQ %r10
-MOVQ %rax, %r10
+MOVQ -64(%rbp), %r10
 MOVQ %r10, %rdi
 CALL print_integer
-.data
-.L13:
-.string "\n"
-.text
-MOVQ $.L13, %r10
-MOVQ %r10, %rdi
-CALL print_string
 JMP .L10
 .L9:
 .L10:

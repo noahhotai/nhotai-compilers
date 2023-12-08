@@ -1,5 +1,14 @@
 .file "test/codegen/good10.bminor.s"
 .data
+chelsea: 
+.quad 1, 2, 3
+.data
+the_string: 
+.string "hello"
+.data
+new: 
+.quad 15
+.data
 new2: 
 .quad 0
 .text

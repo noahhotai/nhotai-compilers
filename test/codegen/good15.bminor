@@ -1,15 +1,6 @@
-
-
-
-
-main: function integer () = {
-    if (false){
-        print 0;
-    }
-    else if (true){
-        print 1;
-    }
-    else{
-        print 0;
-    }
-}   
+x: string  = "hello world\n";
+a: array [2] integer;
+main: function integer() = {
+    y:string = x; 
+    print y;
+}

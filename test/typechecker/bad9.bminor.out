@@ -1,0 +1,7 @@
+Program parsed successfully.
+z resolves to param 2
+x resolves to local 0
+y resolves to local 1
+Program resolved successfully.
+type error: cannot add a integer (x) by an boolean (y).
+Program failed to typecheck.

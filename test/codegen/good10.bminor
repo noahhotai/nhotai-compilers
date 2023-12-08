@@ -1,6 +1,7 @@
-
+chelsea: array[3] integer = {1, 2, 3};
+the_string: string = "hello";
+new: integer = 15;
 new2: integer;
 main: function integer () = {
-    print 5 * (10 %3); // testing mod and mult
+    print 5 * (10 %3);
 }
- 

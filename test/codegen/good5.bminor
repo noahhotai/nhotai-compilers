@@ -1,7 +1,9 @@
 
 
 the_array: array [3] integer  = {1, 2, 3};
-// exponent
+
+
+
 main: function integer () = {
     i:integer = 2;
     j:integer = 3;

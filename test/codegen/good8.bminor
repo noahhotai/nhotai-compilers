@@ -9,6 +9,5 @@ add_one: function integer(i: integer, x:string) = {
 }
 
 main: function integer () = {
-    // testing several function call and return value
     print add_one(1, "hello\n");
 }

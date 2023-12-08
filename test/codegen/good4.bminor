@@ -1,4 +1,4 @@
-// testing inequalities
+
 
 main: function integer () = {
     i:integer = 0;

@@ -30,15 +30,14 @@ IMULQ %r11
 MOVQ %rax, %r11
 ADDQ %r11, %r10
 MOVQ %rbx, (%r10)
-MOVQ $9, %rbx
+MOVQ $2, %rbx
 LEAQ chelsea, %r11
-MOVQ $2, %r12
 MOVQ $8, %rax
-IMULQ %r12
-MOVQ %rax, %r12
-ADDQ %r12, %r11
-MOVQ %rbx, (%r11)
-MOVQ %rbx, %rdi
+IMULQ %rbx
+MOVQ %rax, %rbx
+ADDQ %rbx, %r11
+MOVQ (%r11), %r11
+MOVQ %r11, %rdi
 CALL print_integer
 ADDQ $0, %rsp
 POPQ %r9

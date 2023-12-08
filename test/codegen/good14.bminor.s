@@ -3,14 +3,11 @@
 y: 
 .quad 0
 .data
-z: 
-.quad 0
-.data
 x: 
 .string ""
 .data
 a: 
-.quad 0, 0, 0, 0, 0, 0
+.quad 0, 0, 0
 .text
 .global main
 main:
@@ -22,9 +19,15 @@ PUSHQ %rdx
 PUSHQ %rcx
 PUSHQ %r8
 PUSHQ %r9
-MOVQ y, %rbx
+.data
+.L1:
+.string "hello world\n"
+.text
+MOVQ $.L1, %rbx
+MOVQ %rbx, x
+MOVQ x, %rbx
 MOVQ %rbx, %rdi
-CALL print_integer
+CALL print_string
 ADDQ $0, %rsp
 POPQ %r9
 POPQ %r8

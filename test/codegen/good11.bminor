@@ -1,5 +1,9 @@
+chelsea: array[3] integer = {1, 2, 3};
+the_string: string = "hello";
+new: integer = 15;
+new2: integer;
 main: function integer () = {
-    // testing logical or
+    
     if (true|| false || false|| false){
         print "or works\n";
     }

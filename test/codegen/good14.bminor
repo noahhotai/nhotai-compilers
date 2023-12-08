@@ -1,10 +1,8 @@
 
-
 y: integer;
-z: char;
 x: string;
-a: array[5] integer;
-// testing unititalized variables globally
+a: array [2] integer;
 main: function integer() = {
-    print y;
+    x = "hello world\n";
+    print x;
 }

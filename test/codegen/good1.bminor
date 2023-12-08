@@ -9,3 +9,4 @@ main: function integer () = {
     z: integer = 2;
     printer(i, z);
 }
+

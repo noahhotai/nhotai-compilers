@@ -2,9 +2,7 @@ chelsea: array[3] integer = {1, 2, 3};
 the_string: string = "hello";
 new: integer = 15;
 new2: integer;
-
-// testing array access
 main: function integer () = {
     chelsea[2] = 10;
-    print chelsea[2] = 9;
+    print chelsea[2];
 }

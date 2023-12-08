@@ -1,9 +1,5 @@
-
-y: integer;
-x: string;
+x: string  = "hello world\n";
 a: array [2] integer;
-main: function integer() = { // testing global string change
-    y:string = "hello world\n";
-    x = y;
-    print x;
+main: function integer() = {
+    print (1 + 1 + 1 + 1 + 1);
 }

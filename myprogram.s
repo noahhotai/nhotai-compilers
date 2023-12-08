@@ -1,7 +1,7 @@
 .file "myprogram.s"
 .data
-denis: 
-.string "9"
+the_array: 
+.quad 1, 2, 3
 .text
 .global main
 main:
@@ -13,11 +13,16 @@ PUSHQ %rdx
 PUSHQ %rcx
 PUSHQ %r8
 PUSHQ %r9
-MOVQ $10, %rbx
+MOVQ $2, %rbx
+PUSHQ %rbx
+MOVQ $3, %rbx
 PUSHQ %rbx
 MOVQ -56(%rbp), %rbx
-PUSHQ %rbx
-MOVQ -64(%rbp), %rbx
+MOVQ -64(%rbp), %r10
+MOVQ %rbx, %rdi
+MOVQ %r10, %rsi
+CALL integer_power
+MOVQ %rax, %rbx
 MOVQ %rbx, %rdi
 CALL print_integer
 ADDQ $16, %rsp

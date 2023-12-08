@@ -2,5 +2,5 @@ chelsea: array[3] integer = {1, 2, 3};
 the_string: string = "hello";
 new: integer = 9;
 main: function integer () = {
-    print 1* 3; // testing multiplication
+    print 1* 3;
 }
