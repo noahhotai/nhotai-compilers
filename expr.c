@@ -64,6 +64,7 @@ void func_call_args_reg_fixer(struct expr * e, int num){
         }
         expr_codegen(e, 0);
         fprintf(file, "MOVQ %s, %s\n", scratch_name(e->reg), arg_regs[num]);
+        scratch_free(e->reg);
         func_call_args_reg_fixer(e->right, num + 1);
     }
 }
@@ -71,15 +72,13 @@ void func_call_args_reg_fixer(struct expr * e, int num){
 
 void expr_print(struct expr *e ){
 
-    // printf("expr print\n");
-    // printf("%d\n", e->kind);
+
     if (!e){
         return;
     }
-    // printf("expr_print");
+
     switch (e->kind) {
         case EXPR_ADD:
-            // printf("ecpr_add");
             expr_print(e->left);
             printf("+");
             expr_print(e->right);
@@ -245,7 +244,7 @@ void expr_print(struct expr *e ){
         default:
             break;
     }
-    // expr_print(e->next);
+
 
 }
 
@@ -457,10 +456,7 @@ struct type * expr_typecheck( struct expr *e ){
             result = type_create(TYPE_BOOLEAN,0,0, 0);
             break;
         case EXPR_LT:
-            // printf("herrrreeeeeeee");
             if (!(( lt->kind == TYPE_INTEGER && rt->kind == TYPE_INTEGER) || (lt->kind==TYPE_FLOAT && rt->kind == TYPE_FLOAT))){
-                // result = type_create(TYPE_INTEGER, 0, 0, 0);
-                // type error: cannot add a string ("abc") to an integer (3+5) //      "%s") to an integer (3+5)", );
                 typecheck_error = 1;
                 printf("type error: cannot compare a ");
                 type_print(lt);
@@ -476,8 +472,6 @@ struct type * expr_typecheck( struct expr *e ){
             break;
         case EXPR_GT:
             if (!(( lt->kind ==TYPE_INTEGER && rt->kind == TYPE_INTEGER) || (lt->kind==TYPE_FLOAT && rt->kind == TYPE_FLOAT))){
-                // result = type_create(TYPE_INTEGER, 0, 0, 0);
-                // type error: cannot add a string ("abc") to an integer (3+5) //      "%s") to an integer (3+5)", );
                 typecheck_error = 1;
                 printf("type error: cannot compare a ");
                 type_print(lt);

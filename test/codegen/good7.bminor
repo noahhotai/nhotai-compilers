@@ -1,0 +1,14 @@
+
+
+printer: function integer (z:integer) = {
+    print z, "\n";
+}
+
+
+main: function integer () = {
+
+    i:integer = 1;
+    // testing function call
+    printer(i);
+
+}

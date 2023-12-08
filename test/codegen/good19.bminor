@@ -1,7 +1,5 @@
 
 
-
-
 main : function integer() = { // 
 
     x:integer = 1 + 1 + 1 + 4 %6 * 5 + 0 - 8; //making sure registers are freed

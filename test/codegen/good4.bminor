@@ -1,0 +1,15 @@
+// testing inequalities
+
+main: function integer () = {
+    i:integer = 0;
+    j:integer = 1;
+
+    print i< j;
+    print i <= j;
+    print i==j;
+    print i> j;
+    print i>=j;
+    print !(i ==j);
+
+}
+

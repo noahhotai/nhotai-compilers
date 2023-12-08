@@ -1,0 +1,9 @@
+main: function integer () = {
+    
+    if (true && true && false && true){
+        print "and doesn't\n";
+    }
+    else if (true && true && true && true){
+        print "works\n";
+    }
+}

@@ -155,6 +155,16 @@ bool atomic_type(struct type* t){
 }
 
 bool func_arguments_type_check(struct expr* arg_list_expr, struct param_list* func_param_list, char* func_name){
+
+    if (!arg_list_expr){
+        if (func_param_list){
+            printf("wrong amouhnt of arguments given\n");
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
     struct expr* curr_expr_list = arg_list_expr;
     struct expr* curr_expr = arg_list_expr->left;
     struct param_list*  curr_param = func_param_list;

@@ -76,9 +76,7 @@ void decl_resolve( struct decl *d ){
     } 
     else {
         global_count++;
-        // printf("here\n");
-        // decl_print_error(d);
-        // printf("\n");
+
         kind = SYMBOL_GLOBAL;
     }
 
@@ -252,17 +250,27 @@ void decl_typecheck(struct decl *d ){
 }
 
 
-void global_array_hander(struct expr * e){
-    if (!e) return;
+void global_array_hander(struct decl *d){
     fprintf(file, ".quad ");
-    if ((e->kind == EXPR_ARRAY_BRACES)){
-        e = e->left;
+    if (d->value){
+        struct expr * e = d->value;
+        if ((e->kind == EXPR_ARRAY_BRACES)){
+            e = e->left;
+        }
+        while (e->right){
+            fprintf(file, "%d, ", e->left->int_literal);
+            e = e->right;
+        }
+        fprintf(file, "%d\n", e->left->int_literal);
     }
-    while (e->right){
-        fprintf(file, "%d, ", e->left->int_literal);
-        e = e->right;
+    else{
+        int i;
+        
+        for (i = 0; i < d->type->array_size->int_literal; i++){
+            fprintf(file, "0, ");
+        }
+        fprintf(file, "0\n");
     }
-    fprintf(file, "%d\n", e->left->int_literal);
 
 }
 
@@ -289,7 +297,9 @@ void global_decl_hander(struct decl * d){
                 fprintf(file, "codegen error: array subtype must be integer\n");
                 return;
             }
-            global_array_hander(d->value);
+
+            global_array_hander(d);
+            
             break;
         case TYPE_BOOLEAN:
             if (d->value){
@@ -300,7 +310,14 @@ void global_decl_hander(struct decl * d){
             }
             break;
         case TYPE_STRING:
-            fprintf(file, ".string %s\n", d->value->string_literal);
+            if (d->value){
+                fprintf(file, ".string %s\n", d->value->string_literal);
+            }
+            else{
+                fprintf(file, ".string \"\"");
+                fprintf(file, "\n");
+            }
+            
             break;
         case TYPE_FLOAT:
             fprintf(file, "codegen error: floating not supported\n");
@@ -368,6 +385,7 @@ void decl_codegen(struct decl *d){
         fprintf(file, ".data\n");
         fprintf(file, "%s: \n", d->name);
         global_decl_hander(d);
+       
     }
     else{
         if (d->type->kind != TYPE_ARRAY){

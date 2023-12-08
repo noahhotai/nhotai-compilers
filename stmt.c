@@ -229,20 +229,12 @@ void stmt_typecheck(struct stmt *s, struct type *decl_subtype, int returned, cha
         stmt_typecheck(s->next, decl_subtype, returned, func_name);
     }
 	else{
-		// printf("returned: %d", returned);
-		// printf("decl type: %d", decl_type->kind)
-		// if (decl_subtype->kind != TYPE_VOID && !returned){
-		// 	printf("%d\n", returned);
-		// 	typecheck_error = 1;
-		// 	printf("type error: non void function did not give appropriate return statement.\n");
-		// }
+
 	}
 	
 }
 
-// void print_integer(i){
 
-// }
 
 void stmt_codegen_print(struct expr * e, char * function_name){
 	if (!e) return;

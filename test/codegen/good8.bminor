@@ -1,0 +1,14 @@
+add_one1: function integer(i: integer, x:string) = {
+    
+    return 1 + i;
+}
+
+add_one: function integer(i: integer, x:string) = {
+
+    return 1 + i + add_one1(i, x);
+}
+
+main: function integer () = {
+    // testing several function call and return value
+    print add_one(1, "hello\n");
+}

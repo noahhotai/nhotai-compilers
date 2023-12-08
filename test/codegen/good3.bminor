@@ -1,0 +1,6 @@
+denis: string = "9";
+// print global string
+main: function integer () = {
+    print denis;
+}
+

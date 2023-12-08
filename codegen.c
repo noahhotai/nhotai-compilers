@@ -38,15 +38,7 @@ const char *label_name(int label) {
 
 const char * symbol_codegen(struct symbol * sym){
     if (sym->kind == SYMBOL_GLOBAL){
-        if (sym->type->kind != TYPE_STRING){
-            return sym->name;
-        }
-        else{
-            char * temp[BUFSIZ];
-            strcpy(temp, "$");
-            strcat(temp, sym->name);
-            return strdup(temp);
-        }      
+        return sym->name;
     }
     else if (sym->kind == SYMBOL_PARAM){
         char temp[BUFSIZ] = {0};
@@ -116,7 +108,6 @@ int char_decode2(char* c){
 }
 
 void string_data_handler(struct expr * e, char* function_name){
-
 
         fprintf(file, ".data\n");
         int label_num = label_create();

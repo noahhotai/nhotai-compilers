@@ -1,0 +1,6 @@
+
+new2: integer;
+main: function integer () = {
+    print 5 * (10 %3); // testing mod and mult
+}
+ 

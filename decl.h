@@ -29,6 +29,7 @@ void decl_typecheck( struct decl *d );
 void decl_print_error(struct decl *d);
 void decl_codegen(struct decl *d);
 void global_decl_hander(struct decl *d);
+void global_array_hander(struct decl *d);
 void func_postamble();
 void func_preamble();
 

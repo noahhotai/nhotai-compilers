@@ -1,0 +1,15 @@
+
+
+
+
+main: function integer () = {
+    if (false){
+        print 0;
+    }
+    else if (true){
+        print 1;
+    }
+    else{
+        print 0;
+    }
+}   

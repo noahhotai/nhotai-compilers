@@ -1,0 +1,11 @@
+denis: string = "9";
+
+printer: function void (x: integer, y:integer) = {
+    print x, " ", y, "\n";
+}
+
+main: function integer () = {
+    i: integer = 1;
+    z: integer = 2;
+    printer(i, z);
+}

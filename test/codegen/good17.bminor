@@ -1,0 +1,10 @@
+
+
+hello_world: function string() = {
+    return "hello world\n";
+}
+// returning a string
+main : function integer() = {
+    new:string = hello_world();
+}
+

@@ -1,0 +1,18 @@
+
+
+the_array: array [3] integer  = {1, 2, 3};
+
+the_string: string = "the_string\n";
+
+
+main: function integer () = {
+
+    j: string = the_string;
+    // testing different types in print
+    print the_string, j;
+
+    i:integer = 1;
+    print i++, i;
+}
+
+

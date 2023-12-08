@@ -1,4 +1,4 @@
-.file "myprogram.s"
+.file "test/codegen/good19.bminor.s"
 .text
 .global main
 main:

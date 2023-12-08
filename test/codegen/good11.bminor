@@ -1,0 +1,9 @@
+main: function integer () = {
+    // testing logical or
+    if (true|| false || false|| false){
+        print "or works\n";
+    }
+    else{
+        print "doesn't\n";
+    }
+}
