@@ -1,6 +1,0 @@
-Program parsed successfully.
-x resolves to global 0
-Program resolved successfully.
-type error: only atomic types allowed to be declared globally
-type error: array size initializer must be of type intger (a: array [x] integer)
-Program failed to typecheck.

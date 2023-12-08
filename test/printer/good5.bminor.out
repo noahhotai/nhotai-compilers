@@ -1,3 +1,0 @@
-Program parsed successfully.
-usleep: function void (usecs : integer);
-rand: function integer ();
