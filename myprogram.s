@@ -1,4 +1,7 @@
 .file "myprogram.s"
+.data
+denis: 
+.string "9"
 .text
 .global main
 main:
@@ -10,31 +13,14 @@ PUSHQ %rdx
 PUSHQ %rcx
 PUSHQ %r8
 PUSHQ %r9
-MOVQ $1, %rbx
-MOVQ $1, %r10
-MOVQ $1, %r11
-MOVQ $4, %r12
-MOVQ $6, %r13
-MOVQ %r12, %rax
-CQO
-IDIVQ %r13
-MOVQ %rdx, %r12
-MOVQ $5, %r13
-MOVQ %r13, %rax
-IMULQ %r12
-MOVQ %rax, %r12
-MOVQ $0, %r13
-MOVQ $8, %r14
-SUBQ %r14, %r13
-ADDQ %r12, %r13
-ADDQ %r11, %r13
-ADDQ %r10, %r13
-ADDQ %rbx, %r13
-PUSHQ %r13
+MOVQ $10, %rbx
+PUSHQ %rbx
 MOVQ -56(%rbp), %rbx
+PUSHQ %rbx
+MOVQ -64(%rbp), %rbx
 MOVQ %rbx, %rdi
 CALL print_integer
-ADDQ $8, %rsp
+ADDQ $16, %rsp
 POPQ %r9
 POPQ %r8
 POPQ %rcx

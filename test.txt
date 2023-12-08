@@ -1,11 +1,11 @@
+denis: string = "9";
 
-
-
-
-main : function integer() = { // 
-
-    x:integer = 1 + 1 + 1 + 4 %6 * 5 + 0 - 8; //making sure registers are freed
-    print x;
-
+main: function integer () = {
+    //testing decl assign
+    i: integer = 10;
+    z: integer = i;
+    print z;
 }
+
+
 
