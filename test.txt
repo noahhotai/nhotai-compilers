@@ -1,5 +1,8 @@
-main: function integer() = {
 
-	i: integer = -1;
-	print i;
+
+main: function integer () = {
+	z:string = "ll";
+	x: string = z;
+	z = "hello\n";
+    print z;
 }

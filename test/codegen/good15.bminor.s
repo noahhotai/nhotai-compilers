@@ -1,8 +1,5 @@
 .file "test/codegen/good15.bminor.s"
 .data
-x: 
-.string "hello world\n"
-.data
 a: 
 .quad 0, 0, 0
 .text
@@ -16,7 +13,11 @@ PUSHQ %rdx
 PUSHQ %rcx
 PUSHQ %r8
 PUSHQ %r9
-MOVQ x, %rbx
+.data
+.L1:
+.string "hello world\n"
+.text
+MOVQ $.L1, %rbx
 PUSHQ %rbx
 MOVQ -56(%rbp), %rbx
 MOVQ %rbx, %rdi

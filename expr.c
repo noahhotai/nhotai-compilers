@@ -747,9 +747,16 @@ void expr_codegen(struct expr *e, char* function_name){
     // m D(RA, RB, C) w
         case EXPR_IDENT:
             e->reg = scratch_alloc();
-            fprintf(file, "MOVQ %s, %s\n",
-            symbol_codegen(e->symbol),
-            scratch_name(e->reg));
+            if (e->symbol->kind == SYMBOL_GLOBAL && expr_typecheck(e)->kind == TYPE_STRING){
+                fprintf(file, "MOVQ $%s, %s\n",
+                symbol_codegen(e->symbol),
+                scratch_name(e->reg));
+            }
+            else{
+                fprintf(file, "MOVQ %s, %s\n",
+                symbol_codegen(e->symbol),
+                scratch_name(e->reg));
+            }
             break;
     // Interior node: generate children, then add them.
         case EXPR_ADD:

@@ -1,6 +1,6 @@
-x: string  = "hello world\n";
+
 a: array [2] integer;
 main: function integer() = {
-    y:string = x; 
+    y:string = "hello world\n";
     print y;
 }

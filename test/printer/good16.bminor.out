@@ -1,0 +1,16 @@
+Program parsed successfully.
+simplefunc: function void () = {
+    x: integer = 10;
+    y: integer = 20;
+    if (x<y){
+        if (y>x){
+            print "a";
+        }
+        else{
+            print "a";
+        }
+    }
+    else{
+    }
+}
+

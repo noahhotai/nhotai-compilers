@@ -1,7 +1,4 @@
 .file "test/codegen/good2.bminor.s"
-.data
-denis: 
-.string "9"
 .text
 .global main
 main:
@@ -13,9 +10,12 @@ PUSHQ %rdx
 PUSHQ %rcx
 PUSHQ %r8
 PUSHQ %r9
-MOVQ denis, %rbx
+MOVQ $1, %rbx
+MOVQ $-1, %rax
+IMULQ %rbx
+MOVQ %rax, %rbx
 MOVQ %rbx, %rdi
-CALL print_string
+CALL print_integer
 ADDQ $0, %rsp
 POPQ %r9
 POPQ %r8

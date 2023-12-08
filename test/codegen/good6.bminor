@@ -1,16 +1,9 @@
 
-
-the_array: array [3] integer  = {1, 2, 3};
-
-the_string: string = "the_string\n";
-
+x: string = "efwfewfewfw\n";
 
 main: function integer () = {
-
-    j: string = the_string;
-    print the_string, j;
-
-    i:integer = 1;
-    print i++, i;
+    y: string = x;
+    print y;
 }
+
 

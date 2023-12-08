@@ -1,6 +1,6 @@
-denis: string = "9";
+
 
 main: function integer () = {
-    print denis;
+    print -1;
 }
 

@@ -1,0 +1,5 @@
+Program parsed successfully.
+a resolves to global 0
+Program resolved successfully.
+type error: cannot assign type integer (3.500000) to type float (a[1][0]).
+Program failed to typecheck.

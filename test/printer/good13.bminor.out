@@ -1,0 +1,11 @@
+Program parsed successfully.
+x: integer = 65;
+s: string = "hello";
+b: boolean = false;
+min: function integer (a : integer, b : integer) = {
+    if (a<b)
+        return a;
+    else
+        return b;
+}
+

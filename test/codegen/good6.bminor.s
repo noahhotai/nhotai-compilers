@@ -2,9 +2,6 @@
 .data
 the_array: 
 .quad 1, 2, 3
-.data
-the_string: 
-.string "the_string\n"
 .text
 .global main
 main:
@@ -16,24 +13,16 @@ PUSHQ %rdx
 PUSHQ %rcx
 PUSHQ %r8
 PUSHQ %r9
-MOVQ the_string, %rbx
-PUSHQ %rbx
-MOVQ the_string, %rbx
-MOVQ %rbx, %rdi
-CALL print_string
-MOVQ -56(%rbp), %rbx
-MOVQ %rbx, %rdi
-CALL print_string
 MOVQ $1, %rbx
 PUSHQ %rbx
-MOVQ -64(%rbp), %rbx
-INCQ -64(%rbp)
+MOVQ -56(%rbp), %rbx
+INCQ -56(%rbp)
 MOVQ %rbx, %rdi
 CALL print_integer
-MOVQ -64(%rbp), %rbx
+MOVQ -56(%rbp), %rbx
 MOVQ %rbx, %rdi
 CALL print_integer
-ADDQ $16, %rsp
+ADDQ $8, %rsp
 POPQ %r9
 POPQ %r8
 POPQ %rcx
